@@ -1,0 +1,3 @@
+[submodule "Browser/WeCitizens/firebreath"]
+	path = Browser/WeCitizens/firebreath
+	url = https://github.com/firebreath/FireBreath.git
