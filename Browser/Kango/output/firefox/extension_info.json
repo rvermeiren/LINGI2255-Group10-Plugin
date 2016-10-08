@@ -7,13 +7,13 @@
     "background_scripts": [
         "main.js"
     ], 
-    "homepage_url": "http://kangoextensions.com/", 
+    "homepage_url": "http://www.wecitizens.be/", 
     "version": "0.9.0", 
     "framework_package_id": "dev", 
     "browser_button": {
-        "caption": "Kango", 
-        "tooltipText": "Kango", 
-        "icon": "icons/button.png"
+        "caption": "WeCitizens", 
+        "tooltipText": "WeCitizens", 
+        "icon": "icons/icon128.png"
     }, 
     "id": "{5F5C0B1E-B82E-4BFD-8195-C91A2F631E45}", 
     "name": "WeCitizens"

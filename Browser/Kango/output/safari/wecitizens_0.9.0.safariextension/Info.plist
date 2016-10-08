@@ -37,7 +37,7 @@
 				<key>Identifier</key>
 				<string>kango-ui-button</string>
 				<key>Image</key>
-				<string>icons/button.png</string>
+				<string>icons/icon128.png</string>
 				<key>Include By Default</key>
 				<true/>
 				<key>Label</key>
@@ -66,6 +66,6 @@
 	<key>Update Manifest URL</key>
 	<string></string>
 	<key>Website</key>
-	<string>http://kangoextensions.com/</string>
+	<string>http://www.wecitizens.be/</string>
 </dict>
 </plist>
