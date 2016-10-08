@@ -1,9 +1,0 @@
-{
-  "name": "WeCitizens",
-  "version": "${FBSTRING_PLUGIN_VERSION}",
-  "description": "This plugin will spot the name of every politicians that you encounter within the web!",
-
-	"plugins": [
-    { "path": "npWeCitizens.dll", "public": true }
-  ]
-}

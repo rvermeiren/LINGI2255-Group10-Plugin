@@ -1,2 +1,0 @@
-/usr/bin/ar cr libWCi_PluginAuto.a  CMakeFiles/WCi_PluginAuto.dir/PluginInfo.cpp.o CMakeFiles/WCi_PluginAuto.dir/precompiled_headers.cpp.o CMakeFiles/WCi_PluginAuto.dir/null/NullLogger.cpp.o CMakeFiles/WCi_PluginAuto.dir/X11/KeyCodesX11.cpp.o CMakeFiles/WCi_PluginAuto.dir/X11/np_x11main.cpp.o CMakeFiles/WCi_PluginAuto.dir/X11/PluginWindowX11.cpp.o CMakeFiles/WCi_PluginAuto.dir/X11/NpapiPluginX11.cpp.o
-/usr/bin/ranlib libWCi_PluginAuto.a
