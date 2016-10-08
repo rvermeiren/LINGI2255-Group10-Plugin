@@ -1,0 +1,20 @@
+{
+    "content_scripts": [], 
+    "description": "Extension description", 
+    "creator": "Kango", 
+    "framework_version": "1.8.0 3dc957b83b36", 
+    "package_id": "kango-5f5c0b1e-b82e-4bfd-8195-c91a2f631e45", 
+    "background_scripts": [
+        "main.js"
+    ], 
+    "homepage_url": "http://kangoextensions.com/", 
+    "version": "0.9.0", 
+    "framework_package_id": "dev", 
+    "browser_button": {
+        "caption": "Kango", 
+        "tooltipText": "Kango", 
+        "icon": "icons/button.png"
+    }, 
+    "id": "{5F5C0B1E-B82E-4BFD-8195-C91A2F631E45}", 
+    "name": "WeCitizens"
+}
