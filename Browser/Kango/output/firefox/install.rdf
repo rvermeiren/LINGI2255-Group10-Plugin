@@ -2,7 +2,7 @@
     <Description about="urn:mozilla:install-manifest">
         <em:id>{5F5C0B1E-B82E-4BFD-8195-C91A2F631E45}</em:id>
         <em:name>WeCitizens</em:name>
-        <em:version>0.9.0</em:version>
+        <em:version>1.0</em:version>
         <em:targetApplication>
             <Description>
                 <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>

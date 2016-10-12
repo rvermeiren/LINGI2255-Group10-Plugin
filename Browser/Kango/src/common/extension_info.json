@@ -1,16 +1,15 @@
 {
-    "content_scripts": [], 
-    "description": "Extension description", 
-    "creator": "Kango", 
-    "background_scripts": [
+    "name": "WeCitizens",
+    "version": "1.0",
+    "description": "Extension description",
+    "creator": "Kango",
+    "homepage_url": "http://www.wecitizens.be/",
+    "content_scripts": [
         "main.js"
-    ], 
-    "homepage_url": "http://www.wecitizens.be/", 
-    "version": "0.9.0", 
+    ],
     "browser_button": {
-        "caption": "WeCitizens", 
-        "icon": "icons/icon128.png", 
+        "caption": "WeCitizens",
+        "icon": "icons/icon128.png",
         "tooltipText": "WeCitizens"
-    }, 
-    "name": "WeCitizens"
+    }
 }

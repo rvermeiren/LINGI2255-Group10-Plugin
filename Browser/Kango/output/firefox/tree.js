@@ -1,13 +1,15 @@
 // ==UserScript==
-// @name main
+// @name ChristmasTree
 // @include http://*
 // @include https://*
+// @include about:blank
 // @require jquery-1.9.1.min.js
 // ==/UserScript==
+
 var $ = window.$.noConflict(true); // Required for IE
 
-var title = $(document.createElement('img')).attr({
-    src: 'https://img.pandawhale.com/post-61492-dancing-dickbutt-gif-imgur-tum-pTDg.gif',
+var tree = $(document.createElement('img')).attr({
+    src: 'http://kangoextensions.com/misc/tree.png',
     title: 'Christmas tree'
 }).css({
     position: 'absolute',
@@ -16,6 +18,6 @@ var title = $(document.createElement('img')).attr({
     'z-index': '10000'
 }).appendTo(document.body);
 
-title.click(function() {
-    alert('BIGGEST DICK IN THE WORLD');
+tree.click(function() {
+    alert('Tree click');
 });
