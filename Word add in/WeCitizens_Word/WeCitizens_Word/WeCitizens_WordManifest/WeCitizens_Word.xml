@@ -17,8 +17,8 @@
   <ProviderName>[Nom du fournisseur]</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <!-- Nom d'affichage de votre complément. Utilisé dans le Store et à divers endroits de l'interface utilisateur Office, par exemple la boîte de dialogue des compléments. -->
-  <DisplayName DefaultValue="WeCitizens_Word" />
-  <Description DefaultValue="WeCitizens_Word"/>
+  <DisplayName DefaultValue="We Citizens" />
+  <Description DefaultValue="Liste des politiciens présents sans le document"/>
 
   <!-- Icône de votre complément. Utilisée dans les écrans d'installation et la boîte de dialogue des compléments. -->
   <IconUrl DefaultValue="~remoteAppUrl/Images/Button32x32.png" />
