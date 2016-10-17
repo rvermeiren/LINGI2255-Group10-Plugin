@@ -3,9 +3,11 @@
 html {
     position: relative;
     min-height: 100%;
+    background-color: #AA131F;
 }
 body {
-    margin: 0 0 40px; /* bas = hauteur du pied de page */
+    margin-top: 40px !important; /* bas = hauteur du pied de page */
+    background-color: #AA131F;
 }
 .footer {
     position: absolute;
@@ -17,4 +19,12 @@ body {
 
 .padding {
     padding: 15px;
+}
+
+#content-main {
+  margin-top: 40px;
+}
+
+.well {
+  background-color: white;
 }
