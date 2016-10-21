@@ -6,6 +6,8 @@
 
     var messageBanner;
 
+    var alreadyFoundPoliticians = {}
+
     var politicsName = []
     politicsName.push('Louis')
     politicsName.push('Anatole')
@@ -49,7 +51,7 @@
     function launchProcess() {
       hightlightNames();
       setInterval(hightlightNames, 1000);
-      $('#content-main').append('<div class="well well-sm" id="politicians"></div>');
+      $('#content-main').append('<span id="politicians"></div>');
       return ;
     }
 
@@ -115,16 +117,22 @@
             })
             .then(context.sync)
             .then(function() {
-              $('#politicians').html('')
               var arrayLength = searchResults.length;
               for (var i = 0; i < arrayLength; i++) {
-                if(searchResults[i].items[0] != null)
-                    $('#politicians').append('<div class="panel panel-default">\
-                                                <div class="panel-heading">'+searchResults[i].items[0].text+'</div>\
-                                                <div class="panel-body">\
-                                                  Here is some information about '+searchResults[i].items[0].text+'\
+                if(searchResults[i].items[0] != null && alreadyFoundPoliticians[searchResults[i].items[0].text] == null) {
+                    alreadyFoundPoliticians[searchResults[i].items[0].text] = true;
+                    $('#politicians').append('<div class="panel panel-default" id="panel'+i+'">\
+                                                <div class="panel-heading">\
+                                                  <a data-toggle="collapse" data-target="#collapse'+i+'">\
+                                                    <h4 class="panel-title">'+searchResults[i].items[0].text+'</h4>\
+                                                  </a>\
                                                 </div>\
-                                              </div>');
+                                                <div id="collapse'+i+'" class="panel-collapse collapse ">\
+                                                    <div class="panel-body">Here is some info about the politician</div>\
+                                                </div>\
+                                              </div>'
+                    );
+                }
               }
             })
         })
