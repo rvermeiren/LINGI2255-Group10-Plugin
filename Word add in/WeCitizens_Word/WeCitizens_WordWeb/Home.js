@@ -6,13 +6,13 @@
 
     var messageBanner;
 
-    var politixxName = []
-    politixxName.push('Louis')
-    politixxName.push('Anatole')
-    politixxName.push('Zébulon')
-    politixxName.push('Anguerrand')
-    politixxName.push('téophilémon')
-    politixxName.push('quentin de grolard')
+    var politicsName = []
+    politicsName.push('Louis')
+    politicsName.push('Anatole')
+    politicsName.push('Zébulon')
+    politicsName.push('Anguerrand')
+    politicsName.push('téophilémon')
+    politicsName.push('quentin de grolard')
 
 
     // La fonction d'initialisation doit être exécutée chaque fois qu'une nouvelle page est chargée.
@@ -26,7 +26,7 @@
             // Si Word 2016 n'est pas utilisé, employez la logique de secours.
             if (!Office.context.requirements.isSetSupported('WordApi', '1.1')) {
                 $("#template-description").text("Cet exemple affiche le texte sélectionné.");
-                $('#button-text').text("Chercher les politicards");
+                $('#button-text').text("Chercher les politiciens");
                 $('#button-desc').text("Afficher le texte sélectionné");
 
                 $('#highlight-button').click(
@@ -34,8 +34,8 @@
                 return;
             }
 
-            $("#template-description").text("Cet exemple met en surbrillance les noms contenus dans le texte parmi la liste suivante : Anatole, Zébulon, Anguerrand, téophilémon, Louis.");
-            $('#button-text').text("Mettre en surbrillance !");
+            /*$("#template-description").text("Version d'essai.");*/
+            $('#button-text').text("Chercher les politicians !");
             $('#button-desc').text("Met en surbrillance les noms de la liste.");
 
             loadSampleData();
@@ -49,6 +49,7 @@
     function launchProcess() {
       hightlightNames();
       setInterval(hightlightNames, 1000);
+      $('#content-main').append('<div class="well well-sm" id="politicians"></div>');
       return ;
     }
 
@@ -72,21 +73,24 @@
         .catch(errorHandler);
     }
 
+    /*
+    Hightlights the names of the politicians that are contained in the text
+    */
     function hightlightNames() {
 
         Word.run(function (context) {
 
             // Mettez en file d'attente une commande pour obtenir la sélection actuelle, puis
             // créez un objet de plage proxy avec les résultats.
-            var range = context.document.body;
-            context.load(range, 'text');
+            var body = context.document.body;
+            context.load(body, 'text');
             var searchResults = [];
             return context.sync()
             .then(function () {
 
 
-                for (var name in politixxName) {
-                    searchResults.push(range.search(politixxName[name], {matchCase:true, matchWholeWord: true }));
+                for (var name in politicsName) {
+                    searchResults.push(body.search(politicsName[name], {matchCase:true, matchWholeWord: true }));
                 }
 
                 var arrayLength = searchResults.length;
@@ -105,14 +109,27 @@
 
                         searchResults[i].items[j].font.highlightColor = '#FFFF00';
                         searchResults[i].items[j].font.italic = true;
+                        context.load(searchResults[i], 'text')
                     }
                 }
             })
             .then(context.sync)
+            .then(function() {
+              $('#politicians').html('')
+              var arrayLength = searchResults.length;
+              for (var i = 0; i < arrayLength; i++) {
+                if(searchResults[i].items[0] != null)
+                    $('#politicians').append('<div class="panel panel-default">\
+                                                <div class="panel-heading">'+searchResults[i].items[0].text+'</div>\
+                                                <div class="panel-body">\
+                                                  Here is some information about '+searchResults[i].items[0].text+'\
+                                                </div>\
+                                              </div>');
+              }
+            })
         })
         .catch(errorHandler);
     }
-
 
     function displaySelectedText() {
         Office.context.document.getSelectedDataAsync(Office.CoercionType.Text,
