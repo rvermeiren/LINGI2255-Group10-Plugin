@@ -1,0 +1,23 @@
+{
+    "content_scripts": [
+        "main.js"
+    ], 
+    "browser_button": {
+        "caption": "WeCitizens", 
+        "tooltipText": "WeCitizens", 
+        "popup": {
+            "url": "popup.html", 
+            "width": 600, 
+            "height": 520
+        }, 
+        "icon": "icons/icon128.png"
+    }, 
+    "creator": "CodingNiggaz", 
+    "description": "WeCitizens", 
+    "framework_version": "1.8.0 3dc957b83b36", 
+    "homepage_url": "http://WeCitizens.be/", 
+    "version": "0.1", 
+    "framework_package_id": "dev", 
+    "id": "com.kangoextensions.popupdemo", 
+    "name": "WeCitizens"
+}
