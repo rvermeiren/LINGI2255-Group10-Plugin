@@ -91,23 +91,25 @@ function showPopupProperies() {
 }
 
 KangoAPI.onReady(function() {
-    $('#ready').show();
-    $('#not-ready').hide();
+    //$('#ready').show();
+    //$('#not-ready').hide();
 
-    showPopupProperies();
+    //showPopupProperies();
 
-    $('#form').submit(function() {
+    /* $('#form').submit(function() {
         return false;
-    });
+    }); */
+
+    $('#test-text').val("Here to maintain the window's size. Biz");
 
     $('#popup-close').click(function(event) {
         WindowTest.close();
     });
     
-    $('#popup-resize').click(function(event) {
+    /* $('#popup-resize').click(function(event) {
         WindowTest.resize();
-    });
+    }); */
 
-    XhrTest.init();
-    StorageTest.init();
+    //XhrTest.init();
+    //StorageTest.init();
 });
