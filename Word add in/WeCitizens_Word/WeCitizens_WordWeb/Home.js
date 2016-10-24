@@ -4,6 +4,8 @@
 (function () {
     "use strict";
 
+    var highlighted = false;
+
     var messageBanner;
 
     var alreadyFoundPoliticians = {}
@@ -41,18 +43,24 @@
             $('#button-desc').text("Met en surbrillance les noms de la liste.");
 
             loadSampleData();
+            $('#highlight-button').click(toggleHighlighted);
+
+            launchProcess();
 
             // Ajoutez un gestionnaire d'événements Click pour le bouton de mise en surbrillance.
-            $('#highlight-button').click(
-                launchProcess);
+
         });
     };
 
     function launchProcess() {
-      hightlightNames();
-      setInterval(hightlightNames, 1000);
+      searchNames();
+      setInterval(searchNames, 1000);
       $('#content-main').append('<span id="politicians"></div>');
       return ;
+    }
+
+    function toggleHighlighted() {
+      highlighted = !highlighted;
     }
 
     function loadSampleData() {
@@ -75,10 +83,11 @@
         .catch(errorHandler);
     }
 
+
     /*
     Hightlights the names of the politicians that are contained in the text
     */
-    function hightlightNames() {
+    function searchNames() {
 
         Word.run(function (context) {
 
@@ -98,20 +107,21 @@
                 var arrayLength = searchResults.length;
                 for (var i = 0; i < arrayLength; i++) {
                     context.load(searchResults[i], 'font');
+                    context.load(searchResults[i], 'text')
                 }
 
             })
             .then(context.sync)
-            .then(function () {
-                // Mettez en file d'attente une commande pour mettre en surbrillance les résultats de la recherche.
-                var arrayLength = searchResults.length;
+            .then(function() {
+              var arrayLength = searchResults.length;
                 for (var i = 0; i < arrayLength; i++) {
                     var itemLength = searchResults[i].items.length;
                     for (var j = 0; j < itemLength; j++) {
-
-                        searchResults[i].items[j].font.highlightColor = '#FFFF00';
-                        searchResults[i].items[j].font.italic = true;
-                        context.load(searchResults[i], 'text')
+                        var color = "FFFFFF";
+                        if(highlighted) {
+                          color = "FFFF00";
+                        }
+                        searchResults[i].items[j].font.highlightColor = color;
                     }
                 }
             })
@@ -135,6 +145,7 @@
                 }
               }
             })
+            .then(context.sync);
         })
         .catch(errorHandler);
     }
