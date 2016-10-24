@@ -1,15 +1,20 @@
 {
     "name": "WeCitizens",
-    "version": "1.0",
-    "description": "Extension description",
-    "creator": "Kango",
-    "homepage_url": "http://www.wecitizens.be/",
+    "version": "0.1",
+    "description": "WeCitizens",
+    "creator": "CodingNiggaz",
+    "homepage_url": "http://WeCitizens.be/",
     "content_scripts": [
         "main.js"
     ],
     "browser_button": {
         "caption": "WeCitizens",
         "icon": "icons/icon128.png",
-        "tooltipText": "WeCitizens"
+        "tooltipText": "WeCitizens",
+        "popup": {
+            "url": "popup.html",
+            "width": 600,
+            "height": 520
+        }
     }
 }
