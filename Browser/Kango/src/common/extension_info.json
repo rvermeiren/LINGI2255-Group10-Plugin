@@ -14,7 +14,7 @@
         "popup": {
             "url": "popup.html",
             "width": 600,
-            "height": 520
+            "height": 900
         }
     }
 }
