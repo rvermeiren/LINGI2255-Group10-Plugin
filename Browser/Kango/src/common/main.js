@@ -16,19 +16,33 @@ $(document).ready(function(){
     //     return text.slice(index, end);
     // }
 
-    $('p').each(function(index) {
-        var body = $(this).text();
+    function openModal(word){
+        // TODO check db if match
+    }
+
+
+    // $('p').each(function(index) {
+        var body = $(this).innerHTML();
         var word;
         var str = "";
         var reg = /[A-Z]+[a-z]*/gm;
         while(word = reg.exec(body)){
-            str += word + "\n";
+
+            var image = $(document.createElement('img')).attr({
+                src: 'http://www.citizensforeurope.eu/wp-content/uploads/2015/05/M17-140220-kompas1.png',
+                id: 'politicianFind'
+                onclick: 'openModal(word)'
+            });
+
+            $(this).innerHTML=$(this).innerHTML.replace(word, image + word);
         }
-        if (str != "")
-            alert(str);
-    });
+        body = $(this).innerHTML();
+        // if (str != "")
+            // alert(str);
+    // });
 
 });
+
 
 // var title = $(document.createElement('img')).attr({
 //     src: 'https://img.pandawhale.com/post-61492-dancing-dickbutt-gif-imgur-tum-pTDg.gif',
