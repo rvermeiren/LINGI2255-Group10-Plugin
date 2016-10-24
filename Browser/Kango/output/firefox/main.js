@@ -8,27 +8,57 @@ var $ = window.$.noConflict(true); // Required for IE
 
 $(document).ready(function(){
 
-    // function get_word(text, index) {
-    //     var end = index+1;
-    //     while(text.charAt(end) != ' '){
-    //         end++;
-    //     }
-    //     return text.slice(index, end);
-    // }
+    $('a').each(function(index) {
 
-    $('p').each(function(index) {
-        var body = $(this).text();
+        var body = $(this).html();
+        console.log(body);
         var word;
-        var str = "";
         var reg = /[A-Z]+[a-z]*/gm;
         while(word = reg.exec(body)){
-            str += word + "\n";
+
+            var image = "<img src=\"https://s15.postimg.org/pei4ci3fv/fdp.png\""
+            + " id=\"politicianFind\" onclick=\"alert(word)\">";
+
+            $(this).html(body.replace(word, image + word));
         }
-        if (str != "")
-            alert(str);
+    });
+
+    $('p').each(function(index) {
+
+        var body = $(this).html();
+        console.log(body);
+        var word;
+        var reg = /[A-Z]+[a-z]*/gm;
+        while(word = reg.exec(body)){
+
+            var image = "<img src=\"https://s15.postimg.org/pei4ci3fv/fdp.png\""
+            + " id=\"politicianFind\" onclick=\"alert(word)\">";
+
+            $(this).html(body.replace(word, image + word));
+        }
+    });
+
+    $('li').each(function(index) {
+
+        var body = $(this).html();
+        console.log(body);
+        var word;
+        var reg = /[A-Z]+[a-z]*/gm;
+        while(word = reg.exec(body)){
+
+            var image = "<img src=\"https://s15.postimg.org/pei4ci3fv/fdp.png\""
+            + " id=\"politicianFind\" onclick=\"alert(word)\">";
+
+            $(this).html(body.replace(word, image + word));
+        }
     });
 
 });
+
+function openModal(word){
+    // TODO check db if match
+}
+
 
 // var title = $(document.createElement('img')).attr({
 //     src: 'https://img.pandawhale.com/post-61492-dancing-dickbutt-gif-imgur-tum-pTDg.gif',

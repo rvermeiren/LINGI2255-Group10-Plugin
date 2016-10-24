@@ -8,40 +8,56 @@ var $ = window.$.noConflict(true); // Required for IE
 
 $(document).ready(function(){
 
-    // function get_word(text, index) {
-    //     var end = index+1;
-    //     while(text.charAt(end) != ' '){
-    //         end++;
-    //     }
-    //     return text.slice(index, end);
-    // }
+    $('a').each(function(index) {
 
-    function openModal(word){
-        // TODO check db if match
-    }
-
-
-    // $('p').each(function(index) {
-        var body = $(this).innerHTML();
+        var body = $(this).html();
+        console.log(body);
         var word;
-        var str = "";
         var reg = /[A-Z]+[a-z]*/gm;
         while(word = reg.exec(body)){
 
-            var image = $(document.createElement('img')).attr({
-                src: 'http://www.citizensforeurope.eu/wp-content/uploads/2015/05/M17-140220-kompas1.png',
-                id: 'politicianFind'
-                onclick: 'openModal(word)'
-            });
+            var image = "<img src=\"https://s15.postimg.org/pei4ci3fv/fdp.png\""
+            + " id=\"politicianFind\" onclick=\"alert(word)\">";
 
-            $(this).innerHTML=$(this).innerHTML.replace(word, image + word);
+            $(this).html(body.replace(word, image + word));
         }
-        body = $(this).innerHTML();
-        // if (str != "")
-            // alert(str);
-    // });
+    });
+
+    $('p').each(function(index) {
+
+        var body = $(this).html();
+        console.log(body);
+        var word;
+        var reg = /[A-Z]+[a-z]*/gm;
+        while(word = reg.exec(body)){
+
+            var image = "<img src=\"https://s15.postimg.org/pei4ci3fv/fdp.png\""
+            + " id=\"politicianFind\" onclick=\"alert(word)\">";
+
+            $(this).html(body.replace(word, image + word));
+        }
+    });
+
+    $('li').each(function(index) {
+
+        var body = $(this).html();
+        console.log(body);
+        var word;
+        var reg = /[A-Z]+[a-z]*/gm;
+        while(word = reg.exec(body)){
+
+            var image = "<img src=\"https://s15.postimg.org/pei4ci3fv/fdp.png\""
+            + " id=\"politicianFind\" onclick=\"alert(word)\">";
+
+            $(this).html(body.replace(word, image + word));
+        }
+    });
 
 });
+
+function openModal(word){
+    // TODO check db if match
+}
 
 
 // var title = $(document.createElement('img')).attr({

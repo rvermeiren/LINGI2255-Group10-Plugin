@@ -5,9 +5,8 @@
     });
 
     function launchProcess() {
-        //hightlightNames();
+        // Call the method to trigger the search in the page.
         $('#content-main').append('<span id="politicians"></div>');
-        alert("FU");
-        return ;
+        return;
     }
 });
