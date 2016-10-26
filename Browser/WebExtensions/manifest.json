@@ -1,0 +1,40 @@
+{
+    "name": "WeCitizens",
+    "version": "0.1",
+    "description": "WeCitizens",
+	"manifest_version": 2,
+    "homepage_url": "http://WeCitizens.be/",
+    "content_scripts": [
+		{
+			"matches": ["http://*/*", "https://*/*"],
+			"css": [],
+			"js": ["main.js"]
+		}
+	],
+	"browser_action": {
+        "default_title": "WeCitizens",
+        "default_popup": "popup.html",
+        "icons": {
+            "32": "icons/icon32.png",
+            "48": "icons/icon48.png"
+        }
+    },
+	"permissions": [
+    	"storage"
+	],
+    "browser_button": {
+        "caption": "WeCitizens",
+        "icon": "icons/icon128.png",
+        "tooltipText": "WeCitizens",
+        "popup": {
+            "url": "popup.html",
+            "width": 600,
+            "height": 900
+        }
+    },
+	"applications": {
+        "gecko": {
+            "id": "wecitizens@wecitizens.be"
+        }
+    }
+}
