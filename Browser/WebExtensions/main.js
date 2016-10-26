@@ -7,6 +7,37 @@ var sarko = "Sarkozy";
 
 $(document).ready(function(){
 
+	$('head').append(
+		'<div class="panel panel-default" id="boxes">\
+			<div class="panel-heading">\
+			<h4 class="panel-title">\
+				<a data-toggle="collapse" data-target="#collapsing" href="#collapsing" class="collapsed">Séverine Blampin</a>\
+			</h4>\
+		</div>\
+		<div id="collapsing" class="panel-collapse collapse in">\
+		<div class="panel-body">\
+			<div class="row">\
+			<div class="col-xs-2" id="photo"> <i class="material-icons md-60">face</i> </div>\
+			<div class="col-xs-10">\
+			<div class="row">\
+				FN\
+			</div>\
+			<div class="row">\
+				69/05/1969\
+			</div>\
+			<div class="row">\
+				Houte-Si-Ploue\
+			</div>\
+					<div class="row">\
+						<a href="https://www.youtube.com/watch?v=AmYrTp-JdnY">Voir sur wecitizens</a>\
+					</div>\
+				</div>\
+			</div>\
+		</div>\
+		</div>\
+		</div>'
+	);
+
     //var hashmap = db_reader.getHashMap();
 
     //$('head').append("<script type='text/javascript'> $(\".politicianFind\").click(function() {alert(\"WeCitizens\");}); </script>");
@@ -72,7 +103,7 @@ $(document).ready(function(){
 		//Get the screen height and width
 		var maskHeight = $(window).height();
 		var maskWidth = $(window).width();
-		var fullImagePath = "\"https://s15.postimg.org/pei4ci3fv/fdp.png\"";
+		var fullImagePath = "http://www.hdbloggers.net/wp-content/uploads/2016/06/Nature.jpg";
 
 
 		//Set heigth and width to mask to fill up the whole screen
@@ -115,7 +146,7 @@ $(document).ready(function(){
 
 	$(".politicianFind").on("click",function(){
 		console.log($(this).attr("alt"));
-		// window.scrollTo(0,0);
+		window.scrollTo(0,0);
 		showImage($(this).attr("alt"));
 	});
 
