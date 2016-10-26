@@ -6,6 +6,8 @@
 // ==/UserScript==
 var $ = window.$.noConflict(true); // Required for IE
 
+var sarko = "Sarkozy";
+
 $(document).ready(function(){
 
 	String.prototype.hashCode = function() {
@@ -19,20 +21,7 @@ $(document).ready(function(){
 	  return hash;
 	};
 
-    $('a').each(function(index) {
-
-        var body = $(this).html();
-        console.log(body);
-        var word;
-        var reg = /[A-Z]+[a-z]*/gm;
-        while(word = reg.exec(body)){
-
-            var image = "<img src=\"https://s15.postimg.org/pei4ci3fv/fdp.png\""
-            + " id=\"politicianFind\" onclick=\"alert(word)\">";
-
-            $(this).html(body.replace(word, image + word));
-        }
-    });
+    //$('head').append("<script type='text/javascript'> $(\".politicianFind\").click(function() {alert(\"WeCitizens\");}); </script>");
 
     $('p').each(function(index) {
 
@@ -42,10 +31,14 @@ $(document).ready(function(){
         var reg = /[A-Z]+[a-z]*/gm;
         while(word = reg.exec(body)){
 
-            var image = "<img src=\"https://s15.postimg.org/pei4ci3fv/fdp.png\""
-            + " id=\"politicianFind\" onclick=\"alert(word)\">";
+            if(word == sarko){
+                var image = "<img src=\"https://s15.postimg.org/pei4ci3fv/fdp.png\""
+                + " class=\"politicianFind\" onclick=\"openWeCitizens()\">";
 
-            $(this).html(body.replace(word, image + word));
+                $(this).html(body.replace(word, image + " " + word));
+                break;
+            }
+            
         }
     });
 
@@ -57,10 +50,31 @@ $(document).ready(function(){
         var reg = /[A-Z]+[a-z]*/gm;
         while(word = reg.exec(body)){
 
-            var image = "<img src=\"https://s15.postimg.org/pei4ci3fv/fdp.png\""
-            + " id=\"politicianFind\" onclick=\"alert(word)\">";
+            if(word == sarko){
+                var image = "<img src=\"https://s15.postimg.org/pei4ci3fv/fdp.png\""
+                + " class=\"politicianFind\" onclick=\"alert(word)\">";
 
-            $(this).html(body.replace(word, image + word));
+                $(this).html(body.replace(word, image + " " + word));
+            }
+            
+        }
+    });
+
+    $('meta').each(function(index) {
+
+        var body = $(this).html();
+        console.log(body);
+        var word;
+        var reg = /[A-Z]+[a-z]*/gm;
+        while(word = reg.exec(body)){
+
+            if(word == sarko){
+                var image = "<img src=\"https://s15.postimg.org/pei4ci3fv/fdp.png\""
+                + " class=\"politicianFind\" onclick=\"alert(word)\">";
+
+                $(this).html(body.replace(word, image + " " + word));
+            }
+
         }
     });
 
