@@ -1,9 +1,14 @@
 ﻿// import * as Papa from "node_modules/papaparse/papaparse.min"
 //import * as db_reader from "utils/db_reader";
 
+import * as db_reader from "utils/db_reader";
+
+var sarko = "Sarkozy";
+
 $(document).ready(function(){
 
-    var sarko = "Sarkozy";
+    var hashmap = db_reader.getHashMap();
+    kango.console.log(hashmap);
 
     //$('head').append("<script type='text/javascript'> $(\".politicianFind\").click(function() {alert(\"WeCitizens\");}); </script>");
 
