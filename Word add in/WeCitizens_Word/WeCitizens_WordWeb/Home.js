@@ -41,11 +41,16 @@
             /*$("#template-description").text("Version d'essai.");*/
             $('#button-text').text("Chercher les politicians !");
             $('#button-desc').text("Met en surbrillance les noms de la liste.");
+            var lol;
+            include("Scripts/node_modules/papaparse/papaparse.min.js", function(){
+              lol = importCSV("database/politicians.csv");
+            });
 
-            loadSampleData();
+
+                console.log(lol);
+
             $('#highlight-button').click(toggleHighlighted);
-
-            launchProcess();
+            launchProcess()
 
             // Ajoutez un gestionnaire d'événements Click pour le bouton de mise en surbrillance.
 
@@ -178,4 +183,41 @@
         messageBanner.showBanner();
         messageBanner.toggleExpansion();
     }
+
+    function importCSV(file){
+      Papa.SCRIPT_PATH="Script/node_modules/papaparse/papaparse.min.js";
+      console.log("Starting import...");
+      return Papa.parse(file, {
+      	step: function(row) {
+      		console.log("Row:", row.data);
+      	},
+      	complete: function() {
+      		console.log("All done!");
+      	}
+      });
+    }
+
+
+    function include(url, callback){
+
+      /* on crée une balise<script type="text/javascript"></script> */
+      var script = document.createElement('script');
+      script.type = 'text/javascript';
+
+      /* On fait pointer la balise sur le script qu'on veut charger
+         avec en prime un timestamp pour éviter les problèmes de cache
+      */
+
+      script.src = url + '?' + (new Date().getTime());
+
+      /* On dit d'exécuter cette fonction une fois que le script est chargé */
+      if (callback) {
+          script.onreadystatechange = callback;
+          script.onload = script.onreadystatechange;
+      }
+
+      /* On rajoute la balise script dans le head, ce qui démarre le téléchargement */
+      document.getElementsByTagName('head')[0].appendChild(script);
+    }
+
 })();

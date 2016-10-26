@@ -6,9 +6,9 @@ html {
     background-color: #AA131F;
 }
 body {
-    margin-top: 40px !important; /* bas = hauteur du pied de page */
-    margin-right:20px !important;
+    margin:5px !important; /* bas = hauteur du pied de page */
     background-color: #AA131F;
+    line-height: 1.0 !important
 }
 .footer {
     position: absolute;
@@ -42,4 +42,12 @@ body {
 }
 .panel-heading a.collapsed:after {
     content:"\e080";
+}
+
+.md-60 {
+  font-size: 60px !important;
+}
+
+#photo {
+  font-size: 60px !important;
 }
