@@ -39,11 +39,11 @@
             }
 
             /*$("#template-description").text("Version d'essai.");*/
-            $('#button-text').text("Chercher les politicians !");
+            $('#button-text').text("Chercher les politiciens !");
             $('#button-desc').text("Met en surbrillance les noms de la liste.");
 
             loadSampleData();
-            $('#highlight-button').click(toggleHighlighted);
+            $('#highlight-button').click(searchNames);
 
             launchProcess();
 
@@ -54,7 +54,6 @@
 
     function launchProcess() {
       searchNames();
-      setInterval(searchNames, 1000);
       $('#content-main').append('<span id="politicians"></div>');
       return ;
     }
@@ -83,7 +82,6 @@
         .catch(errorHandler);
     }
 
-
     /*
     Hightlights the names of the politicians that are contained in the text
     */
@@ -96,9 +94,11 @@
             var body = context.document.body;
             context.load(body, 'text');
             var searchResults = [];
+            $('#politicians').empty();
+            alreadyFoundPoliticians = {}
+
             return context.sync()
             .then(function () {
-
 
                 for (var name in politicsName) {
                     searchResults.push(body.search(politicsName[name], {matchCase:true, matchWholeWord: true }));
@@ -112,26 +112,12 @@
 
             })
             .then(context.sync)
-            .then(function() {
-              var arrayLength = searchResults.length;
-                for (var i = 0; i < arrayLength; i++) {
-                    var itemLength = searchResults[i].items.length;
-                    for (var j = 0; j < itemLength; j++) {
-                        var color = "FFFFFF";
-                        if(highlighted) {
-                          color = "FFFF00";
-                        }
-                        searchResults[i].items[j].font.highlightColor = color;
-                    }
-                }
-            })
-            .then(context.sync)
-            .then(function() {
+            .then(function () {
               var arrayLength = searchResults.length;
               for (var i = 0; i < arrayLength; i++) {
-                if(searchResults[i].items[0] != null && alreadyFoundPoliticians[searchResults[i].items[0].text] == null) {
-                    alreadyFoundPoliticians[searchResults[i].items[0].text] = true;
-                    $('#politicians').append('<div class="panel panel-default" id="panel'+i+'">\
+                  if (searchResults[i].items[0] != null && alreadyFoundPoliticians[searchResults[i].items[0].text] == null) {
+                      alreadyFoundPoliticians[searchResults[i].items[0].text] = true;
+                      $('#politicians').append('<div class="panel panel-default" id="panel'+i+'">\
                                                 <div class="panel-heading">\
                                                   <a data-toggle="collapse" data-target="#collapse'+i+'">\
                                                     <h4 class="panel-title">'+searchResults[i].items[0].text+'</h4>\
@@ -141,8 +127,8 @@
                                                     <div class="panel-body">Here is some info about the politician</div>\
                                                 </div>\
                                               </div>'
-                    );
-                }
+                  );
+                  }
               }
             })
             .then(context.sync);
