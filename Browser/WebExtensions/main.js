@@ -8,35 +8,21 @@ var sarko = "Sarkozy";
 $(document).ready(function(){
 
 	$('head').append(
-		'<div class="panel panel-default" id="box">\
-			<div class="panel-heading">\
-			<h4 class="panel-title">\
-				<a data-toggle="collapse" data-target="#collapsing" href="#collapsing" class="collapsed" id="polician_name">Séverine Blampin</a>\
-			</h4>\
-		</div>\
-		<div id="collapsing" class="panel-collapse collapse in">\
-			<div class="panel-body">\
-				<div class="row">\
-				<div class="col-xs-2" id="photo"> <i class="material-icons md-60">face</i> </div>\
-				<div class="col-xs-10">\
-					<div class="row" id="party">\
-						FN\
-					</div>\
-					<div class="row" id="date">\
-						69/05/1969\
-					</div>\
-					<div class="row" id="location">\
-						Houte-Si-Ploue\
-					</div>\
-					<div class="row" id="link">\
-						<a href="https://www.youtube.com/watch?v=AmYrTp-JdnY">Voir sur wecitizens</a>\
-					</div>\
-				</div>\
-			</div>\
-		</div>\
-		</div>\
-		</div>'
+	  '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">\
+	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>\
+	  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>'
 	);
+
+
+	$('body').append(
+		'<script>\
+		$(document).ready(function(){\
+		    $(\'[data-toggle="popover"]\').popover();\
+		});\
+		</script>'
+	);
+
+
 
     //var hashmap = db_reader.getHashMap();
 
@@ -51,8 +37,10 @@ $(document).ready(function(){
         while(word = reg.exec(body)){
 
             if(word == sarko){
-                var image = "<img alt=\"sarko\" src=\"https://s15.postimg.org/pei4ci3fv/fdp.png\""
-                + " class=\"politicianFind\">";
+                var image = '<a href="#" data-toggle="popover" title="Popover Header" data-content="Florian a une petite bite" id="popover">\
+									<img alt="sarko" src="https://s15.postimg.org/pei4ci3fv/fdp.png" class="politicianFind">\
+								</a>';
+
 
                 $(this).html(body.replace(word, word + " " + image));
             }
@@ -147,6 +135,8 @@ $(document).ready(function(){
 	};
 
 	$(".politicianFind").on("click",function(){
+		// Select a specified element
+		$('#popover').popover();
 		console.log($(this).attr("alt"));
 		window.scrollTo(0,0);
 		showImage($(this).attr("alt"));
