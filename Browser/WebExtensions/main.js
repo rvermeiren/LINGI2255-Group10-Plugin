@@ -8,27 +8,27 @@ var sarko = "Sarkozy";
 $(document).ready(function(){
 
 	$('head').append(
-		'<div class="panel panel-default" id="boxes">\
+		'<div class="panel panel-default" id="box">\
 			<div class="panel-heading">\
 			<h4 class="panel-title">\
-				<a data-toggle="collapse" data-target="#collapsing" href="#collapsing" class="collapsed">Séverine Blampin</a>\
+				<a data-toggle="collapse" data-target="#collapsing" href="#collapsing" class="collapsed" id="polician_name">Séverine Blampin</a>\
 			</h4>\
 		</div>\
 		<div id="collapsing" class="panel-collapse collapse in">\
-		<div class="panel-body">\
-			<div class="row">\
-			<div class="col-xs-2" id="photo"> <i class="material-icons md-60">face</i> </div>\
-			<div class="col-xs-10">\
-			<div class="row">\
-				FN\
-			</div>\
-			<div class="row">\
-				69/05/1969\
-			</div>\
-			<div class="row">\
-				Houte-Si-Ploue\
-			</div>\
-					<div class="row">\
+			<div class="panel-body">\
+				<div class="row">\
+				<div class="col-xs-2" id="photo"> <i class="material-icons md-60">face</i> </div>\
+				<div class="col-xs-10">\
+					<div class="row" id="party">\
+						FN\
+					</div>\
+					<div class="row" id="date">\
+						69/05/1969\
+					</div>\
+					<div class="row" id="location">\
+						Houte-Si-Ploue\
+					</div>\
+					<div class="row" id="link">\
 						<a href="https://www.youtube.com/watch?v=AmYrTp-JdnY">Voir sur wecitizens</a>\
 					</div>\
 				</div>\
@@ -107,13 +107,15 @@ $(document).ready(function(){
 
 
 		//Set heigth and width to mask to fill up the whole screen
-		$('#mask').css({'width':'750px','height':'750px'});
-		$('.image').css({'width':'750px','height':'670px'});
+		$('#mask').css({'width':'300px','height':'100px'});
+		$('.image').css({'width':'50px','height':'75px'});
 		$('.image').attr({'src':fullImagePath});
+
+		$('.location').text("Rachecourt city bitch");
 
 		//transition effect
 		$('#mask').fadeIn(500);
-		$('#mask').fadeTo("slow",0.9);
+		$('#mask').fadeTo("fast",0.9);
 
 		//Get the window height and width
 		var winH = $(window).height();
