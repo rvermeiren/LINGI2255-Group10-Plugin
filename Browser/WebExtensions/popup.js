@@ -1,12 +1,21 @@
-﻿KangoAPI.onReady(function() {
 
-    $(document).ready(function () {
-        $('#highlight-button').click(launchProcess);
-    });
+$('#highlight-button').click(launchProcess);
 
-    function launchProcess() {
-        // Call the method to trigger the search in the page.
-        $('#content-main').append('<span id="politicians"></div>');
-        return;
-    }
+console.log("Ready");
+
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    console.log("Sending answer");
+    sendResponse({farewell: "goodbye"});
+    return true;
+  });
+);
+
+  function launchProcess() {
+      // Call the method to trigger the search in the page.
+      $('#content-main').append('<span id="politicians"></span>');
+      return;
+  }
+
+
 });
