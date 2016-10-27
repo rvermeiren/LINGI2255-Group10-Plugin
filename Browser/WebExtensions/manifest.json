@@ -4,10 +4,14 @@
     "description": "WeCitizens",
 	"manifest_version": 2,
     "homepage_url": "http://WeCitizens.be/",
+	"background": {
+    	"scripts": ["popup.js"],
+		"persistent": true
+ 	},
     "content_scripts": [
         {
             "matches": ["http://*/*", "https://*/*"],
-            "css": ["test.css", "css/bootstrap.min.css"],
+            "css": ["test.css"],
             "js": ["jquery-1.9.1.min.js", "bootstrap.min.js", "main.js"]
         }
     ],

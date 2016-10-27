@@ -35,7 +35,6 @@ body {
 }
 
 .panel-heading a:after {
-    font-family:'Glyphicons Halflings';
     content:"keyboard arrow down";
     float: right;
     color: grey;
