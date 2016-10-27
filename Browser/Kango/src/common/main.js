@@ -6,42 +6,83 @@
 // ==/UserScript==
 var $ = window.$.noConflict(true); // Required for IE
 
+var sarko = "Sarkozy";
+
 $(document).ready(function(){
 
-    // function get_word(text, index) {
-    //     var end = index+1;
-    //     while(text.charAt(end) != ' '){
-    //         end++;
-    //     }
-    //     return text.slice(index, end);
-    // }
+	String.prototype.hashCode = function() {
+		var hash = 0, i, chr, len;
+		if (this.length === 0) return hash;
+		for (i = 0, len = this.length; i < len; i++) {
+			chr   = this.charCodeAt(i);
+			hash  = ((hash << 5) - hash) + chr;
+			hash |= 0; // Convert to 32bit integer
+		}
+	  return hash;
+	};
 
-    function openModal(word){
-        // TODO check db if match
-    }
+    //$('head').append("<script type='text/javascript'> $(\".politicianFind\").click(function() {alert(\"WeCitizens\");}); </script>");
 
+    $('p').each(function(index) {
 
-    // $('p').each(function(index) {
-        var body = $(this).innerHTML();
+        var body = $(this).html();
+        console.log(body);
         var word;
-        var str = "";
         var reg = /[A-Z]+[a-z]*/gm;
         while(word = reg.exec(body)){
 
-            var image = $(document.createElement('img')).attr({
-                src: 'http://www.citizensforeurope.eu/wp-content/uploads/2015/05/M17-140220-kompas1.png',
-                id: 'politicianFind'
-                onclick: 'openModal(word)'
-            });
+            if(word == sarko){
+                var image = "<img src=\"https://s15.postimg.org/pei4ci3fv/fdp.png\""
+                + " class=\"politicianFind\" onclick=\"openWeCitizens()\">";
 
-            $(this).innerHTML=$(this).innerHTML.replace(word, image + word);
+                $(this).html(body.replace(word, image + " " + word));
+                break;
+            }
+            
         }
-        body = $(this).innerHTML();
-        // if (str != "")
-            // alert(str);
-    // });
+    });
+
+    $('li').each(function(index) {
+
+        var body = $(this).html();
+        console.log(body);
+        var word;
+        var reg = /[A-Z]+[a-z]*/gm;
+        while(word = reg.exec(body)){
+
+            if(word == sarko){
+                var image = "<img src=\"https://s15.postimg.org/pei4ci3fv/fdp.png\""
+                + " class=\"politicianFind\" onclick=\"alert(word)\">";
+
+                $(this).html(body.replace(word, image + " " + word));
+            }
+            
+        }
+    });
+
+    $('meta').each(function(index) {
+
+        var body = $(this).html();
+        console.log(body);
+        var word;
+        var reg = /[A-Z]+[a-z]*/gm;
+        while(word = reg.exec(body)){
+
+            if(word == sarko){
+                var image = "<img src=\"https://s15.postimg.org/pei4ci3fv/fdp.png\""
+                + " class=\"politicianFind\" onclick=\"alert(word)\">";
+
+                $(this).html(body.replace(word, image + " " + word));
+            }
+
+        }
+    });
 
 });
+
+function openModal(word){
+    // TODO check db if match
+}
 
 
 // var title = $(document.createElement('img')).attr({
