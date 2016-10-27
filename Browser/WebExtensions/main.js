@@ -29,8 +29,8 @@ function addImage(context, counter) {
 	var reg = /[A-Z]+[a-z]*/gm;
 	while(word = reg.exec(body)){
 
-			if(word == name){
-					var image = '<a href="#" data-toggle="popover" title="Popover Header" data-content="Florian a une petite bite" id="popover'+counter.i+'" class="politicianFind">\
+			if(word == name){ 
+					var image = '<a href="#" data-toggle="popover" title='+word+' data-content="Florian a une petite bite" id="popover'+counter.i+'" class="politicianFind">\
 						<img alt="sarko" src="https://s15.postimg.org/pei4ci3fv/fdp.png" class="politicianFind">\
 					</a>';
 					$(context).html(body.replace(word, word + " " + image));

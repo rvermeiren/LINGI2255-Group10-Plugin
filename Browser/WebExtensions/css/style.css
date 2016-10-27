@@ -4,6 +4,7 @@ html {
     position: relative;
     min-height: 100%;
     background-color: #AA131F;
+	min-width: 500px;
 }
 body {
     margin:5px !important; /* bas = hauteur du pied de page */
