@@ -40,7 +40,7 @@ function replaceHTML(politicianInfos) {
 													<strong>Birth date</strong>: '+ birthDate +'\
 												</div>\
 												<div class=\'row\'>\
-													<a href=\'https://www.youtube.com/watch?v=AmYrTp-JdnY\'>Voir sur wecitizens</a>\
+													<a href=\'http://wecitizens.be\'>Voir sur wecitizens</a>\
 												</div>\
 											</div>\
 				                        </div>\
