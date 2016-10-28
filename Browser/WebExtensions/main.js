@@ -21,11 +21,11 @@ $(document).ready(function(){
 	/* Hide the popover when clicking anywhere on the page*/
 	$('body').on('click', function (e) {
     //only buttons
-    if ($(e.target).data('toggle') !== 'popover'
-        && $(e.target).parents('.popover.in').length === 0) {
-        $('[data-toggle="popover"]').popover('hide');
-    }
-});
+	    if ($(e.target).data('toggle') !== 'popover'
+	        && $(e.target).parents('.popover.in').length === 0) {
+	        $('[data-toggle="popover"]').popover('hide');
+	    }
+	});
 
 });
 
