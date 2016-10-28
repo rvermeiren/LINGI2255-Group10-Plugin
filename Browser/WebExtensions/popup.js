@@ -7,7 +7,7 @@ function launchProcess() {
 function replaceHTML(politicianInfos) {
 	console.log("dans replaceHTML");
 
-	$('.panel-group').remove();
+	$('#accordion').remove();
 
 	var name			= politicianInfos.name;
 	var surname			= politicianInfos.surname;
@@ -25,7 +25,25 @@ function replaceHTML(politicianInfos) {
 				                        </h4>\
 				                    </div>\
 				                    <div id="collapsing" class="panel-collapse collapse in">\
-				                        <div class="panel-body">' + city + job + politicalParty + birthDate +'</div>\
+				                        <div class="panel-body">\
+				                        	<div class=\'col-xs-9\'>\
+												<div class=\'row\'>\
+													<strong>Job</strong>: '+ job +'\
+												</div>\
+												<div class=\'row\'>\
+													<strong>Political party</strong>: '+ politicalParty +'\
+												</div>\
+												<div class=\'row\'>\
+													<strong>City</strong>: '+ city +'\
+												</div>\
+												<div class=\'row\'>\
+													<strong>Birth date</strong>: '+ birthDate +'\
+												</div>\
+												<div class=\'row\'>\
+													<a href=\'https://www.youtube.com/watch?v=AmYrTp-JdnY\'>Voir sur wecitizens</a>\
+												</div>\
+											</div>\
+				                        </div>\
 				                    </div>\
 				                </div>\
 				            </div>');
@@ -34,7 +52,7 @@ function replaceHTML(politicianInfos) {
 //Once the DOM is ready
 window.addEventListener('DOMContentLoaded', function () {
 
-	launchProcess();
+	//launchProcess();
 
 	//Query for the active tab
 	chrome.tabs.query({

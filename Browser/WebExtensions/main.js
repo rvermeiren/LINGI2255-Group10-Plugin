@@ -1,4 +1,3 @@
-var name = "Nicolas";
 var font = false;
 $(document).ready(function(){
 	// console.log('Document is ready.. scanning for politicians...');
@@ -13,6 +12,7 @@ $(document).ready(function(){
 });
 
 function launchSearch(hashmap){
+
 	// alert(hashmap['Michel']);
 	var counter = {i: 0}; //Occurences. Singleton to be passed by reference and not by value.
 	$('p').each(function(index) {
@@ -45,63 +45,66 @@ function addImage(context, counter) {
 	var word;
 	var reg = /[A-Z]+[a-z]*/gm;
 	while(word = reg.exec(body)){
-		for (var n in hashmap){
+		if (word in hashmap){
 			if(!font){
 				$('head').append('<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">');
 				font = true;
 			}
-			var matching = [];	//List of matching politicians
-			if (n == word){
-				matching.push(hashmap[n]);
-				if (prev == hashmap[n][4]){
-					var html = "\
-					<div class='panel-body'>\
-						<div class='row'>\
-							<div class='col-xs-3' id='photo'> <i class='material-icons md-60'>face</i> </div>\
-							<div class='col-xs-9'>\
-								<div class='row'>\
-									Prostituée\
-								</div>\
-								<div class='row'>\
-									FN\
-								</div>\
-								<div class='row'>\
-									Houte-Si-Plou\
-								</div>\
-								<div class='row'>\
-									69/05/1969\
-								</div>\
-								<div class='row'>\
-									<a href='https://www.youtube.com/watch?v=AmYrTp-JdnY'>Voir sur wecitizens</a>\
-								</div>\
-							</div>\
-						</div>\
-					</div>"
-					var image = String('<span id="popoverWeCitizens"><img data-toggle="popover" title="Nom du politicien" id="popover')
-					+ counter.i + String('"data-html="true" src="http://s12.postimg.org/bqsrifs6l/image.png" class="politicianFind" data-content="')
-					+ html + String('"></span>');
-					//console.log(image);
-					$(context).html(body.replace(word, word + " " + image));
-
-					var politicianInfos = {name: word, surname: hashmap[n][4], birthDate: hashmap[n][6],
-					politicalParty: hashmap[n][2], city: hashmap[n][7], job: hashmap[n][8]};
-
-					// Listen for messages from the popup
-					console.log('Message received from popup');
-					chrome.runtime.onMessage.addListener(function (msg, sender, response) {
-						if ((msg.from === 'popup') && (msg.subject === 'politicianInfos')) {
-							response(politicianInfos);
-							console.log('Message sent to popup');
-						}
-					});
-
-					counter.i++;
-				}
-				else { 			//We only found the name of a politician
-				//Display all the matching politicians (using the list "matching")
+			var matching = [];
+			var pol = null;
+			for (var i in hashmap[word]){
+				matching.push(hashmap[word][i])
+				if (prev == i[4]){		//Matching also with firstname
+					pol = i;
 				}
 			}
+			if (pol != null){
+				//INFO CONCERNING THE POLITICIAN : hashmap[word][pol]
+			//}else{		//Multiple matches DONUT REMOVE THIS LINE PLEASE
+				var html = "\
+				<div class='panel-body'>\
+					<div class='row'>\
+						<div class='col-xs-3' id='photo'> <i class='material-icons md-60'>face</i> </div>\
+						<div class='col-xs-9'>\
+							<div class='row'>\
+								Prostituée\
+							</div>\
+							<div class='row'>\
+								FN\
+							</div>\
+							<div class='row'>\
+								Houte-Si-Plou\
+							</div>\
+							<div class='row'>\
+								69/05/1969\
+							</div>\
+							<div class='row'>\
+								<a href='https://www.youtube.com/watch?v=AmYrTp-JdnY'>Voir sur wecitizens</a>\
+							</div>\
+						</div>\
+					</div>\
+				</div>"
+				var image = String('<span id="popoverWeCitizens"><img data-toggle="popover" title="Nom du politicien" id="popover')
+				+ counter.i + String('"data-html="true" src="http://s12.postimg.org/bqsrifs6l/image.png" class="politicianFind" data-content="')
+				+ html + String('"></span>');
+				//console.log(image);
+				$(context).html(body.replace(word, word + " " + image));
+
+				var politicianInfos = {name: word, surname: hashmap[word][0][4], birthDate: hashmap[word][0][6],
+				politicalParty: hashmap[word][0][2], city: hashmap[word][0][7], job: hashmap[word][0][8]};
+
+				// Listen for messages from the popup
+				console.log('Message received from popup');
+				chrome.runtime.onMessage.addListener(function (msg, sender, response) {
+					if ((msg.from === 'popup') && (msg.subject === 'politicianInfos')) {
+						response(politicianInfos);
+						console.log('Message sent to popup');
+					}
+				});
+
+				counter.i++;
+			}
+			prev = word;
 		}
-		prev = word;
 	}
 }
