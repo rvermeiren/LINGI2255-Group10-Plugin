@@ -48,7 +48,9 @@ function addImage(context, counter) {
 				$('head').append('<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">');
 				font = true;
 			}
+			var matching = [];	//List of matching politicians 
 			if (n == word){
+				matching.push(hashmap[n]);
 				if (prev == hashmap[n][4]){
 					var html = "\
 					<div class='panel-body'>\
@@ -83,14 +85,10 @@ function addImage(context, counter) {
 					});
 					counter.i++;
 				}else{			//We only found the name of a politician
-						//Display all the matching politicians
+				//Display all the matching politicians (using the list "matching")
 				}
 			}
 		}
 		prev = word;
 	}
-}
-
-function openModal(word){
-    // TODO check db if match
 }
