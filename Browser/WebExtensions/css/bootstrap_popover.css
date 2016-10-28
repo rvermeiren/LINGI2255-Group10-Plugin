@@ -6107,7 +6107,6 @@ button.list-group-item-danger.active:focus {
   left: 0;
   z-index: 1060;
   display: none;
-  max-width: 276px;
   padding: 1px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
@@ -6754,12 +6753,21 @@ button.list-group-item-danger.active:focus {
     display: none !important;
   }
 }
-#popoverWeCitizens .popover{
-    width: 300px; /* Max Width of the popover (depending on the container!) */
+
+/*Added CSS*/
+#popoverWeCitizens .popover, .popover-content, .popover-inner{
+    width: 350px !important; /* Max Width of the popover (depending on the container!) */
 }
 
-#popoverWeCitizens span {
-    width: 300px; /* Max Width of the popover (depending on the container!) */
+
+#popoverWeCitizens .md-60 {
+  font-size: 40px !important;
+  margin-right: 20px;
 }
+
+#popoverWeCitizens img {
+  cursor: pointer;
+}
+
 
 /*# sourceMappingURL=bootstrap.css.map */
