@@ -6,7 +6,6 @@ $(document).ready(function(){
 	// console.log('Document is ready.. scanning for politicians...');
 	var retrievedObject = localStorage.getItem('database_csv');
 	hashmap = CSVToHashmap(retrievedObject);
-	alert(hashmap['Michel']);
 
     //var hashmap = db_reader.getHashMap();
 
@@ -48,7 +47,7 @@ function addImage(context, counter) {
 				$('head').append('<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">');
 				font = true;
 			}
-			var matching = [];	//List of matching politicians 
+			var matching = [];	//List of matching politicians
 			if (n == word){
 				matching.push(hashmap[n]);
 				if (prev == hashmap[n][4]){
