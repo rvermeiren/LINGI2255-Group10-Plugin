@@ -1,4 +1,4 @@
-// import {CSVToHashmap} from db_reader;
+import {CSVToHashmap} from db_reader;
 var name = "Nicolas";
 var font = false;
 var hashmap;
@@ -74,16 +74,30 @@ function addImage(context, counter) {
 							</div>\
 						</div>\
 					</div>"
-					var image = String('<span id="popoverWeCitizens"><img data-toggle="popover" title="Nom du politicien" id="popover')
+					var image = String('<span id="popoverWeCitizens"><img data-toggle="popover" title="Nom du politicien" data-trigger="hover" id="popover')
 					+ counter.i + String('"data-html="true" src="https://s15.postimg.org/pei4ci3fv/fdp.png" class="politicianFind" data-content="')
 					+ html + String('"></span>');
-					console.log(image);
+					//console.log(image);
 					$(context).html(body.replace(word, word + " " + image));
-					chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
-					  console.log(response.farewell);
+
+					// Inform the background page
+					chrome.runtime.sendMessage({
+						from: 'main',
+						subject: 'showPageAction'
 					});
+
+					// Listen for messages from the popup
+					console.log('Message received from popup');
+					chrome.runtime.onMessage.addListener(function (msg, sender, response) {
+						if ((msg.from === 'popup') && (msg.subject === 'HTMLinfo')) {
+							response(html);
+							console.log('Message sent to popup');
+						}
+					});
+
 					counter.i++;
-				}else{			//We only found the name of a politician
+				}
+				else { 			//We only found the name of a politician
 				//Display all the matching politicians (using the list "matching")
 				}
 			}
