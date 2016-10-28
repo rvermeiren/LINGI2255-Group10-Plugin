@@ -8,14 +8,11 @@
 
     var alreadyFoundPoliticians = {}
 
-    var politicsName = []
-    politicsName.push('Louis')
-    politicsName.push('Anatole')
-    politicsName.push('Zébulon')
-    politicsName.push('Anguerrand')
-    politicsName.push('téophilémon')
-    politicsName.push('quentin de grolard')
+    var politicsName = {};
 
+    politicsName["Magnette"] = "Paul Magnette;PS,8/06/1971,Charleroi,Walloon Government";
+    politicsName["Michel"] = "Charles Michel;MR,21/12/1975,Wavre,Federal Government";
+    politicsName["Di Rupo"] = "Elio Di Rupo;PS,18/07/1951,Mons,Chair of a party";
 
     // La fonction d'initialisation doit être exécutée chaque fois qu'une nouvelle page est chargée.
     Office.initialize = function (reason) {
@@ -37,23 +34,20 @@
             }
 
             /*$("#template-description").text("Version d'essai.");*/
-            $('#button-text').text("Chercher les politiciens !");
+            $('#button-text').text(" Search for politicians");
             $('#button-desc').text("Met en surbrillance les noms de la liste.");
-            var lol;
-            include("Scripts/node_modules/papaparse/papaparse.min.js", function(){
-              lol = importCSV("database/politicians.csv");
-            });
 
             loadSampleData();
             $('#highlight-button').click(searchNames);
 
-            launchProcess()
+            //politicsName = readTextFile('http://34bw.be/wp-content/uploads/2016/10/temp_database.csv')
 
-            // Ajoutez un gestionnaire d'événements Click pour le bouton de mise en surbrillance.
+            launchProcess()
 
         });
     };
 
+    // Launches the main function of the add-in
     function launchProcess() {
       searchNames();
       $('#content-main').append('<span id="politicians"></div>');
@@ -62,35 +56,34 @@
 
     function loadSampleData() {
 
-        // Exécutez une opération de traitement par lots sur le modèle objet Word.
+        // Executez une opération de traitement par lots sur le modèle objet Word.
         Word.run(function (context) {
 
-            // Créez un objet proxy pour le corps du document.
+            // Creez un objet proxy pour le corps du document.
             var body = context.document.body;
 
             // Mettez en file d'attente une commande pour effacer le contenu du corps.
             body.clear();
-            // Mettez en file d'attente une commande pour insérer du texte à la fin du corps du document Word.
-            body.insertText("This bLouis guy was writing a sample text but Zébulon and Téophilémon inserted Anatole in anatole.\ntéophilémon is totally not a cool guy. Lol.\nquentin de grolard is a funny guy.",
-                            Word.InsertLocation.end);
 
-            // Synchronisez l'état du document en exécutant les commandes en file d'attente, puis retournez une promesse pour indiquer l'achèvement de la tâche.
+            // Synchronisez l'etat du document en exécutant les commandes en file d'attente, puis retournez une promesse pour indiquer l'achevement de la tache.
             return context.sync();
         })
         .catch(errorHandler);
     }
 
     /*
-    Hightlights the names of the politicians that are contained in the text
+    Search for the names matching the names in the politicians database
     */
     function searchNames() {
 
         Word.run(function (context) {
 
-            // Mettez en file d'attente une commande pour obtenir la sélection actuelle, puis
-            // créez un objet de plage proxy avec les résultats.
+            // Mettez en file d'attente une commande pour obtenir la selection actuelle, puis
+            // creez un objet de plage proxy avec les resultats.
             var body = context.document.body;
             context.load(body, 'text');
+
+            // Clears the search results and the display when "relaunching" the search
             var searchResults = [];
             $('#politicians').empty();
             alreadyFoundPoliticians = {}
@@ -98,8 +91,9 @@
             return context.sync()
             .then(function () {
 
+                // Search for politicians
                 for (var name in politicsName) {
-                    searchResults.push(body.search(politicsName[name], {matchCase:true, matchWholeWord: true }));
+                    searchResults.push(body.search(name, {matchCase:true, matchWholeWord: true }));
                 }
 
                 var arrayLength = searchResults.length;
@@ -111,21 +105,37 @@
             })
             .then(context.sync)
             .then(function () {
+              // Displays in the panel the politicians found
               var arrayLength = searchResults.length;
               for (var i = 0; i < arrayLength; i++) {
                   if (searchResults[i].items[0] != null && alreadyFoundPoliticians[searchResults[i].items[0].text] == null) {
                       alreadyFoundPoliticians[searchResults[i].items[0].text] = true;
-                      $('#politicians').append('<div class="panel panel-default" id="panel'+i+'">\
-                                                <div class="panel-heading">\
-                                                  <a data-toggle="collapse" data-target="#collapse'+i+'">\
-                                                    <h4 class="panel-title">'+searchResults[i].items[0].text+'</h4>\
-                                                  </a>\
-                                                </div>\
-                                                <div id="collapse'+i+'" class="panel-collapse collapse ">\
-                                                    <div class="panel-body">Here is some info about the politician</div>\
-                                                </div>\
-                                              </div>'
-                  );
+                      var currentPolName = politicsName[searchResults[i].items[0].text].split(";");
+                      var currentPolInfos = currentPolName[1].split(",");
+                      console.log(currentPolInfos[0]);
+                      $('#politicians').append(
+         '<div class="panel panel-default" id="panel' + i +'">\
+          <div class="panel-heading">\
+             <a data-toggle="collapse" data-target="#collapse'+i+'">\
+                 <h4 class="panel-title">'+ currentPolName[0] + '</h4>\
+             </a>\
+          </div>\
+          <div id="collapse'+i+'" class="panel-collapse collapse ">\
+              <div class="panel-body">\
+                <div class="row">\
+                 <div class="col-xs-2" id="photo"> <i class="material-icons md-60">face</i> </div>\
+                  <div class="col-xs-10">\
+                    <div class="row"> ' + currentPolInfos[0] +'</div>\
+                    <div class="row"> ' + currentPolInfos[1] +'</div>\
+                    <div class="row"> ' + currentPolInfos[2] +'</div>\
+                    <div class="row"> ' + currentPolInfos[3] +'</div>\
+                    <div class="row"> <a href="http://www.wecitizens.be">More on Wecitizens.be</a> </div>\
+                  </div>\
+                 </div>\
+                </div>\
+              </div>\
+          </div>\ '
+                    );
                   }
               }
             })
@@ -134,16 +144,25 @@
         .catch(errorHandler);
     }
 
-    function displaySelectedText() {
-        Office.context.document.getSelectedDataAsync(Office.CoercionType.Text,
-            function (result) {
-                if (result.status === Office.AsyncResultStatus.Succeeded) {
-                    showNotification('Le texte sélectionné est :', '"' + result.value + '"');
-                } else {
-                    showNotification('Erreur :', result.error.message);
-                }
-            });
+    function readTextFile(filename) {
+        var client = new XMLHttpRequest();
+        client.open('GET', filename, true);
+        client.onreadystatechange = function () {
+            //alert(client.responseText);
+            client.responseText;
+        }
+        client.send();
     }
+
+    // creates the hashmap
+    function getHashMap(filename) {
+        var csv = 'http://34bw.be/wp-content/uploads/2016/10/temp_database.csv';
+        var strContent = readTextFile(csv);
+        var hashmap = {};
+        hashmap = CSVToArray(strContent);
+        //alert(hashmap);
+        return hashmap;
+    }// JavaScript source code
 
     //$$(Helper function for treating errors, $loc_script_taskpane_home_js_comment34$)$$
     function errorHandler(error) {
@@ -161,42 +180,6 @@
         $("#notificationBody").text(content);
         messageBanner.showBanner();
         messageBanner.toggleExpansion();
-    }
-
-    function importCSV(file){
-      Papa.SCRIPT_PATH="Script/node_modules/papaparse/papaparse.min.js";
-      console.log("Starting import...");
-      return Papa.parse(file, {
-      	step: function(row) {
-      		console.log("Row:", row.data);
-      	},
-      	complete: function() {
-      		console.log("All done!");
-      	}
-      });
-    }
-
-
-    function include(url, callback){
-
-      /* on crée une balise<script type="text/javascript"></script> */
-      var script = document.createElement('script');
-      script.type = 'text/javascript';
-
-      /* On fait pointer la balise sur le script qu'on veut charger
-         avec en prime un timestamp pour éviter les problèmes de cache
-      */
-
-      script.src = url + '?' + (new Date().getTime());
-
-      /* On dit d'exécuter cette fonction une fois que le script est chargé */
-      if (callback) {
-          script.onreadystatechange = callback;
-          script.onload = script.onreadystatechange;
-      }
-
-      /* On rajoute la balise script dans le head, ce qui démarre le téléchargement */
-      document.getElementsByTagName('head')[0].appendChild(script);
     }
 
 })();
