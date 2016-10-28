@@ -72,7 +72,6 @@ function CSVToHashmap(strData){
         arrData[arrData.length-1].push(strMatchedValue);
         if (arrData[arrData.length-1].length == 9){
           line = arrData[arrData.length-1];
-          //alert(line);
           addToHashMap(hashmap, line);
 
         }
@@ -85,6 +84,11 @@ function CSVToHashmap(strData){
     return(hashmap);
 }
 
+/*
+ * Add the line to the hashmap.
+ * In case of conflict, appends the line to the end of the array stored at
+ * hashmap[line[5]]
+ **/
 function addToHashMap(hashmap, line){
     if (hashmap[line[5]] == undefined){
         hashmap[line[5]] = [];
@@ -92,6 +96,9 @@ function addToHashMap(hashmap, line){
     hashmap[line[5]].push(line);
 }
 
+/*
+ * Gets the database in CSV format from the website
+ */
 function getDistantCSV(){
     var client = new XMLHttpRequest();
     var filename = 'http://34bw.be/wp-content/uploads/2016/10/temp_database.csv';
@@ -101,11 +108,6 @@ function getDistantCSV(){
             function(){
                 client.responseText;
             });
-
-      //var hashmap = CSVToArray(client.responseText);
-      //alert(hashmap);
-      //return hashmap;
-      //alert(array);
     }
     client.send();
 }
