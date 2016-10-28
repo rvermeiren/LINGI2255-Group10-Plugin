@@ -77,7 +77,7 @@ function addImage(context, counter) {
 							</div>\
 						</div>\
 					</div>"
-					var image = String('<span id="popoverWeCitizens"><img data-toggle="popover" title="Nom du politicien" data-trigger="hover" id="popover')
+					var image = String('<span id="popoverWeCitizens"><img data-toggle="popover" title="Nom du politicien" id="popover')
 					+ counter.i + String('"data-html="true" src="http://s12.postimg.org/bqsrifs6l/image.png" class="politicianFind" data-content="')
 					+ html + String('"></span>');
 					//console.log(image);
