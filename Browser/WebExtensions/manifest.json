@@ -11,8 +11,8 @@
     "content_scripts": [
         {
             "matches": ["http://*/*", "https://*/*"],
-            "css": ["test.css", "popup.css"],
-            "js": ["db_reader.js", "jquery-1.9.1.min.js", "bootstrap.min.js", "main.js"]
+            "js": ["db_reader.js", "jquery-1.9.1.min.js", "bootstrap.min.js", "main.js"],
+            "css" : ["css/bootstrap_popover.css"]
         }
     ],
 	"browser_action": {
