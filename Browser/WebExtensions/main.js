@@ -4,22 +4,23 @@ $(document).ready(function(){
 	var retrievedObject = chrome.storage.local.get('database_csv',
 		function(result){
 			hashmap = CSVToHashmap(result.database_csv);
-			// alert(hashmap['Michel']);
 			launchSearch(hashmap);
-			// alert(hashmap);
 		}
 	);
 });
 
 function launchSearch(hashmap){
 
-	// alert(hashmap['Michel']);
 	var counter = {i: 0}; //Occurences. Singleton to be passed by reference and not by value.
 	$('p').each(function(index) {
 			addImage(this, counter);
 	});
 
 	$('li').each(function(index) {
+			addImage(this, counter);
+	});
+
+    $('a').each(function(index) {
 			addImage(this, counter);
 	});
 
@@ -58,7 +59,7 @@ function addImage(context, counter) {
 					pol = i;
 				}
 			}
-			if (pol != null){
+			//if (pol != null){ DONUT REMOVE THIS LINE PLEASE
 				//INFO CONCERNING THE POLITICIAN : hashmap[word][pol]
 			//}else{		//Multiple matches DONUT REMOVE THIS LINE PLEASE
 				var html = "\
@@ -67,24 +68,24 @@ function addImage(context, counter) {
 						<div class='col-xs-3' id='photo'> <i class='material-icons md-60'>face</i> </div>\
 						<div class='col-xs-9'>\
 							<div class='row'>\
-								Prostituée\
+								"+ hashmap[word][0][8] + "\
 							</div>\
 							<div class='row'>\
-								FN\
+								"+ hashmap[word][0][2] +"\
 							</div>\
 							<div class='row'>\
-								Houte-Si-Plou\
+								"+ hashmap[word][0][7] +"\
 							</div>\
 							<div class='row'>\
-								69/05/1969\
+								"+ hashmap[word][0][6] +"\
 							</div>\
 							<div class='row'>\
-								<a href='https://www.youtube.com/watch?v=AmYrTp-JdnY'>Voir sur wecitizens</a>\
+								<a href='http://www.wecitizens.be'>Voir sur wecitizens</a>\
 							</div>\
 						</div>\
 					</div>\
 				</div>"
-				var image = String('<span id="popoverWeCitizens"><img data-toggle="popover" title="Nom du politicien" id="popover')
+				var image = String('<span id="popoverWeCitizens"><img data-toggle="popover" title="') + hashmap[word][0][4] + " " + hashmap[word][0][5] + String('" id="popover')
 				+ counter.i + String('"data-html="true" src="http://s12.postimg.org/bqsrifs6l/image.png" class="politicianFind" data-content="')
 				+ html + String('"></span>');
 				//console.log(image);
@@ -103,7 +104,7 @@ function addImage(context, counter) {
 				});
 
 				counter.i++;
-			}
+			//} DONUT REMOVE THIS LINE PLEASE
 			prev = word;
 		}
 	}
