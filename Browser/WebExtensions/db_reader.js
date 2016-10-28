@@ -1,7 +1,7 @@
 // setInterval(function() {
 chrome.storage.local.get('database_csv',
         function(result){
-            if (result == {})
+            // if (result == {})
                 getDistantCSV();
         }
 );
