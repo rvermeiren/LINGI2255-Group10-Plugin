@@ -4,10 +4,6 @@
     "description": "WeCitizens",
     "manifest_version": 2,
     "homepage_url": "http://WeCitizens.be/",
-    "background": {
-        "scripts": ["background.js"],
-        "persistent": false
-    },
     "content_scripts": [
         {
             "matches": ["http://*/*", "https://*/*"],

@@ -13,14 +13,14 @@ $(document).ready(function(){
 });
 
 function launchSearch(hashmap){
-	alert(hashmap['Michel']);
+	//alert(hashmap['Michel']);
 	var counter = {i: 0}; //Occurences. Singleton to be passed by reference and not by value.
 	$('p').each(function(index) {
 			addImage(this, counter);
-	  });
+	});
 
 	$('li').each(function(index) {
-			addImage(this, counter)
+			addImage(this, counter);
 	});
 
 	$('head').append(
@@ -78,17 +78,10 @@ function addImage(context, counter) {
 						</div>\
 					</div>"
 					var image = String('<span id="popoverWeCitizens"><img data-toggle="popover" title="Nom du politicien" data-trigger="hover" id="popover')
-					+ counter.i + String('"data-html="true" src="https://s15.postimg.org/pei4ci3fv/fdp.png" class="politicianFind" data-content="')
+					+ counter.i + String('"data-html="true" src="http://s12.postimg.org/bqsrifs6l/image.png" class="politicianFind" data-content="')
 					+ html + String('"></span>');
 					//console.log(image);
 					$(context).html(body.replace(word, word + " " + image));
-
-					// Inform the background page
-					chrome.runtime.sendMessage({
-						from: 'main',
-						subject: 'showPageAction'
-					});
-					console.log("Sent message to background.js");
 
 					// Listen for messages from the popup
 					console.log('Message received from popup');
