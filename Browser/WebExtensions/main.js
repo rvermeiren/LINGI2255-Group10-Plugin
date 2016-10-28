@@ -1,7 +1,11 @@
+// import {CSVToHashmap} from db_reader;
 var name = "Nicolas";
 
 $(document).ready(function(){
 	// console.log('Document is ready.. scanning for politicians...');
+	var retrievedObject = localStorage.getItem('database_csv');
+	var hashmap = CSVToHashmap(retrievedObject);
+	alert(hashmap['Michel']);
 
 
     //var hashmap = db_reader.getHashMap();
