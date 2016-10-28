@@ -1,8 +1,8 @@
 // setInterval(function() {
 chrome.storage.local.get('database_csv',
         function(result){
-            // if (result == undefined)
-                //getDistantCSV();
+            if (result == undefined)
+                getDistantCSV();
         }
 );
 // },  15000); // 60 * 1000 * 168 milsec = 1 week
