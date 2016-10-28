@@ -61,7 +61,7 @@ function addImage(context, counter) {
 			}
 			if (pol != null){
 				//INFO CONCERNING THE POLITICIAN : hashmap[word][pol]
-			}else{		//Multiple matches
+			//}else{		//Multiple matches DONUT REMOVE THIS LINE PLEASE
 				var html = "\
 				<div class='panel-body'>\
 					<div class='row'>\
