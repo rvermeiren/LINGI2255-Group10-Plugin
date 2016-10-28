@@ -83,11 +83,14 @@ function addImage(context, counter) {
 					//console.log(image);
 					$(context).html(body.replace(word, word + " " + image));
 
+					var politicianInfos = {name: word, surname: hashmap[n][4], birthDate: hashmap[n][6],
+					politicalParty: hashmap[n][2], city: hashmap[n][7], job: hashmap[n][8]};
+
 					// Listen for messages from the popup
 					console.log('Message received from popup');
 					chrome.runtime.onMessage.addListener(function (msg, sender, response) {
-						if ((msg.from === 'popup') && (msg.subject === 'HTMLinfo')) {
-							response(html);
+						if ((msg.from === 'popup') && (msg.subject === 'politicianInfos')) {
+							response(politicianInfos);
 							console.log('Message sent to popup');
 						}
 					});

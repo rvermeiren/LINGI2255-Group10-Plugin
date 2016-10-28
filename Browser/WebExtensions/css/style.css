@@ -36,7 +36,6 @@ body {
 }
 
 .panel-heading a:after {
-    content:"keyboard arrow down";
     float: right;
     color: grey;
 }
