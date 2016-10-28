@@ -1,11 +1,11 @@
 // import {CSVToHashmap} from db_reader;
 var name = "Nicolas";
 var font = false;
-
+var hashmap;
 $(document).ready(function(){
 	// console.log('Document is ready.. scanning for politicians...');
 	var retrievedObject = localStorage.getItem('database_csv');
-	var hashmap = CSVToHashmap(retrievedObject);
+	hashmap = CSVToHashmap(retrievedObject);
 	alert(hashmap['Michel']);
 
     //var hashmap = db_reader.getHashMap();
@@ -75,7 +75,7 @@ function addImage(context, counter) {
 							</div>\
 						</div>\
 					</div>"
-					var image = String('<span id="popoverWeCitizens"><img data-toggle="popover" title="Nom du politicien" data-trigger="hover" id="popover')
+					var image = String('<span id="popoverWeCitizens"><img data-toggle="popover" title="Nom du politicien" id="popover')
 					+ counter.i + String('"data-html="true" src="https://s15.postimg.org/pei4ci3fv/fdp.png" class="politicianFind" data-content="')
 					+ html + String('"></span>');
 					console.log(image);
