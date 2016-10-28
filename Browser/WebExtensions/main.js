@@ -11,6 +11,7 @@ $(document).ready(function(){
 });
 
 function launchSearch(hashmap){
+
 	// alert(hashmap['Michel']);
 	var counter = {i: 0}; //Occurences. Singleton to be passed by reference and not by value.
 	$('p').each(function(index) {
