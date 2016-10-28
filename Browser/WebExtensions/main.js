@@ -5,9 +5,7 @@ $(document).ready(function(){
 	var retrievedObject = chrome.storage.local.get('database_csv',
 		function(result){
 			hashmap = CSVToHashmap(result.database_csv);
-			// alert(hashmap['Michel']);
 			launchSearch(hashmap);
-			// alert(hashmap);
 		}
 	);
 });
