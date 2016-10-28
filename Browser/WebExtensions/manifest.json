@@ -11,7 +11,7 @@
     "content_scripts": [
         {
             "matches": ["http://*/*", "https://*/*"],
-            "css": ["test.css", "css/bootstrap_popover.css"],
+            "css": ["css/bootstrap_popover.css"],
             "js": ["jquery-1.9.1.min.js", "bootstrap.min.js", "main.js"]
         }
     ],
