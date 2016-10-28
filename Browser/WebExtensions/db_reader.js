@@ -1,7 +1,7 @@
 // setInterval(function() {
 chrome.storage.local.get('database_csv',
         function(result){
-            if (result == undefined)
+            if (result == {})
                 getDistantCSV();
         }
 );
@@ -104,9 +104,9 @@ function getDistantCSV(){
     var filename = 'http://34bw.be/wp-content/uploads/2016/10/temp_database.csv';
     client.open('GET', filename, false);
     client.onreadystatechange = function() {
-        chrome.storage.local.set('database_csv',
+        chrome.storage.local.set({'database_csv': client.responseText},
             function(){
-                client.responseText;
+                console.log("File saved");
             });
     }
     client.send();
