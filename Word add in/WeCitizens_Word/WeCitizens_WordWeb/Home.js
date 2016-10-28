@@ -40,8 +40,6 @@
             loadSampleData();
             $('#highlight-button').click(searchNames);
 
-            //politicsName = readTextFile('http://34bw.be/wp-content/uploads/2016/10/temp_database.csv')
-
             launchProcess()
 
         });
@@ -112,7 +110,6 @@
                       alreadyFoundPoliticians[searchResults[i].items[0].text] = true;
                       var currentPolName = politicsName[searchResults[i].items[0].text].split(";");
                       var currentPolInfos = currentPolName[1].split(",");
-                      console.log(currentPolInfos[0]);
                       $('#politicians').append(
          '<div class="panel panel-default" id="panel' + i +'">\
           <div class="panel-heading">\
@@ -142,16 +139,6 @@
             .then(context.sync);
         })
         .catch(errorHandler);
-    }
-
-    function readTextFile(filename) {
-        var client = new XMLHttpRequest();
-        client.open('GET', filename, true);
-        client.onreadystatechange = function () {
-            //alert(client.responseText);
-            client.responseText;
-        }
-        client.send();
     }
 
     // creates the hashmap
