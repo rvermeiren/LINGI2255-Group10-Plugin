@@ -1,7 +1,8 @@
 // setInterval(function() {
 chrome.storage.local.get('database_csv',
         function(result){
-            // if (result == {})
+            // alert(JSON.stringify(result));
+            if (JSON.stringify(result) == '{}')
                 getDistantCSV();
         }
 );
@@ -100,10 +101,12 @@ function addToHashMap(hashmap, line){
  * Gets the database in CSV format from the website
  */
 function getDistantCSV(){
+    alert('coucou');
     var client = new XMLHttpRequest();
     var filename = 'http://34bw.be/wp-content/uploads/2016/10/temp_database.csv';
     client.open('GET', filename, false);
     client.onreadystatechange = function() {
+        alert('coucou2');
         chrome.storage.local.set({'database_csv': client.responseText},
             function(){
                 console.log("File saved");
