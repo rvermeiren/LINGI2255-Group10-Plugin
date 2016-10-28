@@ -1,4 +1,3 @@
-// import {CSVToHashmap} from db_reader;
 var name = "Nicolas";
 var font = false;
 $(document).ready(function(){
@@ -14,14 +13,15 @@ $(document).ready(function(){
 });
 
 function launchSearch(hashmap){
+
 	// alert(hashmap['Michel']);
 	var counter = {i: 0}; //Occurences. Singleton to be passed by reference and not by value.
 	$('p').each(function(index) {
 			addImage(this, counter);
-	  });
+	});
 
 	$('li').each(function(index) {
-			addImage(this, counter)
+			addImage(this, counter);
 	});
 
 	$('head').append(
@@ -79,15 +79,23 @@ function addImage(context, counter) {
 						</div>\
 					</div>"
 					var image = String('<span id="popoverWeCitizens"><img data-toggle="popover" title="Nom du politicien" id="popover')
-					+ counter.i + String('"data-html="true" src="https://s15.postimg.org/pei4ci3fv/fdp.png" class="politicianFind" data-content="')
+					+ counter.i + String('"data-html="true" src="http://s12.postimg.org/bqsrifs6l/image.png" class="politicianFind" data-content="')
 					+ html + String('"></span>');
-					console.log(image);
+					//console.log(image);
 					$(context).html(body.replace(word, word + " " + image));
-					chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
-					  console.log(response.farewell);
+
+					// Listen for messages from the popup
+					console.log('Message received from popup');
+					chrome.runtime.onMessage.addListener(function (msg, sender, response) {
+						if ((msg.from === 'popup') && (msg.subject === 'HTMLinfo')) {
+							response(html);
+							console.log('Message sent to popup');
+						}
 					});
+
 					counter.i++;
-				}else{			//We only found the name of a politician
+				}
+				else { 			//We only found the name of a politician
 				//Display all the matching politicians (using the list "matching")
 				}
 			}
