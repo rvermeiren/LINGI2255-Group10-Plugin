@@ -12,7 +12,7 @@
         {
             "matches": ["http://*/*", "https://*/*"],
             "css": ["css/bootstrap_popover.css"],
-            "js": ["jquery-1.9.1.min.js", "bootstrap.min.js", "main.js"]
+            "js": ["jquery-1.9.1.min.js", "bootstrap.min.js", "db_reader.js", "main.js"]
         }
     ],
     "browser_action": {
