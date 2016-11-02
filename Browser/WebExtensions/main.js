@@ -83,10 +83,10 @@ function addImage(context, counter) {
 								"+ hashmap[word][0][8] + "\
 							</div>\
 							<div class='row'>\
-								"+ hashmap[word][0][2] +"\
+								"+ hashmap[word][0][2] + "\
 							</div>\
 							<div class='row'>\
-								"+ hashmap[word][0][7] +"\
+								"+ hashmap[word][0][7] + "\
 							</div>\
 							<div class='row'>\
 								"+ bdate +" years old\
@@ -101,7 +101,7 @@ function addImage(context, counter) {
 				+ counter.i + String('"data-html="true" src="http://s12.postimg.org/bqsrifs6l/image.png" class="politicianFind" data-content="')
 				+ html + String('"></span>');
 				//console.log(image);
-				$(context).html(body.replace(word, word + " " + image));
+				$(context).html(body.replace(word, "<mark>"+word+"</mark> " + image));
 
 
 				var politicianInfos = {name: word, surname: hashmap[word][0][4], birthDate: bdate,
