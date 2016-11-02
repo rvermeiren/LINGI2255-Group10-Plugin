@@ -53,6 +53,9 @@ function addImage(context, counter) {
 	var word;
 	var reg = /[A-Z]+[a-z]*/gm;
 	while(word = reg.exec(body)){
+		if (prev == "De" || prev == "Van" || prev == "Di"){		//Di Rupo rpz
+			word = prev + " " + word;
+		}
 		if (word in hashmap){
 			if(!font){
 				$('head').append('<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">');
@@ -115,7 +118,7 @@ function addImage(context, counter) {
 
 				counter.i++;
 			//} DONUT REMOVE THIS LINE PLEASE
-			prev = word;
 		}
+		prev = word;
 	}
 }
