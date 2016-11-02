@@ -20,7 +20,7 @@ function replaceHTML(politicianInfos) {
 				                <div class="panel panel-default"">\
 				                    <div class="panel-heading">\
 				                        <h4 class="panel-title">\
-				                            <a data-toggle="collapse" data-target="#collapsing" href="#collapsing" class="collapsed">' + name + " " 
+				                            <a data-toggle="collapse" data-target="#collapsing" href="#collapsing" class="collapsed">' + name + " "
 				                            + surname + '</a>\
 				                        </h4>\
 				                    </div>\
@@ -37,7 +37,7 @@ function replaceHTML(politicianInfos) {
 													<strong>City</strong>: '+ city +'\
 												</div>\
 												<div class=\'row\'>\
-													<strong>Birth date</strong>: '+ birthDate +'\
+													<strong>Age</strong>: '+ birthDate +' years old\
 												</div>\
 												<div class=\'row\'>\
 													<a href=\'http://wecitizens.be\'>Voir sur wecitizens</a>\
