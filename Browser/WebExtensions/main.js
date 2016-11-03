@@ -60,69 +60,103 @@ function calculateAge(birthday) { // birthday is a date
     return Math.abs(ageDate.getUTCFullYear() - 1970);
 }
 
+function imageBuild(name, firstname, id){
+    var res = firstname.concat(name);
+    res.toLowerCase();
+    res.replace(" ", "-");
+    return ("http://directory.wecitizens.be/images/generic/politician-thumb/" + id + "-" + res + ".jpg");
+}
+
+function display(hashmap, name, index, counter, context){
+    var body = $(context).text();
+
+	var bdate = new Date(hashmap[name][index][6]+'T10:20:30Z');
+	bdate = calculateAge(bdate);
+
+    if (hashmap[name][index][3]){
+        var photo = imageBuild(name, hashmap[name][index][4], hashmap[name][index][3]);
+    }else{      //id = \N
+
+    }   
+
+	var html = "\
+	<div class='panel-body'>\
+		<div class='row'>\
+			<div class='col-xs-3' id='photo'> <i class='material-icons md-60'>face</i> </div>\
+			<div class='col-xs-9'>\
+				<div class='row'>\
+					"+ hashmap[name][index][8] + "\
+				</div>\
+				<div class='row'>\
+					"+ hashmap[name][index][2] +"\
+				</div>\
+				<div class='row'>\
+					"+ hashmap[name][index][7] +"\
+				</div>\
+				<div class='row'>\
+					"+ bdate +" years old\
+				</div>\
+				<div class='row'>\
+					<a href='http://www.wecitizens.be'>Voir sur wecitizens</a>\
+				</div>\
+			</div>\
+		</div>\
+	</div>"
+	var image = String('<span id="popoverWeCitizens"><img data-toggle="popover" title="') + hashmap[name][index][4] + " " + hashmap[name][index][5] + String('" id="popover')
+	+ counter.i + String('"data-html="true" src="http://s12.postimg.org/bqsrifs6l/image.png" class="politicianFind" data-content="')
+	+ html + String('"></span>');
+	//console.log(image);
+	$(context).html(body.replace(name, name + " " + image));
+
+	politicianInfos.push({name: name, surname: hashmap[name][0][4], birthDate: bdate, 
+		politicalParty: hashmap[name][0][2], city: hashmap[name][0][7], job: hashmap[name][0][8]});
+}
+
 
 function addImage(context, counter) {
-	var body = $(context).text();
-	var prev = null;
+    var body = $(context).text();
+	var prev;
+	var pref;
 	var word;
+	var prefix = ["", "den ", "der ", "de ", "van "];
 	var reg = /[A-Z]+[a-z]*/gm;
 	while(word = reg.exec(body)){
-		if (prev == "De" || prev == "Van" || prev == "Di"){		//Di Rupo rpz
-			word = prev + " " + word;
+		if (word == "De" || word == "Van" || word == "Di" || word == "Vanden" || word == "Ver"){		//Di Rupo rpz
+			pref = word;
+			continue;
 		}
-		if (word in hashmap){
-			if(!font){
-				$('head').append('<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">');
-				font = true;
+		var name;
+		var found = false;
+		var iter = 0;
+		while (!found && iter < 5) {
+			if (pref != null){
+				name = pref + " " + prefix[iter] + word;
+			}else{
+				name = prefix[iter] + word;
 			}
-			var matching = [];
-			var pol = null;
-			for (var i in hashmap[word]){
-				matching.push(hashmap[word][i])
-				if (prev == i[4]){		//Matching also with firstname
-					pol = i;
+			if (name in hashmap){
+				if(!font){
+					$('head').append('<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">');
+					font = true;
 				}
+
+				found = true;
+				var matching = [];
+				var pol = null;
+				for (var i in hashmap[name]){
+					matching.push(hashmap[name][i])
+					if (prev == hashmap[name][i][4]){		//Matching also firstname
+						pol = i;
+					}
+				}
+				if (pol != null){
+					display(hashmap, name, pol, counter, context);
+				}
+                counter.i++;
+                pref = null;
 			}
-			var bdate = new Date(hashmap[word][0][6]+'T10:20:30Z');
-			bdate = calculateAge(bdate);
-			//if (pol != null){ DONUT REMOVE THIS LINE PLEASE
-				//INFO CONCERNING THE POLITICIAN : hashmap[word][pol]
-			//}else{		//Multiple matches DONUT REMOVE THIS LINE PLEASE
-				var html = "\
-				<div class='panel-body'>\
-					<div class='row'>\
-						<div class='col-xs-3' id='photo'> <i class='material-icons md-60'>face</i> </div>\
-						<div class='col-xs-9'>\
-							<div class='row'>\
-								"+ hashmap[word][0][8] + "\
-							</div>\
-							<div class='row'>\
-								"+ hashmap[word][0][2] + "\
-							</div>\
-							<div class='row'>\
-								"+ hashmap[word][0][7] + "\
-							</div>\
-							<div class='row'>\
-								"+ bdate +" years old\
-							</div>\
-							<div class='row'>\
-								<a href='http://www.wecitizens.be'>Voir sur wecitizens</a>\
-							</div>\
-						</div>\
-					</div>\
-				</div>"
-				var image = String('<span id="popoverWeCitizens"><img data-toggle="popover" title="') + hashmap[word][0][4] + " " + hashmap[word][0][5] + String('" id="popover')
-				+ counter.i + String('"data-html="true" src="http://s12.postimg.org/bqsrifs6l/image.png" class="politicianFind" data-content="')
-				+ html + String('"></span>');
-				//console.log(image);
-				$(context).html(body.replace(word, "<mark>"+word+"</mark> " + image));
-
-				politicianInfos.push({name: word, surname: hashmap[word][0][4], birthDate: bdate,
-				politicalParty: hashmap[word][0][2], city: hashmap[word][0][7], job: hashmap[word][0][8]});
-
-				counter.i++;
-			//} DONUT REMOVE THIS LINE PLEASE
+			prev = word;
+			iter++;
 		}
-		prev = word;
 	}
 }
