@@ -49,7 +49,19 @@
                     for (var line = 0; line < input.length; line++) {
                         var currentLine = input[line];
                         var infos = currentLine.split(",");
-                        politicsName[extractText(infos[5])] = currentLine; // Add all infos about that politician (infos[4] contains his last name)
+
+                        // There is already a politician with the same name (which is the dict key) in politicsName
+                        if (politicsName[extractText(infos[5])] != null) {
+                            var updatedList = politicsName[extractText(infos[5])];
+                            updatedList.push(currentLine);
+                            politicsName[extractText(infos[5])] = updatedList;
+                        }
+                        // New politician to add to the dictionary politicsName
+                        else {
+                            var newList = [];
+                            newList.push(currentLine);
+                            politicsName[extractText(infos[5])] = newList;
+                        }
                     }
                 };
                 reader.readAsText(file);
@@ -107,13 +119,13 @@
 
                 // Search for politicians
                 for (var name in politicsName) {
-                    searchResults.push(body.search(name, {matchCase:true, matchWholeWord: true }));
+                    searchResults.push(body.search(name, { matchCase: true, matchWholeWord: true }));
                 }
 
                 var arrayLength = searchResults.length;
                 for (var i = 0; i < arrayLength; i++) {
                     context.load(searchResults[i], 'font');
-                    context.load(searchResults[i], 'text')
+                    context.load(searchResults[i], 'text');
                 }
 
             })
@@ -122,34 +134,39 @@
               // Displays in the panel the politicians found
                 var arrayLength = searchResults.length;
                 for (var i = 0; i < arrayLength; i++) {
-                  if (searchResults[i].items[0] != null && alreadyFoundPoliticians[searchResults[i].items[0].text] == null) {
-                      alreadyFoundPoliticians[searchResults[i].items[0].text] = true;
-                      var currentPolName = politicsName[searchResults[i].items[0].text].split(",");
-                      $('#politicians').append(
-         '<div class="panel panel-default" id="panel' + i +'">\
+                    if (searchResults[i].items[0] != null && alreadyFoundPoliticians[searchResults[i].items[0].text] == null) {
+                        alreadyFoundPoliticians[searchResults[i].items[0].text] = true;
+                        var currentNameList = politicsName[searchResults[i].items[0].text];
+
+                        // Goes through all politicians with the same name and displays them
+                        for (var j = 0; j < currentNameList.length;j++) {
+                            var currentPolName = currentNameList[j].split(",");
+                            $('#politicians').append(
+               '<div class="panel panel-default" id="panel' + j + '">\
           <div class="panel-heading">\
-             <a data-toggle="collapse" data-target="#collapse'+i+'">\
+             <a data-toggle="collapse" data-target="#collapse'+ j + '">\
                  <h4 class="panel-title">' + extractText(currentPolName[4]) + ' ' + extractText(currentPolName[5]) + '</h4>\
              </a>\
           </div>\
-          <div id="collapse'+i+'" class="panel-collapse collapse ">\
+          <div id="collapse'+ j + '" class="panel-collapse collapse ">\
               <div class="panel-body">\
                 <div class="row">\
                  <div class="col-xs-2" id="photo"> <i class="material-icons md-60">face</i> </div>\
                   <div class="col-xs-10">\
                     <div class="row"> ' + 'Job :' + displayJob(extractText(currentPolName[8])) + '</div>\
-                    <div class="row"> ' + 'Political Party :' + extractText(currentPolName[2]) +'</div>\
-                    <div class="row"> ' + 'City: ' + extractText(currentPolName[7]) +'</div>\
-                    <div class="row"> ' + 'Age: ' + computeAge(extractText(currentPolName[6])) +'</div>\
+                    <div class="row"> ' + 'Political Party :' + extractText(currentPolName[2]) + '</div>\
+                    <div class="row"> ' + 'City: ' + extractText(currentPolName[7]) + '</div>\
+                    <div class="row"> ' + 'Age: ' + computeAge(extractText(currentPolName[6])) + '</div>\
                     <div class="row"> <a href="http://www.wecitizens.be">More on Wecitizens.be</a> </div>\
                   </div>\
                  </div>\
                 </div>\
               </div>\
           </div>\ '
-                    );
-                  }
-              }
+                          );
+                        }
+                    }
+                }
             })
             .then(context.sync);
         })
@@ -171,7 +188,6 @@
 
     // Given a date of birth, returns the age of the policitian
     function computeAge(dateOfBirth) {
-        console.log(dateOfBirth);
         var informations = dateOfBirth.split("-");
         var year = parseInt(informations[0]);
         var today = new Date();
