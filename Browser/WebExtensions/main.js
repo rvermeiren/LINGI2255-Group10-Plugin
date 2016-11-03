@@ -46,11 +46,24 @@ function calculateAge(birthday) { // birthday is a date
     return Math.abs(ageDate.getUTCFullYear() - 1970);
 }
 
+function imageBuild(name, firstname, id){
+    var res = firstname.concat(name);
+    res.toLowerCase();
+    res.replace(" ", "-");
+    return ("http://directory.wecitizens.be/images/generic/politician-thumb/" + id + "-" + res + ".jpg");
+}
+
 function display(hashmap, name, index, counter, context){
     var body = $(context).text();
 
 	var bdate = new Date(hashmap[name][index][6]+'T10:20:30Z');
 	bdate = calculateAge(bdate);
+
+    if (hashmap[name][index][3]){
+        var photo = imageBuild(name, hashmap[name][index][4], hashmap[name][index][3]);
+    }else{      //id = \N
+
+    }   
 
 	var html = "\
 	<div class='panel-body'>\
