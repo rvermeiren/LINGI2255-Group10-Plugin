@@ -86,7 +86,7 @@ function addImage(context, counter) {
 				//if (pol != null){ DONUT REMOVE THIS LINE PLEASE
 					//INFO CONCERNING THE POLITICIAN : hashmap[word][pol]
 				//}else{		//Multiple matches DONUT REMOVE THIS LINE PLEASE
-					var bdate = new Date(hashmap[word][0][6]+'T10:20:30Z');
+					var bdate = new Date(hashmap[name][0][6]+'T10:20:30Z');
 					bdate = calculateAge(bdate);
 
 					var html = "\
