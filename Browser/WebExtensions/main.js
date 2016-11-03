@@ -1,4 +1,9 @@
 var font = false;
+
+
+var politicianInfos = [];
+
+
 $(document).ready(function(){
 	// console.log('Document is ready.. scanning for politicians...');
 	var retrievedObject = chrome.storage.local.get('database_csv',
@@ -7,6 +12,15 @@ $(document).ready(function(){
 			launchSearch(hashmap);
 		}
 	);
+
+	// Listen for messages from the popup
+	console.log('Message received from popup');
+	chrome.runtime.onMessage.addListener(function (msg, sender, response) {
+		if ((msg.from === 'popup') && (msg.subject === 'politicianInfos')) {
+			console.log('Message sent to popup');
+			response(politicianInfos);
+		}
+	});
 });
 
 function launchSearch(hashmap){
@@ -103,18 +117,8 @@ function addImage(context, counter) {
 				//console.log(image);
 				$(context).html(body.replace(word, "<mark>"+word+"</mark> " + image));
 
-
-				var politicianInfos = {name: word, surname: hashmap[word][0][4], birthDate: bdate,
-				politicalParty: hashmap[word][0][2], city: hashmap[word][0][7], job: hashmap[word][0][8]};
-
-				// Listen for messages from the popup
-				console.log('Message received from popup');
-				chrome.runtime.onMessage.addListener(function (msg, sender, response) {
-					if ((msg.from === 'popup') && (msg.subject === 'politicianInfos')) {
-						response(politicianInfos);
-						console.log('Message sent to popup');
-					}
-				});
+				politicianInfos.push({name: word, surname: hashmap[word][0][4], birthDate: bdate,
+				politicalParty: hashmap[word][0][2], city: hashmap[word][0][7], job: hashmap[word][0][8]});
 
 				counter.i++;
 			//} DONUT REMOVE THIS LINE PLEASE
