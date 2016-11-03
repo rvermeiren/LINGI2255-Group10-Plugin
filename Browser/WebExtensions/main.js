@@ -46,6 +46,7 @@ function calculateAge(birthday) { // birthday is a date
     return Math.abs(ageDate.getUTCFullYear() - 1970);
 }
 
+
 function display(hashmap, name, index, counter, context){
     var body = $(context).text();
 
@@ -94,6 +95,67 @@ function display(hashmap, name, index, counter, context){
 	});
 }
 
+function display_multiple(hashmap, name, counter, context){
+    var body = $(context).text();
+	var html = "<div class='container' id='content-main'>\
+		<div class='panel-group' id='accordion'>";
+	for(i = 0; i < hashmap[name].length; i++){
+		var person = hashmap[name][i];
+		var bdate = new Date(person[6]+'T10:20:30Z');
+		bdate = calculateAge(bdate);
+
+		html += "<div class='panel panel-default'>\
+					<div class='panel-heading'>\
+						<h4 class='panel-title'>\
+							<a data-toggle='collapse' data-target='#collapsing"+counter.i+"' class='collapsed'>" + person[4] + " "+ person[5] + "</a>\
+						</h4>\
+					</div>\
+					<div id='collapsing"+counter.i+"' class='panel-collapse collapse'>\
+						<div class='panel-body'>\
+							<div class=\'col-xs-9\'>\
+								<div class=\'row\'>\
+									<strong>Job</strong>: "+ person[8] +"\
+								</div>\
+								<div class=\'row\'>\
+									<strong>Political party</strong>: "+ person[2] +"\
+								</div>\
+								<div class=\'row\'>\
+									<strong>City</strong>: "+ person[7] +"\
+								</div>\
+								<div class=\'row\'>\
+									<strong>Age</strong>: "+ bdate +" years old\
+								</div>\
+								<div class=\'row\'>\
+									<a href=\'http://wecitizens.be\'>Voir sur wecitizens</a>\
+								</div>\
+							</div>\
+						</div>\
+					</div>\
+				</div>"
+
+
+
+		var politicianInfos = {name: name, surname: person[4], birthDate: bdate,
+		politicalParty: person[2], city: person[7], job: person[8]};
+
+		// Listen for messages from the popup
+		console.log('Message received from popup');
+		chrome.runtime.onMessage.addListener(function (msg, sender, response) {
+			if ((msg.from === 'popup') && (msg.subject === 'politicianInfos')) {
+				response(politicianInfos);
+				console.log('Message sent to popup');
+			}
+		});
+		counter.i++;
+	}
+	html+="</div></div>";
+	var image = String('<span id="popoverWeCitizens"><img data-toggle="popover" title="Politicians found"') + String('" id="popover')
+	+ counter.i + String('"data-html="true" src="http://s12.postimg.org/bqsrifs6l/image.png" class="politicianFind" data-content="')
+	+ html + String('"></span>');
+
+	$(context).html(body.replace(name, name + " " + image));
+}
+
 
 function addImage(context, counter) {
     var body = $(context).text();
@@ -121,89 +183,16 @@ function addImage(context, counter) {
 					$('head').append('<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">');
 					font = true;
 				}
-			}
-			var bdate = new Date(hashmap[word][0][6]+'T10:20:30Z');
-			bdate = calculateAge(bdate);
-			//if (pol != null){ DONUT REMOVE THIS LINE PLEASE
-				//INFO CONCERNING THE POLITICIAN : hashmap[word][pol]
-			//}else{		//Multiple matches DONUT REMOVE THIS LINE PLEASE
-				var html = "<div class='container' id='content-main'>\
-							<div class='panel-group' id='accordion'>\
-							                <div class='panel panel-default'>\
-							                    <div class='panel-heading'>\
-							                        <h4 class='panel-title'>\
-							                            <a data-toggle='collapse' data-target='#collapsing"+counter.i+"' class='collapsed'>" + hashmap[word][0][4] + " "+ hashmap[word][0][5] + "</a>\
-							                        </h4>\
-							                    </div>\
-							                    <div id='collapsing"+counter.i+"' class='panel-collapse collapse in'>\
-							                        <div class='panel-body'>\
-							                        	<div class=\'col-xs-9\'>\
-															<div class=\'row\'>\
-																<strong>Job</strong>: "+ hashmap[word][0][8] +"\
-															</div>\
-															<div class=\'row\'>\
-																<strong>Political party</strong>: "+ hashmap[word][0][2] +"\
-															</div>\
-															<div class=\'row\'>\
-																<strong>City</strong>: "+ hashmap[word][0][7] +"\
-															</div>\
-															<div class=\'row\'>\
-																<strong>Age</strong>: "+ bdate +" years old\
-															</div>\
-															<div class=\'row\'>\
-																<a href=\'http://wecitizens.be\'>Voir sur wecitizens</a>\
-															</div>\
-														</div>\
-							                        </div>\
-							                    </div>\
-							                </div>\
-							            </div>\
-									</div>"
-										/*"\
-				<div class='panel-body'>\
-					<div class='row'>\
-						<div class='col-xs-3' id='photo'> <i class='material-icons md-60'>face</i> </div>\
-						<div class='col-xs-9'>\
-							<div class='row'>\
-								"+ hashmap[word][0][8] + "\
-							</div>\
-							<div class='row'>\
-								"+ hashmap[word][0][2] + "\
-							</div>\
-							<div class='row'>\
-								"+ hashmap[word][0][7] + "\
-							</div>\
-							<div class='row'>\
-								"+ bdate +" years old\
-							</div>\
-							<div class='row'>\
-								<a href='http://www.wecitizens.be'>Voir sur wecitizens</a>\
-							</div>\
-						</div>\
-					</div>\
-				</div>"*/
-				var image = String('<span id="popoverWeCitizens"><img data-toggle="popover" title="') + hashmap[word][0][4] + " " + hashmap[word][0][5] + String('" id="popover')
-				+ counter.i + String('"data-html="true" src="http://img4.hostingpics.net/pics/902279test.png" class="politicianFind" data-content="')
-				+ html + String('"></span>');
-				//console.log(image);
-				$(context).html(body.replace(word, "<mark>"+word+"</mark> " + image));
 
+				var bdate = new Date(hashmap[name][0][6]+'T10:20:30Z');
+				bdate = calculateAge(bdate);
 
-				var politicianInfos = {name: word, surname: hashmap[word][0][4], birthDate: bdate,
-				politicalParty: hashmap[word][0][2], city: hashmap[word][0][7], job: hashmap[word][0][8]};
-
-				// Listen for messages from the popup
-				console.log('Message received from popup');
-				chrome.runtime.onMessage.addListener(function (msg, sender, response) {
-					if ((msg.from === 'popup') && (msg.subject === 'politicianInfos')) {
-						response(politicianInfos);
-						console.log('Message sent to popup');
 
 				found = true;
 				var matching = [];
 				var pol = null;
 				for (var i in hashmap[name]){
-					matching.push(hashmap[name][i])
+					matching.push(hashmap[name][i]);
 					if (prev == hashmap[name][i][4]){		//Matching also firstname
 						pol = i;
 					}
@@ -211,7 +200,7 @@ function addImage(context, counter) {
 				if (pol != null){
 					display(hashmap, name, pol, counter, context);
 				}else{		//Multiple matches
-
+					display_multiple(hashmap, name, counter, context);
 				}
                 counter.i++;
                 pref = null;
