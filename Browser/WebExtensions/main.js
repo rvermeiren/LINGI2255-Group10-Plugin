@@ -39,6 +39,13 @@ function launchSearch(hashmap){
 	});
 }
 
+//http://stackoverflow.com/questions/4060004/calculate-age-in-javascript
+function calculateAge(birthday) { // birthday is a date
+    var ageDifMs = Date.now() - birthday.getTime();
+    var ageDate = new Date(ageDifMs); // miliseconds from epoch
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
+}
+
 
 function addImage(context, counter) {
 	var body = $(context).text();
@@ -66,6 +73,7 @@ function addImage(context, counter) {
 					$('head').append('<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">');
 					font = true;
 				}
+
 				found = true;
 				var matching = [];
 				var pol = null;
@@ -78,6 +86,9 @@ function addImage(context, counter) {
 				//if (pol != null){ DONUT REMOVE THIS LINE PLEASE
 					//INFO CONCERNING THE POLITICIAN : hashmap[word][pol]
 				//}else{		//Multiple matches DONUT REMOVE THIS LINE PLEASE
+					var bdate = new Date(hashmap[word][0][6]+'T10:20:30Z');
+					bdate = calculateAge(bdate);
+
 					var html = "\
 					<div class='panel-body'>\
 						<div class='row'>\
@@ -93,7 +104,7 @@ function addImage(context, counter) {
 									"+ hashmap[name][0][7] +"\
 								</div>\
 								<div class='row'>\
-									"+ hashmap[name][0][6] +"\
+									"+ bdate +" years old\
 								</div>\
 								<div class='row'>\
 									<a href='http://www.wecitizens.be'>Voir sur wecitizens</a>\
@@ -107,7 +118,7 @@ function addImage(context, counter) {
 					//console.log(image);
 					$(context).html(body.replace(name, name + " " + image));
 
-					var politicianInfos = {name: name, surname: hashmap[name][0][4], birthDate: hashmap[name][0][6],
+					var politicianInfos = {name: name, surname: hashmap[name][0][4], birthDate: bdate,
 					politicalParty: hashmap[name][0][2], city: hashmap[name][0][7], job: hashmap[name][0][8]};
 
 					// Listen for messages from the popup

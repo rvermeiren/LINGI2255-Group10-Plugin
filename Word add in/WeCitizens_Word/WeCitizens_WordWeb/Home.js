@@ -6,13 +6,9 @@
 
     var messageBanner;
 
-    var alreadyFoundPoliticians = {}
+    var alreadyFoundPoliticians = {};
 
     var politicsName = {};
-
-    politicsName["Magnette"] = "Paul Magnette;PS,8/06/1971,Charleroi,Walloon Government";
-    politicsName["Michel"] = "Charles Michel;MR,21/12/1975,Wavre,Federal Government";
-    politicsName["Di Rupo"] = "Elio Di Rupo;PS,18/07/1951,Mons,Chair of a party";
 
     // La fonction d'initialisation doit être exécutée chaque fois qu'une nouvelle page est chargée.
     Office.initialize = function (reason) {
@@ -40,9 +36,26 @@
             loadSampleData();
             $('#highlight-button').click(searchNames);
 
-            //politicsName = readTextFile('http://34bw.be/wp-content/uploads/2016/10/temp_database.csv')
+            // Adds the infos about all politicians in the global variable politicsName
+           document.getElementById('file').onchange = function () {
 
-            launchProcess()
+                var file = this.files[0];
+
+                var reader = new FileReader();
+                reader.onload = function (progressEvent) {
+
+                    // By lines
+                    var input = this.result.split('\n');
+                    for (var line = 0; line < input.length; line++) {
+                        var currentLine = input[line];
+                        var infos = currentLine.split(",");
+                        politicsName[extractText(infos[5])] = currentLine; // Add all infos about that politician (infos[4] contains his last name)
+                    }
+                };
+                reader.readAsText(file);
+            };
+
+            launchProcess();
 
         });
     };
@@ -83,6 +96,7 @@
             var body = context.document.body;
             context.load(body, 'text');
 
+            
             // Clears the search results and the display when "relaunching" the search
             var searchResults = [];
             $('#politicians').empty();
@@ -106,18 +120,16 @@
             .then(context.sync)
             .then(function () {
               // Displays in the panel the politicians found
-              var arrayLength = searchResults.length;
-              for (var i = 0; i < arrayLength; i++) {
+                var arrayLength = searchResults.length;
+                for (var i = 0; i < arrayLength; i++) {
                   if (searchResults[i].items[0] != null && alreadyFoundPoliticians[searchResults[i].items[0].text] == null) {
                       alreadyFoundPoliticians[searchResults[i].items[0].text] = true;
-                      var currentPolName = politicsName[searchResults[i].items[0].text].split(";");
-                      var currentPolInfos = currentPolName[1].split(",");
-                      console.log(currentPolInfos[0]);
+                      var currentPolName = politicsName[searchResults[i].items[0].text].split(",");
                       $('#politicians').append(
          '<div class="panel panel-default" id="panel' + i +'">\
           <div class="panel-heading">\
              <a data-toggle="collapse" data-target="#collapse'+i+'">\
-                 <h4 class="panel-title">'+ currentPolName[0] + '</h4>\
+                 <h4 class="panel-title">' + extractText(currentPolName[4]) + ' ' + extractText(currentPolName[5]) + '</h4>\
              </a>\
           </div>\
           <div id="collapse'+i+'" class="panel-collapse collapse ">\
@@ -125,10 +137,10 @@
                 <div class="row">\
                  <div class="col-xs-2" id="photo"> <i class="material-icons md-60">face</i> </div>\
                   <div class="col-xs-10">\
-                    <div class="row"> ' + currentPolInfos[0] +'</div>\
-                    <div class="row"> ' + currentPolInfos[1] +'</div>\
-                    <div class="row"> ' + currentPolInfos[2] +'</div>\
-                    <div class="row"> ' + currentPolInfos[3] +'</div>\
+                    <div class="row"> ' + 'Job :' + displayJob(extractText(currentPolName[8])) + '</div>\
+                    <div class="row"> ' + 'Political Party :' + extractText(currentPolName[2]) +'</div>\
+                    <div class="row"> ' + 'City: ' + extractText(currentPolName[7]) +'</div>\
+                    <div class="row"> ' + 'Age: ' + computeAge(extractText(currentPolName[6])) +'</div>\
                     <div class="row"> <a href="http://www.wecitizens.be">More on Wecitizens.be</a> </div>\
                   </div>\
                  </div>\
@@ -144,14 +156,38 @@
         .catch(errorHandler);
     }
 
-    function readTextFile(filename) {
-        var client = new XMLHttpRequest();
-        client.open('GET', filename, true);
-        client.onreadystatechange = function () {
-            //alert(client.responseText);
-            client.responseText;
+    // Code found on stackoverflow.com : 
+    // http://stackoverflow.com/questions/19793221/javascript-text-between-double-quotes
+    function extractText(str) {
+        var ret = "";
+
+        if (/"/.test(str)) {
+            ret = str.match(/"(.*?)"/)[1];
+        } else {
+            ret = str;
         }
-        client.send();
+        return ret;
+    }
+
+    // Given a date of birth, returns the age of the policitian
+    function computeAge(dateOfBirth) {
+        console.log(dateOfBirth);
+        var informations = dateOfBirth.split("-");
+        var year = parseInt(informations[0]);
+        var today = new Date();
+        return (today.getFullYear() - year).toString();
+    }
+
+    /* Checks if job is not null. I
+     *  If so returns it, if not returns "n/a" (not available)
+     */ 
+    function displayJob(job) {
+        if (job === "\N" || job === "") {
+            return " n/a";
+        }
+        else {
+            return job;
+        }
     }
 
     // creates the hashmap
