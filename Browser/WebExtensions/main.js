@@ -1,4 +1,9 @@
 var font = false;
+
+
+var politicianInfos = [];
+
+
 $(document).ready(function(){
 	// console.log('Document is ready.. scanning for politicians...');
 	var retrievedObject = chrome.storage.local.get('database_csv',
@@ -7,6 +12,15 @@ $(document).ready(function(){
 			launchSearch(hashmap);
 		}
 	);
+
+	// Listen for messages from the popup
+	console.log('Message received from popup');
+	chrome.runtime.onMessage.addListener(function (msg, sender, response) {
+		if ((msg.from === 'popup') && (msg.subject === 'politicianInfos')) {
+			console.log('Message sent to popup');
+			response(politicianInfos);
+		}
+	});
 });
 
 function launchSearch(hashmap){
@@ -47,11 +61,24 @@ function calculateAge(birthday) { // birthday is a date
 }
 
 
+function imageBuild(name, firstname, id){
+    var res = firstname.concat(name);
+    res.toLowerCase();
+    res.replace(" ", "-");
+    return ("http://directory.wecitizens.be/images/generic/politician-thumb/" + id + "-" + res + ".jpg");
+}
+
 function display(hashmap, name, index, counter, context){
     var body = $(context).text();
 
 	var bdate = new Date(hashmap[name][index][6]+'T10:20:30Z');
 	bdate = calculateAge(bdate);
+
+    if (hashmap[name][index][3]){
+        var photo = imageBuild(name, hashmap[name][index][4], hashmap[name][index][3]);
+    }else{      //id = \N
+
+    }
 
 	var html = "\
 	<div class='panel-body'>\
@@ -82,17 +109,8 @@ function display(hashmap, name, index, counter, context){
 	//console.log(image);
 	$(context).html(body.replace(name, name + " " + image));
 
-	var politicianInfos = {name: name, surname: hashmap[name][index][4], birthDate: bdate,
-	politicalParty: hashmap[name][index][2], city: hashmap[name][index][7], job: hashmap[name][index][8]};
-
-	// Listen for messages from the popup
-	console.log('Message received from popup');
-	chrome.runtime.onMessage.addListener(function (msg, sender, response) {
-		if ((msg.from === 'popup') && (msg.subject === 'politicianInfos')) {
-			response(politicianInfos);
-			console.log('Message sent to popup');
-		}
-	});
+	politicianInfos.push({name: name, surname: hashmap[name][0][4], birthDate: bdate,
+		politicalParty: hashmap[name][0][2], city: hashmap[name][0][7], job: hashmap[name][0][8]});
 }
 
 function display_multiple(hashmap, name, counter, context){
