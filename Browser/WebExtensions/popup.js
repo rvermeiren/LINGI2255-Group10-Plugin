@@ -33,8 +33,8 @@ function replaceHTML(politicianInfos) {
 					                <div class="panel panel-default"">\
 					                    <div class="panel-heading">\
 					                        <h4 class="panel-title">\
-					                            <a data-toggle="collapse" data-target="#collapsing'+i+'" href="#collapsing" class="collapsed">' + name + " " 
-					                            + surname + '</a>\
+					                            <a data-toggle="collapse" data-target="#collapsing'+i+'" href="#collapsing" class="collapsed">' + surname + " " 
+					                            + name + '</a>\
 					                        </h4>\
 					                    </div>\
 					                    <div id="collapsing'+i+'" class="panel-collapse collapse in">\
