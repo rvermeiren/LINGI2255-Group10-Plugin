@@ -74,7 +74,39 @@ function addImage(context, counter) {
 			//if (pol != null){ DONUT REMOVE THIS LINE PLEASE
 				//INFO CONCERNING THE POLITICIAN : hashmap[word][pol]
 			//}else{		//Multiple matches DONUT REMOVE THIS LINE PLEASE
-				var html = "\
+				var html = "<div class='container' id='content-main'>\
+							<div class='panel-group' id='accordion'>\
+							                <div class='panel panel-default'>\
+							                    <div class='panel-heading'>\
+							                        <h4 class='panel-title'>\
+							                            <a data-toggle='collapse' data-target='#collapsing"+counter.i+"' class='collapsed'>" + hashmap[word][0][4] + " "+ hashmap[word][0][5] + "</a>\
+							                        </h4>\
+							                    </div>\
+							                    <div id='collapsing"+counter.i+"' class='panel-collapse collapse in'>\
+							                        <div class='panel-body'>\
+							                        	<div class=\'col-xs-9\'>\
+															<div class=\'row\'>\
+																<strong>Job</strong>: "+ hashmap[word][0][8] +"\
+															</div>\
+															<div class=\'row\'>\
+																<strong>Political party</strong>: "+ hashmap[word][0][2] +"\
+															</div>\
+															<div class=\'row\'>\
+																<strong>City</strong>: "+ hashmap[word][0][7] +"\
+															</div>\
+															<div class=\'row\'>\
+																<strong>Age</strong>: "+ bdate +" years old\
+															</div>\
+															<div class=\'row\'>\
+																<a href=\'http://wecitizens.be\'>Voir sur wecitizens</a>\
+															</div>\
+														</div>\
+							                        </div>\
+							                    </div>\
+							                </div>\
+							            </div>\
+									</div>"
+										/*"\
 				<div class='panel-body'>\
 					<div class='row'>\
 						<div class='col-xs-3' id='photo'> <i class='material-icons md-60'>face</i> </div>\
@@ -96,9 +128,9 @@ function addImage(context, counter) {
 							</div>\
 						</div>\
 					</div>\
-				</div>"
+				</div>"*/
 				var image = String('<span id="popoverWeCitizens"><img data-toggle="popover" title="') + hashmap[word][0][4] + " " + hashmap[word][0][5] + String('" id="popover')
-				+ counter.i + String('"data-html="true" src="http://s12.postimg.org/bqsrifs6l/image.png" class="politicianFind" data-content="')
+				+ counter.i + String('"data-html="true" src="http://img4.hostingpics.net/pics/902279test.png" class="politicianFind" data-content="')
 				+ html + String('"></span>');
 				//console.log(image);
 				$(context).html(body.replace(word, "<mark>"+word+"</mark> " + image));
