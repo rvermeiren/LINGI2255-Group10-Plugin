@@ -1,3 +1,20 @@
+//Once the DOM is ready
+window.addEventListener('DOMContentLoaded', function () {
+	//Query for the active tab
+	chrome.tabs.query({
+		active: true,
+		currentWindow: true
+	}, function (tabs) {
+	//Send a request for the HTML info
+		chrome.tabs.sendMessage(
+	   	 	tabs[0].id,
+	   		{from: 'popup', subject: 'politicianInfos'},
+	   		//Specifying a callback to be called from the receiving end (content script)
+	    	replaceHTML);
+		console.log('Message sent from popup.js');
+	});
+});
+
 
 function containsObject(obj, array) {
 	var obj = JSON.stringify(obj);
@@ -16,9 +33,11 @@ function replaceHTML(politicianInfos) {
 
 	for (var i = 0; i < politicianInfos.length; i++) {
 
-		var alreadyMet = containsObject(politicianInfos[i], politicianInfos);
+		var index = containsObject(politicianInfos[i], politicianInfos);
 
-		if (alreadyMet >= i) {
+		var alreadyMet = (index >= i);
+
+		if (alreadyMet) {
 
 			console.log("alreadyMet");
 
@@ -33,11 +52,11 @@ function replaceHTML(politicianInfos) {
 					                <div class="panel panel-default"">\
 					                    <div class="panel-heading">\
 					                        <h4 class="panel-title">\
-					                            <a data-toggle="collapse" data-target="#collapsing'+i+'" href="#collapsing" class="collapsed">' + surname + " " 
-					                            + name + '</a>\
+					                            <a data-toggle="collapse" data-target="#collapsing'+i+'" href="#collapsing" class="collapsed">' + name + " " 
+					                            + surname + '</a>\
 					                        </h4>\
 					                    </div>\
-					                    <div id="collapsing'+i+'" class="panel-collapse collapse in">\
+					                    <div id="collapsing'+i+'" class="panel-collapse collapse">\
 					                        <div class="panel-body">\
 					                        	<div class=\'col-xs-9\'>\
 													<div class=\'row\'>\
@@ -50,7 +69,7 @@ function replaceHTML(politicianInfos) {
 														<strong>City</strong>: '+ city +'\
 													</div>\
 													<div class=\'row\'>\
-														<strong>Age</strong>: '+ birthDate +'\
+														<strong>Age</strong>: '+ birthDate +' years old\
 													</div>\
 													<div class=\'row\'>\
 														<a href=\'http://wecitizens.be\'>Voir sur wecitizens</a>\
@@ -63,20 +82,3 @@ function replaceHTML(politicianInfos) {
 		}
 	}
 }
-
-//Once the DOM is ready
-window.addEventListener('DOMContentLoaded', function () {
-	//Query for the active tab
-	chrome.tabs.query({
-		active: true,
-		currentWindow: true
-	}, function (tabs) {
-	//Send a request for the HTML info
-		chrome.tabs.sendMessage(
-	   	 	tabs[0].id,
-	   		{from: 'popup', subject: 'politicianInfos'},
-	   		//Specifying a callback to be called from the receiving end (content script)
-	    	replaceHTML);
-		console.log('Message sent from popup.js');
-	});
-});

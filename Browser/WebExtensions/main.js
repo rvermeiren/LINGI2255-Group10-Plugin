@@ -110,8 +110,8 @@ function display(hashmap, name, index, counter, context){
 	//console.log(image);
 	$(context).html(body.replace(name, name + " " + image));
 
-	politicianInfos.push({name: name, surname: hashmap[name][0][4], birthDate: bdate,
-		politicalParty: hashmap[name][0][2], city: hashmap[name][0][7], job: hashmap[name][0][8]});
+	politicianInfos.push({name: hashmap[name][index][4], surname: hashmap[name][index][5], birthDate: bdate,
+		politicalParty: hashmap[name][index][2], city: hashmap[name][index][7], job: hashmap[name][index][8]});
 }
 
 function display_multiple(hashmap, name, counter, context){
