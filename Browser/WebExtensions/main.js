@@ -74,16 +74,17 @@ function display(hashmap, name, index, counter, context){
 	var bdate = new Date(hashmap[name][index][6]+'T10:20:30Z');
 	bdate = calculateAge(bdate);
 
-    if (hashmap[name][index][3]){
+    if (hashmap[name][index][3] != "\\N"){
         var photo = imageBuild(name, hashmap[name][index][4], hashmap[name][index][3]);
-    }else{      //id = \N
-
+        var img = "<img src="+ photo +" height=75 alt="+ name +">";
+    }else{
+        var img = "<i class='material-icons md-60'>face</i>";
     }
 
 	var html = "\
 	<div class='panel-body'>\
 		<div class='row'>\
-			<div class='col-xs-3' id='photo'> <i class='material-icons md-60'>face</i> </div>\
+			<div class='col-xs-3' id='photo'>"+ img +" </div>\
 			<div class='col-xs-9'>\
 				<div class='row'>\
 					"+ hashmap[name][index][8] + "\
