@@ -64,14 +64,6 @@ function calculateAge(birthday) { // birthday is a date
     return Math.abs(ageDate.getUTCFullYear() - 1970);
 }
 
-<<<<<<< HEAD
-
-function imageBuild(name, firstname, id){
-    var res = firstname.concat(name);
-    res.toLowerCase();
-    res.replace(" ", "-");
-    return ("http://directory.wecitizens.be/images/generic/politician-thumb/" + id + "-" + res + ".jpg");
-=======
 function removeAccent(str){
 	var accent = [
         /[\300-\306]/g, /[\340-\346]/g, // A, a
@@ -83,11 +75,11 @@ function removeAccent(str){
         /[\307]/g, /[\347]/g, // C, c
     ];
     var noaccent = ['A','a','E','e','I','i','O','o','U','u','N','n','C','c'];
-     
+
     for(var i = 0; i < accent.length; i++){
         str = str.replace(accent[i], noaccent[i]);
     }
-     
+
     return str;
 }
 
@@ -99,31 +91,22 @@ function urlBuild(name, firstname, id){
 	res.replace(" ", "-");
 	res = removeAccent(res);
 	return("http://directory.wecitizens.be/fr/politician/" + res + "-" + id);
->>>>>>> 50f186962cb23556c8f45f4a522296fc7e5714e1
 }
 
-function display(hashmap, name, index, counter, context, returns){
+function display(hashmap, name, index, counter, context){
     var body = $(context).text();
 
 	var bdate = new Date(hashmap[name][index][6]+'T10:20:30Z');
 	bdate = calculateAge(bdate);
 
-<<<<<<< HEAD
-    if (hashmap[name][index][3] != "\\N"){
-        var photo = imageBuild(name, hashmap[name][index][4], hashmap[name][index][3]);
-=======
     if (hashmap[name][index][3] != "\\N" && hashmap[name][index][3] != 0){
         var photo = ("http://directory.wecitizens.be/images/generic/politician-thumb/" + hashmap[name][index][3]);
->>>>>>> 50f186962cb23556c8f45f4a522296fc7e5714e1
         var img = "<img src="+ photo +" height=75 alt="+ name +">";
     }else{
         var img = "<i class='material-icons md-60'>face</i>";
     }
-<<<<<<< HEAD
-=======
 
     var url = urlBuild(name, hashmap[name][index][4], hashmap[name][index][0]);
->>>>>>> 50f186962cb23556c8f45f4a522296fc7e5714e1
 
 	var html = "\
 	<div class='panel-body'>\
@@ -154,96 +137,9 @@ function display(hashmap, name, index, counter, context, returns){
 	//console.log(image);
 	politicianInfos.push({name: hashmap[name][index][4], surname: hashmap[name][index][5], birthDate: bdate,
 		politicalParty: hashmap[name][index][2], city: hashmap[name][index][7], job: hashmap[name][index][8]});
-	if (returns) {
-		return html;
-	}
 	$(context).html(body.replace(name, name + " " + image));
 }
 
-function display_multiple(hashmap, name, counter, context, returns){
-    var body = $(context).text();
-	console.log(context);
-	var html = "<div class='container' id='content-main'>\
-		<div class='panel-group' id='accordion'>";
-	for(i = 0; i < hashmap[name].length; i++){
-		var person = hashmap[name][i];
-		var bdate = new Date(person[6]+'T10:20:30Z');
-		bdate = calculateAge(bdate);
-
-		html += "<div class='panel panel-default'>\
-					<div class='panel-heading'>\
-						<h4 class='panel-title'>\
-							<a data-toggle='collapse' data-target='#collapsing"+counter.i+"' class='collapsed'>" + person[4] + " "+ person[5] + "</a>\
-						</h4>\
-					</div>\
-					<div id='collapsing"+counter.i+"' class='panel-collapse collapse'>\
-						<div class='panel-body'>\
-							<div class=\'col-xs-9\'>\
-								<div class=\'row\'>\
-									<strong>Job</strong>: "+ person[8] +"\
-								</div>\
-								<div class=\'row\'>\
-									<strong>Political party</strong>: "+ person[2] +"\
-								</div>\
-								<div class=\'row\'>\
-									<strong>City</strong>: "+ person[7] +"\
-								</div>\
-								<div class=\'row\'>\
-									<strong>Age</strong>: "+ bdate +" years old\
-								</div>\
-								<div class=\'row\'>\
-									<a href=\'http://wecitizens.be\'>Voir sur wecitizens</a>\
-								</div>\
-							</div>\
-						</div>\
-					</div>\
-				</div>"
-
-
-
-		var politicianInfos = {name: name, surname: person[4], birthDate: bdate,
-		politicalParty: person[2], city: person[7], job: person[8]};
-
-		counter.i++;
-	}
-	html+="</div></div>";
-	var image = String('<span id="popoverWeCitizens"><img data-toggle="popover" title="Politicians found"') + String('" id="popover')
-	+ counter.i + String('"data-html="true" src="http://s12.postimg.org/bqsrifs6l/image.png" class="politicianFind" data-content="')
-	+ html + String('"></span>');
-	if (returns) {
-		return html;
-	}
-	$(context).html(body.replace(name, name + " " + image));
-}
-
-<<<<<<< HEAD
-function searchNames(context, counter) {
-	var children = context.childNodes;
-	if(context.hasChildNodes()){
-		for (var i = 0; i < children.length; i++) {
-		// children.forEach(function(child){
-			/*If we need to insert the logo after the balise*/
-			var child = children[i];
-			if ($(child).is("strong, a, img, b, em, i, pre, sub, sup")) {
-				var result = addImage(context, $(child).text(), counter, true);
-				// console.log($(child));
-				$(child).after(result);
-				i++;
-			}
-			/*If we can insert the image right after the name*/
-			else {
-				searchNames(child, counter);
-			}
-		}
-	}
-	var text = $(context).clone().children().remove().end().text();
-	if (text != "") {
-		addImage(context, text, counter, false);
-	}
-=======
-	politicianInfos.push({name: hashmap[name][index][4], surname: hashmap[name][index][5], birthDate: bdate,
-		politicalParty: hashmap[name][index][2], city: hashmap[name][index][7], job: hashmap[name][index][8], photo: img, link: url});
-}
 
 function display_multiple(hashmap, name, counter, context){
     var body = $(context).text();
@@ -314,7 +210,6 @@ function display_multiple(hashmap, name, counter, context){
 	+ html + String('"></span>');
 
 	$(context).html(body.replace(name, name + " " + image));
->>>>>>> 50f186962cb23556c8f45f4a522296fc7e5714e1
 }
 
 
@@ -365,19 +260,12 @@ function addImage(context, body, counter, returns) {
 						pol = i;
 					}
 				}
-<<<<<<< HEAD
-				if (pol != null) {
-					ret = display(hashmap, name, pol, counter, context, returns);
-				} else {		//Multiple matches
-					ret = display_multiple(hashmap, name, counter, context, returns);
-=======
 				if (pol != null){
 					display(hashmap, name, pol, counter, context);
 				}else if (matching.length == 1){	//Only one name matched
 					display(hashmap, name, 0, counter, context);
 				}else{		//Multiple matches
 					display_multiple(hashmap, name, counter, context);
->>>>>>> 50f186962cb23556c8f45f4a522296fc7e5714e1
 				}
                 counter.i++;
                 pref = null;
