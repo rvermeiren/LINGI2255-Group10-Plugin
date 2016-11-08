@@ -97,10 +97,10 @@ function display(hashmap, name, index, counter, context){
 
     if (hashmap[name][index][3] != "\\N" && hashmap[name][index][3] != 0){
         var photo = ("http://directory.wecitizens.be/images/generic/politician-thumb/" + hashmap[name][index][3]);
-        var img = "<img src="+ photo +" height=75 alt="+ name +">";
     }else{
-        var img = "<i class='material-icons md-60'>face</i>";
+        var photo = ("http://directory.wecitizens.be/images/img-no-photo.png");
     }
+    var img = "<img src="+ photo +" height=75 alt="+ name +">";
 
     var url = urlBuild(name, hashmap[name][index][4], hashmap[name][index][0]);
 
@@ -148,10 +148,10 @@ function display_multiple(hashmap, name, counter, context){
 
 		if (person[3] != "\\N" && person[3] != 0){
 	        var photo = ("http://directory.wecitizens.be/images/generic/politician-thumb/" + person[3]);
-	        var img = "<img src="+ photo +" height=60 alt="+ name +">";
 	    }else{
-	        var img = "<i class='material-icons md-60'>face</i>";
+	        var photo = ("http://directory.wecitizens.be/images/img-no-photo.png");
 	    }
+	    var img = "<img src="+ photo +" height=60 alt="+ name +">";
 
 		var url = urlBuild(name, person[4], person[0]);
 
