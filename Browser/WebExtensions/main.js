@@ -42,9 +42,9 @@ function launchSearch(hashmap){
 	// 		addImage(this, counter);
 	// });
 	//
-	// $('head').append(
-	// 	"<script>$(function(){$('[data-toggle=\"popover\"]').popover();});</script>"
-	// );
+	$('head').append(
+		"<script>$(function(){$('[data-toggle=\"popover\"]').popover();});</script>"
+	);
 
 	/* Hide the popover when clicking anywhere on the page*/
 	$('body').on('click', function (e) {
@@ -70,6 +70,31 @@ function imageBuild(name, firstname, id){
     res.toLowerCase();
     res.replace(" ", "-");
     return ("http://directory.wecitizens.be/images/generic/politician-thumb/" + id + "-" + res + ".jpg");
+}
+
+function searchNames(context, counter) {
+	var children = context.childNodes;
+	if(context.hasChildNodes()){
+		for (var i = 0; i < children.length; i++) {
+		// children.forEach(function(child){
+			/*If we need to insert the logo after the balise*/
+			var child = children[i];
+			if ($(child).is("strong, a, img, b, em, i, pre, sub, sup")) {
+				var result = addImage(context, $(child).text(), counter, true);
+				// console.log($(child));
+				$(child).after(result);
+				i++;
+			}
+			/*If we can insert the image right after the name*/
+			else {
+				searchNames(child, counter);
+			}
+		}
+	}
+	var text = $(context).clone().children().remove().end().text();
+	if (text != "") {
+		addImage(context, text, counter, false);
+	}
 }
 
 function display(hashmap, name, index, counter, context, returns){
@@ -115,7 +140,7 @@ function display(hashmap, name, index, counter, context, returns){
 	politicianInfos.push({name: hashmap[name][index][4], surname: hashmap[name][index][5], birthDate: bdate,
 		politicalParty: hashmap[name][index][2], city: hashmap[name][index][7], job: hashmap[name][index][8]});
 	if (returns) {
-		return html;
+		return image;
 	}
 	$(context).html(body.replace(name, name + " " + image));
 }
@@ -171,35 +196,11 @@ function display_multiple(hashmap, name, counter, context, returns){
 	+ counter.i + String('"data-html="true" src="http://s12.postimg.org/bqsrifs6l/image.png" class="politicianFind" data-content="')
 	+ html + String('"></span>');
 	if (returns) {
-		return html;
+		return image;
 	}
 	$(context).html(body.replace(name, name + " " + image));
 }
 
-function searchNames(context, counter) {
-	var children = context.childNodes;
-	if(context.hasChildNodes()){
-		for (var i = 0; i < children.length; i++) {
-		// children.forEach(function(child){
-			/*If we need to insert the logo after the balise*/
-			var child = children[i];
-			if ($(child).is("strong, a, img, b, em, i, pre, sub, sup")) {
-				var result = addImage(context, $(child).text(), counter, true);
-				// console.log($(child));
-				$(child).after(result);
-				i++;
-			}
-			/*If we can insert the image right after the name*/
-			else {
-				searchNames(child, counter);
-			}
-		}
-	}
-	var text = $(context).clone().children().remove().end().text();
-	if (text != "") {
-		addImage(context, text, counter, false);
-	}
-}
 
 
 /* Returns indicates if we can hot swap the text or if we hae to retrun the html
