@@ -23,33 +23,37 @@ $(document).ready(function(){
 	});
 });
 
+	/* Search through <p> and <li> items TODO add other types*/
 function launchSearch(hashmap){
 
+
 	var counter = {i: 0}; //Occurences. Singleton to be passed by reference and not by value.
-	$('p').each(function(index) {
-			addImage(this, counter);
-	});
 
-	$('li').each(function(index) {
-			addImage(this, counter);
-	});
-
-    $('a').each(function(index) {
-			addImage(this, counter);
-	});
-
-	$('head').append(
-		"<script>$(function(){$('[data-toggle=\"popover\"]').popover();});\
-		</script>"
-	);
+	searchNames(document.body, counter);
+	// $('p').each(function(index) {
+	// 		addImage(this, counter);
+	// });
+	//
+	// $('li').each(function(index) {
+	// 		addImage(this, counter);
+	// });
+	//
+    // $('a').each(function(index) {
+	// 		addImage(this, counter);
+	// });
+	//
+	// $('head').append(
+	// 	"<script>$(function(){$('[data-toggle=\"popover\"]').popover();});</script>"
+	// );
 
 	/* Hide the popover when clicking anywhere on the page*/
 	$('body').on('click', function (e) {
-		//only buttons
-		if ($(e.target).data('toggle') !== 'popover'
-			&& $(e.target).parents('.popover.in').length === 0) {
-			$('[data-toggle="popover"]').popover('hide');
-		}
+
+    //only buttons
+	    if ($(e.target).data('toggle') !== 'popover'
+	        && $(e.target).parents('.popover.in').length === 0) {
+	        $('[data-toggle="popover"]').popover('hide');
+	    }
 	});
 }
 
@@ -71,11 +75,11 @@ function removeAccent(str){
         /[\307]/g, /[\347]/g, // C, c
     ];
     var noaccent = ['A','a','E','e','I','i','O','o','U','u','N','n','C','c'];
-     
+
     for(var i = 0; i < accent.length; i++){
         str = str.replace(accent[i], noaccent[i]);
     }
-     
+
     return str;
 }
 
@@ -131,11 +135,11 @@ function display(hashmap, name, index, counter, context){
 	+ counter.i + String('"data-html="true" src="http://s12.postimg.org/bqsrifs6l/image.png" class="politicianFind" data-content="')
 	+ html + String('"></span>');
 	//console.log(image);
-	$(context).html(body.replace(name, name + " " + image));
-
 	politicianInfos.push({name: hashmap[name][index][4], surname: hashmap[name][index][5], birthDate: bdate,
-		politicalParty: hashmap[name][index][2], city: hashmap[name][index][7], job: hashmap[name][index][8], photo: img, link: url});
+		politicalParty: hashmap[name][index][2], city: hashmap[name][index][7], job: hashmap[name][index][8]});
+	$(context).html(body.replace(name, name + " " + image));
 }
+
 
 function display_multiple(hashmap, name, counter, context){
     var body = $(context).text();
@@ -209,13 +213,20 @@ function display_multiple(hashmap, name, counter, context){
 }
 
 
-function addImage(context, counter) {
-    var body = $(context).text();
+/* Returns indicates if we can hot swap the text or if we hae to retrun the html
+This is useful to escape balises */
+function addImage(context, body, counter, returns) {
+    // var body = $(context).text();
+	console.log(body);
 	var prev;
 	var pref;
 	var word;
 	var prefix = ["", "den ", "der ", "de ", "van "];
 	var reg = /[A-Z]+[a-z]*/gm;
+	var i = 0;
+	var ret;
+	word = reg.exec(body);
+	// for(i; i<word.length; i++) {
 	while(word = reg.exec(body)){
 		if (word == "De" || word == "Van" || word == "Di" || word == "Vanden" || word == "Ver"){		//Di Rupo rpz
 			pref = word;
@@ -261,6 +272,8 @@ function addImage(context, counter) {
 			}
 			prev = word;
 			iter++;
+			// i++;
 		}
 	}
+	return ret;
 }
