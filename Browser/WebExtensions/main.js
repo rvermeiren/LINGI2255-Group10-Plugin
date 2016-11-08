@@ -103,7 +103,7 @@ function display(hashmap, name, index, counter, context){
 	var bdate = new Date(hashmap[name][index][6]+'T10:20:30Z');
 	bdate = calculateAge(bdate);
 
-    if (hashmap[name][index][3] != "\\N"){
+    if (hashmap[name][index][3] != "\\N" && hashmap[name][index][3] != 0){
         var photo = imageBuild(name, hashmap[name][index][4], hashmap[name][index][3]);
         var img = "<img src="+ photo +" height=75 alt="+ name +">";
     }else{
@@ -142,7 +142,7 @@ function display(hashmap, name, index, counter, context){
 	$(context).html(body.replace(name, name + " " + image));
 
 	politicianInfos.push({name: hashmap[name][index][4], surname: hashmap[name][index][5], birthDate: bdate,
-		politicalParty: hashmap[name][index][2], city: hashmap[name][index][7], job: hashmap[name][index][8]});
+		politicalParty: hashmap[name][index][2], city: hashmap[name][index][7], job: hashmap[name][index][8], photo: img, link: url});
 }
 
 function display_multiple(hashmap, name, counter, context){
@@ -154,7 +154,7 @@ function display_multiple(hashmap, name, counter, context){
 		var bdate = new Date(person[6]+'T10:20:30Z');
 		bdate = calculateAge(bdate);
 
-		if (person[3] != "\\N"){
+		if (person[3] != "\\N" && person[3] != 0){
 	        var photo = imageBuild(name, person[4], person[3]);
 	        var img = "<img src="+ photo +" height=60 alt="+ name +">";
 	    }else{
@@ -171,7 +171,7 @@ function display_multiple(hashmap, name, counter, context){
 					</div>\
 					<div id='collapsing"+counter.i+"' class='panel-collapse collapse'>\
 						<div class='panel-body'>\
-							<div class=\'col-xs-3\' id='photo\'>"+ img +" </div>\
+							<div class=\'col-xs-3\' id=\'photo\'>"+ img +" </div>\
 							<div class=\'col-xs-9\'>\
 								<div class=\'row\'>\
 									<strong>Job</strong>: "+ person[8] +"\
@@ -196,7 +196,7 @@ function display_multiple(hashmap, name, counter, context){
 
 
 		var politicianInfos = {name: name, surname: person[4], birthDate: bdate,
-		politicalParty: person[2], city: person[7], job: person[8]};
+		politicalParty: person[2], city: person[7], job: person[8], photo: img, link: url};
 
 		// Listen for messages from the popup
 		console.log('Message received from popup');
