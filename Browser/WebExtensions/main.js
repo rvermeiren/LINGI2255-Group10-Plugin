@@ -130,7 +130,7 @@ function display(hashmap, name, index, counter, context){
 					"+ bdate +" years old\
 				</div>\
 				<div class='row'>\
-					<a href='"+ url +"'>Voir sur wecitizens</a>\
+					<a target=\'_blank\' href='"+ url +"'>Voir sur wecitizens</a>\
 				</div>\
 			</div>\
 		</div>\
@@ -186,7 +186,7 @@ function display_multiple(hashmap, name, counter, context){
 									<strong>Age</strong>: "+ bdate +" years old\
 								</div>\
 								<div class=\'row\'>\
-									<a href=\'"+ url +"\'>Voir sur wecitizens</a>\
+									<a target=\'_blank\' href=\'"+ url +"\'>Voir sur wecitizens</a>\
 								</div>\
 							</div>\
 						</div>\

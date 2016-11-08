@@ -75,7 +75,7 @@ function replaceHTML(politicianInfos) {
 														<strong>Age</strong>: '+ birthDate +' years old\
 													</div>\
 													<div class=\'row\'>\
-														<a href=\''+ link +'\'>Voir sur wecitizens</a>\
+														<a target="_blank" href=\''+ link +'\'>Voir sur wecitizens</a>\
 													</div>\
 												</div>\
 					                        </div>\
