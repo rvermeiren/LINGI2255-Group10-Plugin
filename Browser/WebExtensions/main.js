@@ -64,33 +64,12 @@ function calculateAge(birthday) { // birthday is a date
     return Math.abs(ageDate.getUTCFullYear() - 1970);
 }
 
-function removeAccent(str){
-	var accent = [
-        /[\300-\306]/g, /[\340-\346]/g, // A, a
-        /[\310-\313]/g, /[\350-\353]/g, // E, e
-        /[\314-\317]/g, /[\354-\357]/g, // I, i
-        /[\322-\330]/g, /[\362-\370]/g, // O, o
-        /[\331-\334]/g, /[\371-\374]/g, // U, u
-        /[\321]/g, /[\361]/g, // N, n
-        /[\307]/g, /[\347]/g, // C, c
-    ];
-    var noaccent = ['A','a','E','e','I','i','O','o','U','u','N','n','C','c'];
 
-    for(var i = 0; i < accent.length; i++){
-        str = str.replace(accent[i], noaccent[i]);
-    }
-
-    return str;
-}
-
-function urlBuild(name, firstname, id){
-	linkedName = name.replace(" ", "-");
-	linkedFirstname = firstname.replace(" ", "-");
-	var res = linkedFirstname.concat(linkedName);
-	res.toLowerCase();
-	res.replace(" ", "-");
-	res = removeAccent(res);
-	return("http://directory.wecitizens.be/fr/politician/" + res + "-" + id);
+function imageBuild(name, firstname, id){
+    var res = firstname.concat(name);
+    res.toLowerCase();
+    res.replace(" ", "-");
+    return ("http://directory.wecitizens.be/images/generic/politician-thumb/" + id + "-" + res + ".jpg");
 }
 
 function display(hashmap, name, index, counter, context, returns){
@@ -99,14 +78,12 @@ function display(hashmap, name, index, counter, context, returns){
 	var bdate = new Date(hashmap[name][index][6]+'T10:20:30Z');
 	bdate = calculateAge(bdate);
 
-    if (hashmap[name][index][3] != "\\N" && hashmap[name][index][3] != 0){
-        var photo = ("http://directory.wecitizens.be/images/generic/politician-thumb/" + hashmap[name][index][3]);
+    if (hashmap[name][index][3] != "\\N"){
+        var photo = imageBuild(name, hashmap[name][index][4], hashmap[name][index][3]);
         var img = "<img src="+ photo +" height=75 alt="+ name +">";
     }else{
         var img = "<i class='material-icons md-60'>face</i>";
     }
-
-    var url = urlBuild(name, hashmap[name][index][4], hashmap[name][index][0]);
 
 	var html = "\
 	<div class='panel-body'>\
@@ -126,7 +103,7 @@ function display(hashmap, name, index, counter, context, returns){
 					"+ bdate +" years old\
 				</div>\
 				<div class='row'>\
-					<a target=\'_blank\' href='"+ url +"'>Voir sur wecitizens</a>\
+					<a href='http://www.wecitizens.be'>Voir sur wecitizens</a>\
 				</div>\
 			</div>\
 		</div>\
@@ -199,79 +176,29 @@ function display_multiple(hashmap, name, counter, context, returns){
 	$(context).html(body.replace(name, name + " " + image));
 }
 
-	politicianInfos.push({name: hashmap[name][index][4], surname: hashmap[name][index][5], birthDate: bdate,
-		politicalParty: hashmap[name][index][2], city: hashmap[name][index][7], job: hashmap[name][index][8], photo: img, link: url});
-}
-
-function display_multiple(hashmap, name, counter, context){
-    var body = $(context).text();
-	var html = "<div class='container' id='content-main'>\
-		<div class='panel-group' id='accordion'>";
-	for(i = 0; i < hashmap[name].length; i++){
-		var person = hashmap[name][i];
-		var bdate = new Date(person[6]+'T10:20:30Z');
-		bdate = calculateAge(bdate);
-
-		if (person[3] != "\\N" && person[3] != 0){
-	        var photo = ("http://directory.wecitizens.be/images/generic/politician-thumb/" + person[3]);
-	        var img = "<img src="+ photo +" height=60 alt="+ name +">";
-	    }else{
-	        var img = "<i class='material-icons md-60'>face</i>";
-	    }
-
-		var url = urlBuild(name, person[4], person[0]);
-
-		html += "<div class='panel panel-default'>\
-					<div class='panel-heading'>\
-						<h4 class='panel-title'>\
-							<a data-toggle='collapse' data-target='#collapsing"+counter.i+"' class='collapsed'>" + person[4] + " "+ person[5] + "</a>\
-						</h4>\
-					</div>\
-					<div id='collapsing"+counter.i+"' class='panel-collapse collapse'>\
-						<div class='panel-body'>\
-							<div class=\'col-xs-3\' id=\'photo\'>"+ img +" </div>\
-							<div class=\'col-xs-9\'>\
-								<div class=\'row\'>\
-									<strong>Job</strong>: "+ person[8] +"\
-								</div>\
-								<div class=\'row\'>\
-									<strong>Political party</strong>: "+ person[2] +"\
-								</div>\
-								<div class=\'row\'>\
-									<strong>City</strong>: "+ person[7] +"\
-								</div>\
-								<div class=\'row\'>\
-									<strong>Age</strong>: "+ bdate +" years old\
-								</div>\
-								<div class=\'row\'>\
-									<a target=\'_blank\' href=\'"+ url +"\'>Voir sur wecitizens</a>\
-								</div>\
-							</div>\
-						</div>\
-					</div>\
-				</div>"
-
-
-
-		var politicianInfos = {name: name, surname: person[4], birthDate: bdate,
-		politicalParty: person[2], city: person[7], job: person[8], photo: img, link: url};
-
-		// Listen for messages from the popup
-		console.log('Message received from popup');
-		chrome.runtime.onMessage.addListener(function (msg, sender, response) {
-			if ((msg.from === 'popup') && (msg.subject === 'politicianInfos')) {
-				response(politicianInfos);
-				console.log('Message sent to popup');
+function searchNames(context, counter) {
+	var children = context.childNodes;
+	if(context.hasChildNodes()){
+		for (var i = 0; i < children.length; i++) {
+		// children.forEach(function(child){
+			/*If we need to insert the logo after the balise*/
+			var child = children[i];
+			if ($(child).is("strong, a, img, b, em, i, pre, sub, sup")) {
+				var result = addImage(context, $(child).text(), counter, true);
+				// console.log($(child));
+				$(child).after(result);
+				i++;
 			}
-		});
-		counter.i++;
+			/*If we can insert the image right after the name*/
+			else {
+				searchNames(child, counter);
+			}
+		}
 	}
-	html+="</div></div>";
-	var image = String('<span id="popoverWeCitizens"><img data-toggle="popover" title="Politicians found"') + String('" id="popover')
-	+ counter.i + String('"data-html="true" src="http://s12.postimg.org/bqsrifs6l/image.png" class="politicianFind" data-content="')
-	+ html + String('"></span>');
-
-	$(context).html(body.replace(name, name + " " + image));
+	var text = $(context).clone().children().remove().end().text();
+	if (text != "") {
+		addImage(context, text, counter, false);
+	}
 }
 
 
@@ -309,10 +236,6 @@ function addImage(context, body, counter, returns) {
 					font = true;
 				}
 
-				var bdate = new Date(hashmap[name][0][6]+'T10:20:30Z');
-				bdate = calculateAge(bdate);
-
-
 				found = true;
 				var matching = [];
 				var pol = null;
@@ -322,12 +245,10 @@ function addImage(context, body, counter, returns) {
 						pol = i;
 					}
 				}
-				if (pol != null){
-					display(hashmap, name, pol, counter, context);
-				}else if (matching.length == 1){	//Only one name matched
-					display(hashmap, name, 0, counter, context);
-				}else{		//Multiple matches
-					display_multiple(hashmap, name, counter, context);
+				if (pol != null) {
+					ret = display(hashmap, name, pol, counter, context, returns);
+				} else {		//Multiple matches
+					ret = display_multiple(hashmap, name, counter, context, returns);
 				}
                 counter.i++;
                 pref = null;
