@@ -79,18 +79,10 @@ function removeAccent(str){
     return str;
 }
 
-function imageBuild(name, firstname, id){
-	linkedName = name.replace(" ", "-");
-    var res = firstname.concat(linkedName);
-    res.toLowerCase();
-    res.replace(" ", "-");
-    res = removeAccent(res);
-    return ("http://directory.wecitizens.be/images/generic/politician-thumb/" + id + "-" + res + ".jpg");
-}
-
 function urlBuild(name, firstname, id){
 	linkedName = name.replace(" ", "-");
-	var res = firstname.concat(linkedName);
+	linkedFirstname = firstname.replace(" ", "-");
+	var res = linkedFirstname.concat(linkedName);
 	res.toLowerCase();
 	res.replace(" ", "-");
 	res = removeAccent(res);
@@ -104,7 +96,7 @@ function display(hashmap, name, index, counter, context){
 	bdate = calculateAge(bdate);
 
     if (hashmap[name][index][3] != "\\N" && hashmap[name][index][3] != 0){
-        var photo = imageBuild(name, hashmap[name][index][4], hashmap[name][index][3]);
+        var photo = ("http://directory.wecitizens.be/images/generic/politician-thumb/" + hashmap[name][index][3]);
         var img = "<img src="+ photo +" height=75 alt="+ name +">";
     }else{
         var img = "<i class='material-icons md-60'>face</i>";
@@ -155,7 +147,7 @@ function display_multiple(hashmap, name, counter, context){
 		bdate = calculateAge(bdate);
 
 		if (person[3] != "\\N" && person[3] != 0){
-	        var photo = imageBuild(name, person[4], person[3]);
+	        var photo = ("http://directory.wecitizens.be/images/generic/politician-thumb/" + person[3]);
 	        var img = "<img src="+ photo +" height=60 alt="+ name +">";
 	    }else{
 	        var img = "<i class='material-icons md-60'>face</i>";

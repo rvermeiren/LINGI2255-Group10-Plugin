@@ -102,7 +102,7 @@ function addToHashMap(hashmap, line){
  */
 function getDistantCSV(){
     var client = new XMLHttpRequest();
-    var filename = 'http://34bw.be/wp-content/uploads/2016/10/temp_database.csv';
+    var filename = 'http://34bw.be/wp-content/uploads/2016/11/temp_database.csv';
     client.open('GET', filename, false);
     client.onreadystatechange = function() {
         chrome.storage.local.set({'database_csv': client.responseText},
