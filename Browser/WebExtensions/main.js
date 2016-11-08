@@ -60,12 +60,41 @@ function calculateAge(birthday) { // birthday is a date
     return Math.abs(ageDate.getUTCFullYear() - 1970);
 }
 
+function removeAccent(str){
+	var accent = [
+        /[\300-\306]/g, /[\340-\346]/g, // A, a
+        /[\310-\313]/g, /[\350-\353]/g, // E, e
+        /[\314-\317]/g, /[\354-\357]/g, // I, i
+        /[\322-\330]/g, /[\362-\370]/g, // O, o
+        /[\331-\334]/g, /[\371-\374]/g, // U, u
+        /[\321]/g, /[\361]/g, // N, n
+        /[\307]/g, /[\347]/g, // C, c
+    ];
+    var noaccent = ['A','a','E','e','I','i','O','o','U','u','N','n','C','c'];
+     
+    for(var i = 0; i < accent.length; i++){
+        str = str.replace(accent[i], noaccent[i]);
+    }
+     
+    return str;
+}
 
 function imageBuild(name, firstname, id){
-    var res = firstname.concat(name);
+	linkedName = name.replace(" ", "-");
+    var res = firstname.concat(linkedName);
     res.toLowerCase();
     res.replace(" ", "-");
+    res = removeAccent(res);
     return ("http://directory.wecitizens.be/images/generic/politician-thumb/" + id + "-" + res + ".jpg");
+}
+
+function urlBuild(name, firstname, id){
+	linkedName = name.replace(" ", "-");
+	var res = firstname.concat(linkedName);
+	res.toLowerCase();
+	res.replace(" ", "-");
+	res = removeAccent(res);
+	return("http://directory.wecitizens.be/fr/politician/" + res + "-" + id);
 }
 
 function display(hashmap, name, index, counter, context){
@@ -80,6 +109,8 @@ function display(hashmap, name, index, counter, context){
     }else{
         var img = "<i class='material-icons md-60'>face</i>";
     }
+
+    var url = urlBuild(name, hashmap[name][index][4], hashmap[name][index][0]);
 
 	var html = "\
 	<div class='panel-body'>\
@@ -99,7 +130,7 @@ function display(hashmap, name, index, counter, context){
 					"+ bdate +" years old\
 				</div>\
 				<div class='row'>\
-					<a href='http://www.wecitizens.be'>Voir sur wecitizens</a>\
+					<a href='"+ url +"'>Voir sur wecitizens</a>\
 				</div>\
 			</div>\
 		</div>\
@@ -123,6 +154,15 @@ function display_multiple(hashmap, name, counter, context){
 		var bdate = new Date(person[6]+'T10:20:30Z');
 		bdate = calculateAge(bdate);
 
+		if (person[3] != "\\N"){
+	        var photo = imageBuild(name, person[4], person[3]);
+	        var img = "<img src="+ photo +" height=60 alt="+ name +">";
+	    }else{
+	        var img = "<i class='material-icons md-60'>face</i>";
+	    }
+
+		var url = urlBuild(name, person[4], person[0]);
+
 		html += "<div class='panel panel-default'>\
 					<div class='panel-heading'>\
 						<h4 class='panel-title'>\
@@ -131,6 +171,7 @@ function display_multiple(hashmap, name, counter, context){
 					</div>\
 					<div id='collapsing"+counter.i+"' class='panel-collapse collapse'>\
 						<div class='panel-body'>\
+							<div class=\'col-xs-3\' id='photo\'>"+ img +" </div>\
 							<div class=\'col-xs-9\'>\
 								<div class=\'row\'>\
 									<strong>Job</strong>: "+ person[8] +"\
@@ -145,7 +186,7 @@ function display_multiple(hashmap, name, counter, context){
 									<strong>Age</strong>: "+ bdate +" years old\
 								</div>\
 								<div class=\'row\'>\
-									<a href=\'http://wecitizens.be\'>Voir sur wecitizens</a>\
+									<a href=\'"+ url +"\'>Voir sur wecitizens</a>\
 								</div>\
 							</div>\
 						</div>\
@@ -218,6 +259,8 @@ function addImage(context, counter) {
 				}
 				if (pol != null){
 					display(hashmap, name, pol, counter, context);
+				}else if (matching.length == 1){	//Only one name matched
+					display(hashmap, name, 0, counter, context);
 				}else{		//Multiple matches
 					display_multiple(hashmap, name, counter, context);
 				}
