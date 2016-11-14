@@ -203,10 +203,6 @@ function addImage(context, counter) {
 					font = true;
 				}
 
-				var bdate = new Date(hashmap[name][0][6]+'T10:20:30Z');
-				bdate = calculateAge(bdate);
-
-
 				found = true;
 				var matching = [];
 				var pol = null;
@@ -227,5 +223,6 @@ function addImage(context, counter) {
 			prev = word;
 			iter++;
 		}
+		body = $(context).text();
 	}
 }
