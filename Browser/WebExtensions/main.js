@@ -218,7 +218,7 @@ function addImage(context, counter) {
 		var name;
 		var found = false;
 		var iter = 0;
-		while (!found && iter < 5) {
+		while (!found && iter < prefix.length) {
 			if (pref != null){
 				name = pref + " " + prefix[iter] + word;
 			}else{
@@ -252,7 +252,6 @@ function addImage(context, counter) {
 			prev = word;
 			iter++;
 			// i++;
-			body = $(context).text();
 		}
 	}
 	return ret;
