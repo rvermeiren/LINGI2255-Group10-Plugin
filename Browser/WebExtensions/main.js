@@ -29,19 +29,18 @@ function launchSearch(hashmap){
 
 	var counter = {i: 0}; //Occurences. Singleton to be passed by reference and not by value.
 
-	searchNames(document.body, counter);
-	// $('p').each(function(index) {
-	// 		addImage(this, counter);
-	// });
-	//
-	// $('li').each(function(index) {
-	// 		addImage(this, counter);
-	// });
-	//
-    // $('a').each(function(index) {
-	// 		addImage(this, counter);
-	// });
-	//
+	$('p').each(function(index) {
+			addImage(this, counter);
+	});
+
+	$('li').each(function(index) {
+			addImage(this, counter);
+	});
+
+    $('a').each(function(index) {
+			addImage(this, counter);
+	});
+
 
 	$('head').append(
 		"<script>$(function(){$('[data-toggle=\"popover\"]').popover();});</script>"
@@ -94,30 +93,6 @@ function urlBuild(name, firstname, id){
 	return("http://directory.wecitizens.be/fr/politician/" + res + "-" + id);
 }
 
-function searchNames(context, counter) {
-	var children = context.childNodes;
-	if(context.hasChildNodes()){
-		for (var i = 0; i < children.length; i++) {
-		// children.forEach(function(child){
-			/*If we need to insert the logo after the balise*/
-			var child = children[i];
-			if ($(child).is("strong, a, img, b, em, i, pre, sub, sup")) {
-				var result = addImage(context, $(child).text(), counter, true);
-				// console.log($(child));
-				$(child).after(result);
-				i++;
-			}
-			/*If we can insert the image right after the name*/
-			else {
-				searchNames(child, counter);
-			}
-		}
-	}
-	var text = $(context).clone().children().remove().end().text();
-	if (text != "") {
-		addImage(context, text, counter, false);
-	}
-}
 
 function display(hashmap, name, index, counter, context, returns){
     var body = $(context).text();
@@ -163,13 +138,13 @@ function display(hashmap, name, index, counter, context, returns){
 	//console.log(image);
 	politicianInfos.push({name: hashmap[name][index][4], surname: hashmap[name][index][5], birthDate: bdate,
 		politicalParty: hashmap[name][index][2], city: hashmap[name][index][7], job: hashmap[name][index][8]});
-	$(context).html(body.replace(name, name + " " + image));
+	$(context).html($(context).html().replace(name, name + " " + image));
 }
 
 
-function display_multiple(hashmap, name, counter, context, returns){
+function display_multiple(hashmap, name, counter, context){
     var body = $(context).text();
-	console.log(context);
+	// console.log(context);
 	var html = "<div class='container' id='content-main'>\
 		<div class='panel-group' id='accordion'>";
 	for(i = 0; i < hashmap[name].length; i++){
@@ -217,18 +192,15 @@ function display_multiple(hashmap, name, counter, context, returns){
 	var image = String('<span id="popoverWeCitizens"><img data-toggle="popover" title="Politicians found"') + String('" id="popover')
 	+ counter.i + String('"data-html="true" src="http://s12.postimg.org/bqsrifs6l/image.png" class="politicianFind" data-content="')
 	+ html + String('"></span>');
-	if (returns) {
-		return image;
-	}
-	$(context).html(body.replace(name, name + " " + image));
+	$(context).html($(context).html().replace(name, name + " " + image));
 }
 
 
 
 /* Returns indicates if we can hot swap the text or if we hae to retrun the html
 This is useful to escape balises */
-function addImage(context, body, counter, returns) {
-    // var body = $(context).text();
+function addImage(context, counter) {
+    var body = $(context).text();
 	// console.log(body);
 	var prev;
 	var pref;
@@ -237,7 +209,6 @@ function addImage(context, body, counter, returns) {
 	var reg = /[A-Z]+[a-z]*/gm;
 	var i = 0;
 	var ret;
-	word = reg.exec(body);
 	// for(i; i<word.length; i++) {
 	while(word = reg.exec(body)){
 		if (word == "De" || word == "Van" || word == "Di" || word == "Vanden" || word == "Ver"){		//Di Rupo rpz
@@ -268,19 +239,21 @@ function addImage(context, body, counter, returns) {
 						pol = i;
 					}
 				}
+				console.log($(context).html());
 				if (pol != null) {
-					ret = display(hashmap, name, pol, counter, context, returns);
+					display(hashmap, name, pol, counter, context);
 				} else {		//Multiple matches
-					ret = display_multiple(hashmap, name, counter, context, returns);
+					display_multiple(hashmap, name, counter, context);
 				}
+				console.log($(context).html());
                 counter.i++;
                 pref = null;
 			}
 			prev = word;
 			iter++;
 			// i++;
+			body = $(context).text();
 		}
-		body = $(context).text();
 	}
 	return ret;
 }
