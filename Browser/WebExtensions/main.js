@@ -23,33 +23,37 @@ $(document).ready(function(){
 	});
 });
 
+	/* Search through <p> and <li> items TODO add other types*/
 function launchSearch(hashmap){
 
+
 	var counter = {i: 0}; //Occurences. Singleton to be passed by reference and not by value.
-	$('p').each(function(index) {
-			addImage(this, counter);
-	});
 
-	$('li').each(function(index) {
-			addImage(this, counter);
-	});
-
-    $('a').each(function(index) {
-			addImage(this, counter);
-	});
-
-	$('head').append(
-		"<script>$(function(){$('[data-toggle=\"popover\"]').popover();});\
-		</script>"
-	);
+	searchNames(document.body, counter);
+	// $('p').each(function(index) {
+	// 		addImage(this, counter);
+	// });
+	//
+	// $('li').each(function(index) {
+	// 		addImage(this, counter);
+	// });
+	//
+    // $('a').each(function(index) {
+	// 		addImage(this, counter);
+	// });
+	//
+	// $('head').append(
+	// 	"<script>$(function(){$('[data-toggle=\"popover\"]').popover();});</script>"
+	// );
 
 	/* Hide the popover when clicking anywhere on the page*/
 	$('body').on('click', function (e) {
-		//only buttons
-		if ($(e.target).data('toggle') !== 'popover'
-			&& $(e.target).parents('.popover.in').length === 0) {
-			$('[data-toggle="popover"]').popover('hide');
-		}
+
+    //only buttons
+	    if ($(e.target).data('toggle') !== 'popover'
+	        && $(e.target).parents('.popover.in').length === 0) {
+	        $('[data-toggle="popover"]').popover('hide');
+	    }
 	});
 }
 
@@ -60,12 +64,33 @@ function calculateAge(birthday) { // birthday is a date
     return Math.abs(ageDate.getUTCFullYear() - 1970);
 }
 
+function removeAccent(str){
+	var accent = [
+        /[\300-\306]/g, /[\340-\346]/g, // A, a
+        /[\310-\313]/g, /[\350-\353]/g, // E, e
+        /[\314-\317]/g, /[\354-\357]/g, // I, i
+        /[\322-\330]/g, /[\362-\370]/g, // O, o
+        /[\331-\334]/g, /[\371-\374]/g, // U, u
+        /[\321]/g, /[\361]/g, // N, n
+        /[\307]/g, /[\347]/g, // C, c
+    ];
+    var noaccent = ['A','a','E','e','I','i','O','o','U','u','N','n','C','c'];
 
-function imageBuild(name, firstname, id){
-    var res = firstname.concat(name);
-    res.toLowerCase();
-    res.replace(" ", "-");
-    return ("http://directory.wecitizens.be/images/generic/politician-thumb/" + id + "-" + res + ".jpg");
+    for(var i = 0; i < accent.length; i++){
+        str = str.replace(accent[i], noaccent[i]);
+    }
+
+    return str;
+}
+
+function urlBuild(name, firstname, id){
+	linkedName = name.replace(" ", "-");
+	linkedFirstname = firstname.replace(" ", "-");
+	var res = linkedFirstname.concat(linkedName);
+	res.toLowerCase();
+	res.replace(" ", "-");
+	res = removeAccent(res);
+	return("http://directory.wecitizens.be/fr/politician/" + res + "-" + id);
 }
 
 function display(hashmap, name, index, counter, context){
@@ -74,12 +99,14 @@ function display(hashmap, name, index, counter, context){
 	var bdate = new Date(hashmap[name][index][6]+'T10:20:30Z');
 	bdate = calculateAge(bdate);
 
-    if (hashmap[name][index][3] != "\\N"){
-        var photo = imageBuild(name, hashmap[name][index][4], hashmap[name][index][3]);
-        var img = "<img src="+ photo +" height=75 alt="+ name +">";
+    if (hashmap[name][index][3] != "\\N" && hashmap[name][index][3] != 0){
+        var photo = ("http://directory.wecitizens.be/images/generic/politician-thumb/" + hashmap[name][index][3]);
     }else{
-        var img = "<i class='material-icons md-60'>face</i>";
+        var photo = ("http://directory.wecitizens.be/images/img-no-photo.png");
     }
+    var img = "<img src="+ photo +" height=75 alt="+ name +">";
+
+    var url = urlBuild(name, hashmap[name][index][4], hashmap[name][index][0]);
 
 	var html = "\
 	<div class='panel-body'>\
@@ -99,7 +126,7 @@ function display(hashmap, name, index, counter, context){
 					"+ bdate +" years old\
 				</div>\
 				<div class='row'>\
-					<a href='http://www.wecitizens.be'>Voir sur wecitizens</a>\
+					<a target=\'_blank\' href='"+ url +"'>Voir sur wecitizens</a>\
 				</div>\
 			</div>\
 		</div>\
@@ -108,11 +135,11 @@ function display(hashmap, name, index, counter, context){
 	+ counter.i + String('"data-html="true" src="http://s12.postimg.org/bqsrifs6l/image.png" class="politicianFind" data-content="')
 	+ html + String('"></span>');
 	//console.log(image);
-	$(context).html(body.replace(name, name + " " + image));
-
 	politicianInfos.push({name: hashmap[name][index][4], surname: hashmap[name][index][5], birthDate: bdate,
 		politicalParty: hashmap[name][index][2], city: hashmap[name][index][7], job: hashmap[name][index][8]});
+	$(context).html(body.replace(name, name + " " + image));
 }
+
 
 function display_multiple(hashmap, name, counter, context){
     var body = $(context).text();
@@ -123,6 +150,15 @@ function display_multiple(hashmap, name, counter, context){
 		var bdate = new Date(person[6]+'T10:20:30Z');
 		bdate = calculateAge(bdate);
 
+		if (person[3] != "\\N" && person[3] != 0){
+	        var photo = ("http://directory.wecitizens.be/images/generic/politician-thumb/" + person[3]);
+	    }else{
+	        var photo = ("http://directory.wecitizens.be/images/img-no-photo.png");
+	    }
+	    var img = "<img src="+ photo +" height=60 alt="+ name +">";
+
+		var url = urlBuild(name, person[4], person[0]);
+
 		html += "<div class='panel panel-default'>\
 					<div class='panel-heading'>\
 						<h4 class='panel-title'>\
@@ -131,6 +167,7 @@ function display_multiple(hashmap, name, counter, context){
 					</div>\
 					<div id='collapsing"+counter.i+"' class='panel-collapse collapse'>\
 						<div class='panel-body'>\
+							<div class=\'col-xs-3\' id=\'photo\'>"+ img +" </div>\
 							<div class=\'col-xs-9\'>\
 								<div class=\'row\'>\
 									<strong>Job</strong>: "+ person[8] +"\
@@ -145,7 +182,7 @@ function display_multiple(hashmap, name, counter, context){
 									<strong>Age</strong>: "+ bdate +" years old\
 								</div>\
 								<div class=\'row\'>\
-									<a href=\'http://wecitizens.be\'>Voir sur wecitizens</a>\
+									<a target=\'_blank\' href=\'"+ url +"\'>Voir sur wecitizens</a>\
 								</div>\
 							</div>\
 						</div>\
@@ -155,7 +192,7 @@ function display_multiple(hashmap, name, counter, context){
 
 
 		var politicianInfos = {name: name, surname: person[4], birthDate: bdate,
-		politicalParty: person[2], city: person[7], job: person[8]};
+		politicalParty: person[2], city: person[7], job: person[8], photo: img, link: url};
 
 		// Listen for messages from the popup
 		console.log('Message received from popup');
@@ -176,13 +213,20 @@ function display_multiple(hashmap, name, counter, context){
 }
 
 
-function addImage(context, counter) {
-    var body = $(context).text();
+/* Returns indicates if we can hot swap the text or if we hae to retrun the html
+This is useful to escape balises */
+function addImage(context, body, counter, returns) {
+    // var body = $(context).text();
+	console.log(body);
 	var prev;
 	var pref;
 	var word;
 	var prefix = ["", "den ", "der ", "de ", "van "];
 	var reg = /[A-Z]+[a-z]*/gm;
+	var i = 0;
+	var ret;
+	word = reg.exec(body);
+	// for(i; i<word.length; i++) {
 	while(word = reg.exec(body)){
 		if (word == "De" || word == "Van" || word == "Di" || word == "Vanden" || word == "Ver"){		//Di Rupo rpz
 			pref = word;
@@ -214,6 +258,8 @@ function addImage(context, counter) {
 				}
 				if (pol != null){
 					display(hashmap, name, pol, counter, context);
+				}else if (matching.length == 1){	//Only one name matched
+					display(hashmap, name, 0, counter, context);
 				}else{		//Multiple matches
 					display_multiple(hashmap, name, counter, context);
 				}
@@ -222,7 +268,9 @@ function addImage(context, counter) {
 			}
 			prev = word;
 			iter++;
+			// i++;
 		}
 		body = $(context).text();
 	}
+	return ret;
 }

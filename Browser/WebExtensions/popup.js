@@ -47,6 +47,8 @@ function replaceHTML(politicianInfos) {
 			var politicalParty	= politicianInfos[i].politicalParty;
 			var city			= politicianInfos[i].city;
 			var job 			= politicianInfos[i].job;
+			var photo			= politicianInfos[i].photo;
+			var link			= politicianInfos[i].link;
 
 			$('#content-main').append('<div class="panel-group" id="accordion'+i+'">\
 					                <div class="panel panel-default"">\
@@ -58,6 +60,7 @@ function replaceHTML(politicianInfos) {
 					                    </div>\
 					                    <div id="collapsing'+i+'" class="panel-collapse collapse">\
 					                        <div class="panel-body">\
+					                        	<div class=\'col-xs-3\' id=\'photo\'>'+ photo +' </div>\
 					                        	<div class=\'col-xs-9\'>\
 													<div class=\'row\'>\
 														<strong>Job</strong>: '+ job +'\
@@ -72,7 +75,7 @@ function replaceHTML(politicianInfos) {
 														<strong>Age</strong>: '+ birthDate +' years old\
 													</div>\
 													<div class=\'row\'>\
-														<a href=\'http://wecitizens.be\'>Voir sur wecitizens</a>\
+														<a target="_blank" href=\''+ link +'\'>Voir sur wecitizens</a>\
 													</div>\
 												</div>\
 					                        </div>\
