@@ -23,23 +23,35 @@ $(document).ready(function(){
 	});
 });
 
+function textNodesUnder(el){
+  var n, a=[], walk=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,null,false);
+  while(n=walk.nextNode()) a.push(n);
+  return a;
+}
+
 	/* Search through <p> and <li> items TODO add other types*/
 function launchSearch(hashmap){
 
 
 	var counter = {i: 0}; //Occurences. Singleton to be passed by reference and not by value.
 
-	$('p').each(function(index) {
-			addImage(this, counter);
-	});
-
-	$('li').each(function(index) {
-			addImage(this, counter);
-	});
-
-    $('a').each(function(index) {
-			addImage(this, counter);
-	});
+	var arr = textNodesUnder(document.documentElement);
+	for (var i = 0; i < arr.length; i++) {
+		console.log("Array[i] =");
+		console.log(arr[i]);
+		addImage(arr[i], counter);
+	}
+	// $('p').each(function(index) {
+	// 		addImage(this, counter);
+	// });
+	//
+	// $('li').each(function(index) {
+	// 		addImage(this, counter);
+	// });
+	//
+    // $('a').each(function(index) {
+	// 		addImage(this, counter);
+	// });
 
 
 	$('head').append(
@@ -138,7 +150,8 @@ function display(hashmap, name, index, counter, context, returns){
 	//console.log(image);
 	politicianInfos.push({name: hashmap[name][index][4], surname: hashmap[name][index][5], birthDate: bdate,
 		politicalParty: hashmap[name][index][2], city: hashmap[name][index][7], job: hashmap[name][index][8]});
-	$(context).html($(context).html().replace(name, name + " " + image));
+	return image;
+	// $(context).html($(context).html().replace(name, name + " " + image));
 }
 
 
@@ -192,7 +205,8 @@ function display_multiple(hashmap, name, counter, context){
 	var image = String('<span id="popoverWeCitizens"><img data-toggle="popover" title="Politicians found"') + String('" id="popover')
 	+ counter.i + String('"data-html="true" src="http://s12.postimg.org/bqsrifs6l/image.png" class="politicianFind" data-content="')
 	+ html + String('"></span>');
-	$(context).html($(context).html().replace(name, name + " " + image));
+	return image;
+	// $(context).html($(context).html().replace(name, name + " " + image));
 }
 
 
@@ -200,7 +214,8 @@ function display_multiple(hashmap, name, counter, context){
 /* Returns indicates if we can hot swap the text or if we hae to retrun the html
 This is useful to escape balises */
 function addImage(context, counter) {
-    var body = $(context).text();
+	var toDisplay = [];
+    var body = context.textContent;
 	// console.log(body);
 	var prev;
 	var pref;
@@ -208,7 +223,6 @@ function addImage(context, counter) {
 	var prefix = ["", "den ", "der ", "de ", "van "];
 	var reg = /[A-Z]+[a-z]*/gm;
 	var i = 0;
-	var ret;
 	// for(i; i<word.length; i++) {
 	while(word = reg.exec(body)){
 		if (word == "De" || word == "Van" || word == "Di" || word == "Vanden" || word == "Ver"){		//Di Rupo rpz
@@ -225,6 +239,7 @@ function addImage(context, counter) {
 				name = prefix[iter] + word;
 			}
 			if (name in hashmap){
+				console.log("Found " + word + " at index " + word.index);
 				if(!font){
 					$('head').append('<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">');
 					font = true;
@@ -239,13 +254,11 @@ function addImage(context, counter) {
 						pol = i;
 					}
 				}
-				console.log($(context).html());
 				if (pol != null) {
-					display(hashmap, name, pol, counter, context);
+					toDisplay.push({"index" : word.index + word.length, "image" : display(hashmap, name, pol, counter, context)});
 				} else {		//Multiple matches
-					display_multiple(hashmap, name, counter, context);
+					toDisplay.push({"index" : word.index + word.length, "image" : display_multiple(hashmap, name, counter, context)});
 				}
-				console.log($(context).html());
                 counter.i++;
                 pref = null;
 			}
@@ -254,5 +267,8 @@ function addImage(context, counter) {
 			// i++;
 		}
 	}
-	return ret;
+	for(var i = 0; i < toDisplay.length; i++) {
+		var icon = toDisplay.pop();
+		context.textContent = body.substr(0, icon.index) + icon.image + body.substr(icon.index + 1);
+	}
 }
