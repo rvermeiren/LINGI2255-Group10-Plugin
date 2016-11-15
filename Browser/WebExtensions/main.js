@@ -9,6 +9,7 @@ var politicianInfos = [];
 **********************************************/
 
 $(document).ready(function(){
+	// console.log('Document is ready.. scanning for politicians...');
 	var retrievedObject = chrome.storage.local.get('database_csv',
 		function(result){
 			hashmap = CSVToHashmap(result.database_csv);
@@ -20,6 +21,7 @@ $(document).ready(function(){
 	console.log('Message received from popup');
 	chrome.runtime.onMessage.addListener(function (msg, sender, response) {
 		if ((msg.from === 'popup') && (msg.subject === 'politicianInfos')) {
+			console.log('Message sent to popup');
 			response(politicianInfos);
 		}
 	});
@@ -98,10 +100,8 @@ function inspectTextNode(parent, nodeIndex, textNode, counter) {
 				found = true;
 				var matching = [];
 				var pol = null;
-				/******** WARNING the following code may make you want to throw up.
-				Don't worry, we'll clean it soon. *********************************/
-				var twoNames = false;
 				// If only one politician has this name
+				var twoNames = false;
 				if(hashmap[name].length == 1) {
 					pol = 0;
 				}
@@ -115,13 +115,13 @@ function inspectTextNode(parent, nodeIndex, textNode, counter) {
 				}
 				var nameLength = name.length;
 				if(twoNames) {
-					if(prev in hashmap) toDisplay.pop();
 					prev += " "
 					nameLength += prev.length;
 				}
 				else {
 					prev = ""
 				}
+				// console.log("Name length : " + word[0].length);
 				// Only one politician
 				if (pol != null) {
 					toDisplay.push({"index" : reg.lastIndex, "nameLength" : nameLength ,"span" : prev + name + createSinglePopover(hashmap, name, pol, counter)});
@@ -145,18 +145,12 @@ function inspectTextNode(parent, nodeIndex, textNode, counter) {
 
 function displayIcons(textNode, parent, toDisplay) {
 	var ret = textNode.nodeValue;
-<<<<<<< HEAD
-
-	console.log(toDisplay.length);
-	console.log("ici");
-	console.log(ret);
-=======
->>>>>>> 724718403733cd263ef5f15ef4aeef288da55102
 
 	var fragment = document.createDocumentFragment();
 	for(var i = 0; i < toDisplay.length; i++) {
 		console.log(i);
 		var icon = toDisplay.pop();
+		// console.log(icon.index);
 		// Add the end of the textNode
 		if((icon.index) < ret.length)
 			fragment.insertBefore(document.createTextNode(ret.substr(icon.index)), fragment.firstChild);
@@ -165,9 +159,10 @@ function displayIcons(textNode, parent, toDisplay) {
 		var toAdd = document.createElement("span");
 		toAdd.innerHTML = icon.span;
 		fragment.insertBefore(toAdd, fragment.firstChild);
+		// console.log(icon.index-icon.nameLength);
+		// fragment.insertBefore(document.createTextNode(ret.substr(icon.index - icon.nameLength-1, icon.index)), fragment.firstChild);
 
 		// Now we handle the rest of the names, the ones in the beginning of the text
-		// We only keep until befor the name we just treated, as the name is already in icon.span
 		ret = ret.substr(0, icon.index-icon.nameLength);
 	}
 	fragment.insertBefore(document.createTextNode(ret), fragment.firstChild);
