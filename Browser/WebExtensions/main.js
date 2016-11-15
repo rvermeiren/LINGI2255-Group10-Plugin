@@ -43,17 +43,24 @@ function launchSearch(hashmap) {
 	var counter = {i: 0}; //Occurences. Singleton to be passed by reference and not by value.
 
 	var arr = textNodesUnder(document.body);
+	var visited = {};
 	for (var i = 0; i < arr.length; i++) {
-		for (var j = 0; j < arr[i].childNodes.length; j++) {
-			if (arr[i].childNodes[j].nodeType == Node.TEXT_NODE && arr[i].childNodes[j].nodeValue != "\n") {
-				inspectTextNode(arr[i], j, arr[i].childNodes[j], counter);
-				console.log(arr[i].childNodes.length);
-				console.log("i = " + i + " j = " + j);
-				// j++;
-				// console.log(arr[i].childNodes[j]);
-				// console.log(arr[i].childNodes[j+1]);
-				// console.log(arr[i].childNodes[j+2]);
+		if(!visited[arr[i].innerHTML]){
+			console.log(arr[i].innerHTML);
+			for (var j = 0; j < arr[i].childNodes.length; j++) {
+				if (arr[i].childNodes[j].nodeType == Node.TEXT_NODE && arr[i].childNodes[j].nodeValue != "\n") {
+					console.log("i = " + i + " j = " + j);
+					console.log(arr[i].childNodes[j].nodeValue);
+					var s = inspectTextNode(arr[i], j, arr[i].childNodes[j], counter);
+					if (s == 1){
+						// console.log(arr[i].childNodes.length);
+						j++;
+						console.log(arr[i].childNodes[j]);
+						console.log(arr[i].childNodes[j+1]);
+					}
+				}
 			}
+			visited[arr[i].innerHTML] = true;
 		}
 	}
 
@@ -139,7 +146,7 @@ function inspectTextNode(parent, nodeIndex, textNode, counter) {
 
 function displayIcons(textNode, parent, toDisplay) {
 	var ret = textNode.nodeValue;
-	console.log(ret);
+	// console.log(ret);
 
 	var fragment = document.createDocumentFragment();
 	for(var i = 0; i < toDisplay.length; i++) {
