@@ -56,6 +56,30 @@ function launchSearch(hashmap) {
 		"<script>$(function(){$(\'[data-toggle=\"popover\"]\').popover();});</script>"
 	);
 
+	//J'ai essaye d'injecter ça qui n'a pas l'air d'avoir besoin du body en container mais ça marche pas :d
+	$('head').append(
+		"<script>\
+				var originalLeave = $.fn.popover.Constructor.prototype.leave;\
+				$.fn.popover.Constructor.prototype.leave = function(obj){\
+					var self = obj instanceof this.constructor ?\
+						obj : $(obj.currentTarget)[this.type](this.getDelegateOptions()).data('bs.' + this.type)\
+					var container, timeout;\
+					originalLeave.call(this, obj);\
+					if(obj.currentTarget) {\
+						container = $(obj.currentTarget).siblings('.popover')\
+						timeout = self.timeout;\
+						container.one('mouseenter', function(){\
+							//We entered the actual popover – call off the dogs\
+							clearTimeout(timeout);\
+							//Let's monitor popover content instead\
+							container.one('mouseleave', function(){\
+								$.fn.popover.Constructor.prototype.leave.call(self, self);\
+							});\
+						})\
+					}\
+				};\	</script>"
+	);
+
 	/* Hide the popover when clicking anywhere on the page*/
 	$('body').on('click', function (e) {
 
@@ -77,7 +101,7 @@ function inspectTextNode(parent, nodeIndex, textNode, counter) {
 	// console.log(body);
 	var prev, pref, word;
 	var prefix = ["", "den ", "der ", "de ", "van "];
-	var reg = /[A-Z]+[a-z]*/gm;
+	var reg = /[A-Z]+[a-z\-]*/gm;
 	var i = 0;
 	// for(i; i<word.length; i++) {
 	while(word = reg.exec(body)){
@@ -232,13 +256,13 @@ function createSinglePopover(hashmap, name, index, counter) {
 
 	var html = initSinglePanel(img, hashmap[name][index][8], hashmap[name][index][2], hashmap[name][index][7], bdate, url)
 
-	var popover = String(' <span id="popoverWeCitizens"><img data-toggle="popover" data-trigger="hover" title="') + hashmap[name][index][4] + " " + hashmap[name][index][5] + String('" id="popover')
-	+ counter.i + String('"data-html="true" src="http://s12.postimg.org/bqsrifs6l/image.png" class="politicianFind" data-content="')
+	var popover = String(' <span id="popoverWeCitizens"><img data-popover="true" data-toggle="popover" data-trigger="hover" title="') + hashmap[name][index][4] + " " + hashmap[name][index][5] + String('" id="popover')
+	+ counter.i + String('"data-html="true" src="http://s12.postimg.org/bqsrifs6l/image.png" class="politicianFind pop" data-content="')
 	+ html + String('"></span>');
 
 	counter.i++;
 	politicianInfos.push({name: hashmap[name][index][4], surname: hashmap[name][index][5], birthDate: bdate,
-		politicalParty: hashmap[name][index][2], city: hashmap[name][index][7], job: hashmap[name][index][8]});
+		politicalParty: hashmap[name][index][2], city: hashmap[name][index][7], job: hashmap[name][index][8], photo: img});
 
 	return popover;
 }
@@ -259,10 +283,10 @@ function createListPopover(hashmap, name, counter){
 		html += initMultiplePanel(counter.i, person[4], person[5], img, person[8], person[2], person[7], bdate, url);
 
 		counter.i++;
-		politicianInfos.push({name: name, surname: person[4], birthDate: bdate, politicalParty: person[2], city: person[7], job: person[8]});
+		politicianInfos.push({name: name, surname: person[4], birthDate: bdate, politicalParty: person[2], city: person[7], job: person[8], photo: img});
 	}
 	html += "</div></div>";
-	var popover = String(' <span id="popoverWeCitizens"><img data-toggle="popover" title="Politicians found"') + String('" id="popover')
+	var popover = String(' <span id="popoverWeCitizens"><img data-toggle="popover" data-trigger="hover" title="Politicians found"') + String('" id="popover')
 	+ counter.i + String('"data-html="true" src="http://s12.postimg.org/bqsrifs6l/image.png" class="politicianFind" data-content="')
 	+ html + String('"></span>');
 	return popover;
