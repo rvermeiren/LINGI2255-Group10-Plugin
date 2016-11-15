@@ -45,14 +45,9 @@ function launchSearch(hashmap) {
 	var arr = textNodesUnder(document.body);
 	for (var i = 0; i < arr.length; i++) {
 		for (var j = 0; j < arr[i].childNodes.length; j++) {
-			if (arr[i].childNodes[j].nodeType == Node.TEXT_NODE && arr[i].childNodes[j].nodeValue != "\n") {
+			if (arr[i].childNodes[j].nodeType == Node.TEXT_NODE) {
 				inspectTextNode(arr[i], j, arr[i].childNodes[j], counter);
-				console.log(arr[i].childNodes.length);
-				console.log("i = " + i + " j = " + j);
-				// j++;
-				// console.log(arr[i].childNodes[j]);
-				// console.log(arr[i].childNodes[j+1]);
-				// console.log(arr[i].childNodes[j+2]);
+				j++;
 			}
 		}
 	}
@@ -106,6 +101,7 @@ function inspectTextNode(parent, nodeIndex, textNode, counter) {
 				var matching = [];
 				var pol = null;
 				// If only one politician has this name
+				var twoNames = false;
 				if(hashmap[name].length == 1) {
 					pol = 0;
 				}
@@ -114,15 +110,25 @@ function inspectTextNode(parent, nodeIndex, textNode, counter) {
 					matching.push(hashmap[name][i]);
 					if (prev == hashmap[name][i][4]) { //Matching also firstname
 						pol = i;
+						twoNames = true;
 					}
 				}
+				var nameLength = name.length;
+				if(twoNames) {
+					prev += " "
+					nameLength += prev.length;
+				}
+				else {
+					prev = ""
+				}
+				// console.log("Name length : " + word[0].length);
 				// Only one politician
 				if (pol != null) {
-					toDisplay.push({"index" : reg.lastIndex, "span" : createSinglePopover(hashmap, name, pol, counter)});
+					toDisplay.push({"index" : reg.lastIndex, "nameLength" : nameLength ,"span" : prev + name + createSinglePopover(hashmap, name, pol, counter)});
 				}
 				//Multiple policitians
 				else {
-					toDisplay.push({"index" : reg.lastIndex, "span" : createListPopover(hashmap, name, counter)});
+					toDisplay.push({"index" : reg.lastIndex, "nameLength" : nameLength ,"span" : prev + name + createListPopover(hashmap, name, counter)});
 				}
                 pref = null;
 			}
@@ -139,12 +145,15 @@ function inspectTextNode(parent, nodeIndex, textNode, counter) {
 
 function displayIcons(textNode, parent, toDisplay) {
 	var ret = textNode.nodeValue;
+	console.log(toDisplay.length);
+	console.log("ici");
 	console.log(ret);
 
 	var fragment = document.createDocumentFragment();
 	for(var i = 0; i < toDisplay.length; i++) {
+		console.log(i);
 		var icon = toDisplay.pop();
-		console.log(icon.index);
+		// console.log(icon.index);
 		// Add the end of the textNode
 		if((icon.index) < ret.length)
 			fragment.insertBefore(document.createTextNode(ret.substr(icon.index)), fragment.firstChild);
@@ -153,11 +162,13 @@ function displayIcons(textNode, parent, toDisplay) {
 		var toAdd = document.createElement("span");
 		toAdd.innerHTML = icon.span;
 		fragment.insertBefore(toAdd, fragment.firstChild);
+		// console.log(icon.index-icon.nameLength);
+		// fragment.insertBefore(document.createTextNode(ret.substr(icon.index - icon.nameLength-1, icon.index)), fragment.firstChild);
 
 		// Now we handle the rest of the names, the ones in the beginning of the text
-		ret = ret.substr(0, icon.index);
+		ret = ret.substr(0, icon.index-icon.nameLength);
 	}
-	fragment.insertBefore(document.createTextNode(ret.substr(0, icon.index)), fragment.firstChild);
+	fragment.insertBefore(document.createTextNode(ret), fragment.firstChild);
 	parent.replaceChild(fragment, textNode);
 }
 
