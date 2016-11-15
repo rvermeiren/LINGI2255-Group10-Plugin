@@ -45,8 +45,14 @@ function launchSearch(hashmap) {
 	var arr = textNodesUnder(document.body);
 	for (var i = 0; i < arr.length; i++) {
 		for (var j = 0; j < arr[i].childNodes.length; j++) {
-			if (arr[i].childNodes[j].nodeType == Node.TEXT_NODE) {
+			if (arr[i].childNodes[j].nodeType == Node.TEXT_NODE && arr[i].childNodes[j].nodeValue != "\n") {
 				inspectTextNode(arr[i], j, arr[i].childNodes[j], counter);
+				console.log(arr[i].childNodes.length);
+				console.log("i = " + i + " j = " + j);
+				// j++;
+				// console.log(arr[i].childNodes[j]);
+				// console.log(arr[i].childNodes[j+1]);
+				// console.log(arr[i].childNodes[j+2]);
 			}
 		}
 	}
@@ -126,18 +132,19 @@ function inspectTextNode(parent, nodeIndex, textNode, counter) {
 	}
 	if(toDisplay.length > 0) {
 		displayIcons(textNode, parent, toDisplay);
-		return toDisplay.length;
+		return 1;
 	}
 	return 0;
 }
 
 function displayIcons(textNode, parent, toDisplay) {
 	var ret = textNode.nodeValue;
+	console.log(ret);
 
 	var fragment = document.createDocumentFragment();
 	for(var i = 0; i < toDisplay.length; i++) {
 		var icon = toDisplay.pop();
-
+		console.log(icon.index);
 		// Add the end of the textNode
 		if((icon.index) < ret.length)
 			fragment.insertBefore(document.createTextNode(ret.substr(icon.index)), fragment.firstChild);
