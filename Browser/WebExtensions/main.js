@@ -24,9 +24,51 @@ $(document).ready(function(){
 });
 
 function textNodesUnder(el){
-  var n, a=[], walk=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,null,false);
-  while(n=walk.nextNode()) a.push(n);
-  return a;
+	var pred;
+	var n, a=[], walk=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,null,false);
+	while(n=walk.nextNode()){
+		if (pred != n.parentNode)
+			a.push(n.parentNode);
+		pred = n.parentNode;
+	}
+	return a;
+}
+
+function replaceNode(textNode, eNode) {
+    var pNode = textNode.parentNode;
+    pNode.replaceChild(textNode, eNode);
+}
+
+function decorateText(str) {
+    var e = document.createElement("span");
+    e.style.color = "#ff0000";
+    e.appendChild(document.createTextNode(str));
+    return e;
+}
+
+function searchAndReplaceElement(elem) {
+    for(var i = elem.childNodes.length; i--;) {
+        var childNode = elem.childNodes[i];
+        if(childNode.nodeType == 3) { // 3 => a Text Node
+            var strSrc = childNode.nodeValue; // for Text Nodes, the nodeValue property contains the text
+            var strSearch = "Special String";
+            var pos = strSrc.indexOf(strSearch);
+
+            if(pos >= 0) {
+                var fragment = document.createDocumentFragment();
+
+                if(pos > 0)
+                    fragment.appendChild(document.createTextNode(strSrc.substr(0, pos)));
+
+                fragment.appendChild(decorateText(strSearch));
+
+                if((pos + strSearch.length + 1) < strSrc.length)
+                    fragment.appendChild(document.createTextNode(strSrc.substr(pos + strSearch.length + 1)));
+
+                elem.replaceChild(fragment, childNode);
+            }
+        }
+    }
 }
 
 	/* Search through <p> and <li> items TODO add other types*/
@@ -35,11 +77,27 @@ function launchSearch(hashmap){
 
 	var counter = {i: 0}; //Occurences. Singleton to be passed by reference and not by value.
 
-	var arr = textNodesUnder(document.documentElement);
+	var arr = textNodesUnder(document.body);
 	for (var i = 0; i < arr.length; i++) {
-		console.log("Array[i] =");
-		console.log(arr[i]);
-		addImage(arr[i], counter);
+		var tab = [];
+		// console.log(arr[i]);
+		for (var j = 0; j < arr[i].childNodes.length; j++){
+			if (arr[i].childNodes[j].nodeType == Node.TEXT_NODE){
+				console.log("Array[i] =");
+				console.log(arr[i]);
+				tab.push({"index": j, "content" : addImage(arr[i], j, arr[i].childNodes[j], counter)});
+			}
+		}
+
+
+		var tmp = arr[i];
+		for (var j = tab.length-1; j>=0; j--){
+			var replacementNode = document.createElement('span');
+			replacementNode.innerHTML = tab[j].content;
+			tmp.insertBefore(replacementNode, tmp.childNodes[tab[j].index]);
+			tmp.removeChild(tmp.childNodes[tab[j].index+1]);
+		}
+		arr[i].nodeValue = tmp;
 	}
 	// $('p').each(function(index) {
 	// 		addImage(this, counter);
@@ -213,7 +271,7 @@ function display_multiple(hashmap, name, counter, context){
 
 /* Returns indicates if we can hot swap the text or if we hae to retrun the html
 This is useful to escape balises */
-function addImage(context, counter) {
+function addImage(parent, nodeIndex, context, counter) {
 	var toDisplay = [];
     var body = context.textContent;
 	// console.log(body);
@@ -267,8 +325,11 @@ function addImage(context, counter) {
 			// i++;
 		}
 	}
+	var ret = parent.childNodes[nodeIndex].nodeValue;
 	for(var i = 0; i < toDisplay.length; i++) {
 		var icon = toDisplay.pop();
-		context.textContent = body.substr(0, icon.index) + icon.image + body.substr(icon.index + 1);
+		ret=ret.substr(0, icon.index) + icon.image + ret.substr(icon.index + 1);
+		// context.textContent = body.substr(0, icon.index) + icon.image + body.substr(icon.index + 1);
 	}
+	return ret;
 }
