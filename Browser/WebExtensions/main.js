@@ -1,6 +1,6 @@
 var font = false;
 
-
+var pdf = false;
 var politicianInfos = [];
 
 
@@ -18,13 +18,27 @@ $(document).ready(function(){
 	);
 
 	// Listen for messages from the popup
-	console.log('Message received from popup');
 	chrome.runtime.onMessage.addListener(function (msg, sender, response) {
 		if ((msg.from === 'popup') && (msg.subject === 'politicianInfos')) {
 			console.log('Message sent to popup');
 			response(politicianInfos);
 		}
 	});
+
+	//to know if it is a pdf file
+	var url = document.location.href;
+	if (url.substr(url.length-3, url.length) == "pdf")
+		pdf=true;
+	else
+		pdf=false;
+	console.log(url.substr(url.length-3, url.length));
+	console.log(url);
+	// chrome.runtime.onMessage.addListener(function (msg, sender, response) {
+		// console.log(sender);
+		// var url = tab.url;
+		// var tab = sender.tab;
+	// });
+
 });
 
 function textNodesUnder(el){
@@ -160,7 +174,7 @@ function inspectTextNode(parent, nodeIndex, textNode, counter) {
 			iter++;
 		}
 	}
-	if(toDisplay.length > 0) {
+	if(toDisplay.length > 0 && !pdf) {
 		displayIcons(textNode, parent, toDisplay);
 		return 1;
 	}
@@ -257,7 +271,7 @@ function createSinglePopover(hashmap, name, index, counter) {
 	var html = initSinglePanel(img, hashmap[name][index][8], hashmap[name][index][2], hashmap[name][index][7], bdate, url)
 
 	var popover = String(' <span id="popoverWeCitizens"><img data-popover="true" data-toggle="popover" data-trigger="hover" title="') + hashmap[name][index][4] + " " + hashmap[name][index][5] + String('" id="popover')
-	+ counter.i + String('"data-html="true" src="http://s12.postimg.org/bqsrifs6l/image.png" class="politicianFind pop" data-content="')
+	+ counter.i + String('"data-html="true" src="http://i.imgur.com/coA4ZIB.png" class="politicianFind pop" data-content="')
 	+ html + String('"></span>');
 
 	counter.i++;
@@ -287,7 +301,7 @@ function createListPopover(hashmap, name, counter){
 	}
 	html += "</div></div>";
 	var popover = String(' <span id="popoverWeCitizens"><img data-toggle="popover" data-trigger="hover" title="Politicians found"') + String('" id="popover')
-	+ counter.i + String('"data-html="true" src="http://s12.postimg.org/bqsrifs6l/image.png" class="politicianFind" data-content="')
+	+ counter.i + String('"data-html="true" src="http://i.imgur.com/coA4ZIB.png" class="politicianFind" data-content="')
 	+ html + String('"></span>');
 	return popover;
 }
