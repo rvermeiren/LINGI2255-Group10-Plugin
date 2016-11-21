@@ -31,13 +31,13 @@ $(document).ready(function(){
 		pdf=true;
 	else
 		pdf=false;
-	console.log(url.substr(url.length-3, url.length));
-	console.log(url);
-	// chrome.runtime.onMessage.addListener(function (msg, sender, response) {
-		// console.log(sender);
-		// var url = tab.url;
-		// var tab = sender.tab;
-	// });
+
+	$('head').append("<script>\
+	$('[data-toggle=\"popover\"]').popover({\
+        placement : 'top',\
+        trigger : 'hover'\
+    });\
+	</script>");
 
 });
 
@@ -52,7 +52,6 @@ function textNodesUnder(el){
 	return a;
 }
 
-
 function launchSearch(hashmap) {
 	var counter = {i: 0}; //Occurences. Singleton to be passed by reference and not by value.
 
@@ -66,32 +65,28 @@ function launchSearch(hashmap) {
 		}
 	}
 
-	$('head').append(
-		"<script>$(function(){$(\'[data-toggle=\"popover\"]\').popover();});</script>"
-	);
-
-	//J'ai essaye d'injecter ça qui n'a pas l'air d'avoir besoin du body en container mais ça marche pas :d
+	// Let the popover opened if we hover over it
 	$('head').append(
 		"<script>\
-				var originalLeave = $.fn.popover.Constructor.prototype.leave;\
-				$.fn.popover.Constructor.prototype.leave = function(obj){\
-					var self = obj instanceof this.constructor ?\
-						obj : $(obj.currentTarget)[this.type](this.getDelegateOptions()).data('bs.' + this.type)\
-					var container, timeout;\
-					originalLeave.call(this, obj);\
-					if(obj.currentTarget) {\
-						container = $(obj.currentTarget).siblings('.popover')\
-						timeout = self.timeout;\
-						container.one('mouseenter', function(){\
-							//We entered the actual popover – call off the dogs\
-							clearTimeout(timeout);\
-							//Let's monitor popover content instead\
-							container.one('mouseleave', function(){\
-								$.fn.popover.Constructor.prototype.leave.call(self, self);\
-							});\
-						})\
-					}\
-				};\	</script>"
+		$(function(){\
+			$(\'[data-toggle=\"popover\"]\')\
+			.popover({ trigger: \"manual\" , html: true, animation:false})\
+			.on(\"mouseenter\", function () {\
+			    var _this = this;\
+			    $(this).popover(\"show\");\
+			    $(\".popover\").on(\"mouseleave\", function () {\
+			        $(_this).popover('hide');\
+			    });\
+			}).on(\"mouseleave\", function () {\
+			    var _this = this;\
+			    setTimeout(function () {\
+			        if (!$(\".popover:hover\").length) {\
+			            $(_this).popover(\"hide\");\
+			        }\
+			    }, 300);\
+			});\
+		});\
+		</script> "
 	);
 
 	/* Hide the popover when clicking anywhere on the page*/
@@ -159,7 +154,7 @@ function inspectTextNode(parent, nodeIndex, textNode, counter) {
 				else {
 					prev = ""
 				}
-				// console.log("Name length : " + word[0].length);
+
 				// Only one politician
 				if (pol != null) {
 					toDisplay.push({"index" : reg.lastIndex, "nameLength" : nameLength ,"span" : prev + name + createSinglePopover(hashmap, name, pol, counter)});
@@ -186,7 +181,6 @@ function displayIcons(textNode, parent, toDisplay) {
 
 	var fragment = document.createDocumentFragment();
 	for(var i = 0; i < toDisplay.length; i++) {
-		console.log(i);
 		var icon = toDisplay.pop();
 		// console.log(icon.index);
 		// Add the end of the textNode
@@ -197,8 +191,6 @@ function displayIcons(textNode, parent, toDisplay) {
 		var toAdd = document.createElement("span");
 		toAdd.innerHTML = icon.span;
 		fragment.insertBefore(toAdd, fragment.firstChild);
-		// console.log(icon.index-icon.nameLength);
-		// fragment.insertBefore(document.createTextNode(ret.substr(icon.index - icon.nameLength-1, icon.index)), fragment.firstChild);
 
 		// Now we handle the rest of the names, the ones in the beginning of the text
 		ret = ret.substr(0, icon.index-icon.nameLength);
@@ -271,7 +263,7 @@ function createSinglePopover(hashmap, name, index, counter) {
 	var html = initSinglePanel(img, hashmap[name][index][8], hashmap[name][index][2], hashmap[name][index][7], bdate, url)
 
 	var popover = String(' <span id="popoverWeCitizens"><img data-popover="true" data-toggle="popover" data-trigger="hover" title="') + hashmap[name][index][4] + " " + hashmap[name][index][5] + String('" id="popover')
-	+ counter.i + String('"data-html="true" src="http://i.imgur.com/coA4ZIB.png" class="politicianFind pop" data-content="')
+	+ counter.i + String('"data-html="true" src="http://i.imgur.com/neBExfj.png" class="politicianFind pop" data-content="')
 	+ html + String('"></span>');
 
 	counter.i++;
@@ -297,11 +289,11 @@ function createListPopover(hashmap, name, counter){
 		html += initMultiplePanel(counter.i, person[4], person[5], img, person[8], person[2], person[7], bdate, url);
 
 		counter.i++;
-		politicianInfos.push({name: name, surname: person[4], birthDate: bdate, politicalParty: person[2], city: person[7], job: person[8], photo: img});
+		politicianInfos.push({name: person[4], surname:name , birthDate: bdate, politicalParty: person[2], city: person[7], job: person[8], photo: img});
 	}
 	html += "</div></div>";
 	var popover = String(' <span id="popoverWeCitizens"><img data-toggle="popover" data-trigger="hover" title="Politicians found"') + String('" id="popover')
-	+ counter.i + String('"data-html="true" src="http://i.imgur.com/coA4ZIB.png" class="politicianFind" data-content="')
+	+ counter.i + String('"data-html="true" src="http://i.imgur.com/neBExfj.png" class="politicianFind" data-content="')
 	+ html + String('"></span>');
 	return popover;
 }
@@ -313,7 +305,7 @@ function initMultiplePanel(i, firstName, lastName, img, job, party, city, bdate,
 	return "<div class='panel panel-default'>\
 	<div class='panel-heading'>\
 		<h4 class='panel-title'>\
-			<a data-toggle='collapse' data-target='#collapsing"+i+"' class='collapsed'>" + firstName + " "+ lastName + "</a>\
+			<a data-toggle='collapse' href='javascript:;' data-target='#collapsing"+i+"' class='collapsed'>" + firstName + " "+ lastName + "</a>\
 		</h4>\
 	</div>\
 	<div id='collapsing"+i+"' class='panel-collapse collapse'>\

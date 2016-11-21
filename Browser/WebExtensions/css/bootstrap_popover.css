@@ -6756,7 +6756,15 @@ button.list-group-item-danger.active:focus {
 
 /*Added CSS*/
 #popoverWeCitizens .popover, .popover-content, .popover-inner{
-    width: 350px !important; /* Max Width of the popover (depending on the container!) */
+    max-width: 350px !important; /* Max Width of the popover (depending on the container!) */
+	width: 350px !important; /* Max Width of the popover (depending on the container!) */
+	color: black !important;
+}
+
+#popoverWeCitizens .pop {
+	margin-top: 0px !important;
+	margin-bottom: 0px !important;
+	line-height: normal !important;
 }
 
 
