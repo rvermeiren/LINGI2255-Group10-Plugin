@@ -9,11 +9,22 @@ var politicianInfos = [];
 **********************************************/
 
 $(document).ready(function(){
+	//to know if it is a pdf file
+	var url = document.location.href;
+	if (url.substr(url.length-3, url.length) == "pdf")
+		pdf=true;
+	else
+		pdf=false;
+
+
 	// console.log('Document is ready.. scanning for politicians...');
 	var retrievedObject = chrome.storage.local.get('database_csv',
 		function(result){
 			hashmap = CSVToHashmap(result.database_csv);
-			launchSearch(hashmap);
+			if (pdf)
+				launchPDFSearch(hashmap, url);
+			else
+				launchHTMLSearch(hashmap);
 		}
 	);
 
@@ -25,12 +36,7 @@ $(document).ready(function(){
 		}
 	});
 
-	//to know if it is a pdf file
-	var url = document.location.href;
-	if (url.substr(url.length-3, url.length) == "pdf")
-		pdf=true;
-	else
-		pdf=false;
+
 
 	$('head').append("<script>\
 	$('[data-toggle=\"popover\"]').popover({\
@@ -52,14 +58,36 @@ function textNodesUnder(el){
 	return a;
 }
 
-function launchSearch(hashmap) {
+function launchPDFSearch(hashmap, url) {
+	var pdfName = url.split("/");
+	pdfName = pdfName[pdfName.length-1];
+	console.log(pdfName);
+	PDFJS.workerSrc = "chrome-extension://kgekcegnemjkffokambeichljgkfhchc/pdf.worker.js";
+	var counter = {i : 0};
+	// PDFJS.disableWorker = true;
+	PDFJS.getDocument(url).then(function(pdf) {
+	    var maxPages = pdf.pdfInfo.numPages;
+	    for (var j = 1; j < maxPages; j++) {
+	        var page = pdf.getPage(j).then(function(page) {
+	            var textContent  = page.getTextContent().then(function(textContent){
+					for(var i = 0; i < textContent.items.length; i++) {
+						console.log(textContent.items[i].str);
+						inspectTextNode(null, null, textContent.items[i].str, counter, true);
+					}
+				});
+	        });
+	    }
+	});
+}
+
+function launchHTMLSearch(hashmap) {
 	var counter = {i: 0}; //Occurences. Singleton to be passed by reference and not by value.
 
 	var arr = textNodesUnder(document.body);
 	for (var i = 0; i < arr.length; i++) {
 		for (var j = 0; j < arr[i].childNodes.length; j++) {
 			if (arr[i].childNodes[j].nodeType == Node.TEXT_NODE) {
-				inspectTextNode(arr[i], j, arr[i].childNodes[j], counter);
+				inspectTextNode(arr[i], j, arr[i].childNodes[j], counter, false);
 				j++;
 			}
 		}
@@ -104,9 +132,13 @@ function launchSearch(hashmap) {
 **** Search through textNode and add icons ***
 **********************************************/
 
-function inspectTextNode(parent, nodeIndex, textNode, counter) {
+function inspectTextNode(parent, nodeIndex, textNode, counter, pdf) {
 	var toDisplay = [];
-    var body = textNode.textContent;
+	var body;
+	if (pdf)
+		body = textNode;
+	else
+		body = textNode.textContent;
 	// console.log(body);
 	var prev, pref, word;
 	var prefix = ["", "den ", "der ", "de ", "van "];
@@ -157,11 +189,21 @@ function inspectTextNode(parent, nodeIndex, textNode, counter) {
 
 				// Only one politician
 				if (pol != null) {
-					toDisplay.push({"index" : reg.lastIndex, "nameLength" : nameLength ,"span" : prev + name + createSinglePopover(hashmap, name, pol, counter)});
+					if (pdf) {
+						console.log("LOL we create a politician");
+						createSinglePopover(hashmap, name, pol, counter);
+					}
+					else
+						toDisplay.push({"index" : reg.lastIndex, "nameLength" : nameLength ,"span" : prev + name + createSinglePopover(hashmap, name, pol, counter)});
 				}
 				//Multiple policitians
 				else {
-					toDisplay.push({"index" : reg.lastIndex, "nameLength" : nameLength ,"span" : prev + name + createListPopover(hashmap, name, counter)});
+					if (pdf) {
+						console.log("LOL we create multiple politicians");
+						createListPopover(hashmap, name, counter);
+					}
+					else
+						toDisplay.push({"index" : reg.lastIndex, "nameLength" : nameLength ,"span" : prev + name + createListPopover(hashmap, name, counter)});
 				}
                 pref = null;
 			}
