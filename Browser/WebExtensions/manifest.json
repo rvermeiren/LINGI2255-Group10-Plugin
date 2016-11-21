@@ -6,9 +6,9 @@
     "homepage_url": "http://WeCitizens.be/",
     "content_scripts": [
         {
-            "matches": ["http://*/*", "https://*/*"],
+            "matches": ["<all_urls>"],
             "css": ["css/bootstrap_popover.css"],
-            "js": ["jquery-1.9.1.min.js", "bootstrap.min.js", "db_reader.js", "main.js"]
+            "js": ["jquery-1.9.1.min.js", "bootstrap.min.js", "db_reader.js", "compatibility.js", "pdf.js", "main.js"]
         }
     ],
     "browser_action": {
@@ -33,5 +33,6 @@
         "gecko": {
             "id": "wecitizens@wecitizens.be"
         }
-    }
+    },
+	"web_accessible_resources": ["pdf.worker.js"]
 }
