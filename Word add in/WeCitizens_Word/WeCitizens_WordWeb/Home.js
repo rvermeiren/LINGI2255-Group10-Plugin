@@ -1,5 +1,7 @@
 ﻿/// <reference path="/Scripts/FabricUI/MessageBanner.js" />
+// DEBUG ASSUMPTIONS : Hashmap and CSVtoHashmap work, the hashmap is not empty
 
+// TODO : Image loading different!
 
 (function () {
     "use strict";
@@ -8,7 +10,7 @@
 
     var alreadyFoundPoliticians = {};
 
-    var politicsName = {};
+    var hashmap = [];
 
     // La fonction d'initialisation doit être exécutée chaque fois qu'une nouvelle page est chargée.
     Office.initialize = function (reason) {
@@ -33,39 +35,22 @@
             $('#button-text').text(" Search for politicians");
             $('#button-desc').text("Met en surbrillance les noms de la liste.");
 
-            loadSampleData();
+           // loadSampleData();
             $('#highlight-button').click(searchNames);
 
-            // Adds the infos about all politicians in the global variable politicsName
-           document.getElementById('file').onchange = function () {
+            document.getElementById('file').onchange = function () {
 
-                var file = this.files[0];
+               var file = this.files[0];
 
-                var reader = new FileReader();
-                reader.onload = function (progressEvent) {
+               var reader = new FileReader();
+               reader.onload = function (progressEvent) {
 
-                    // By lines
-                    var input = this.result.split('\n');
-                    for (var line = 0; line < input.length; line++) {
-                        var currentLine = input[line];
-                        var infos = currentLine.split(",");
-
-                        // There is already a politician with the same name (which is the dict key) in politicsName
-                        if (politicsName[extractText(infos[5])] != null) {
-                            var updatedList = politicsName[extractText(infos[5])];
-                            updatedList.push(currentLine);
-                            politicsName[extractText(infos[5])] = updatedList;
-                        }
-                        // New politician to add to the dictionary politicsName
-                        else {
-                            var newList = [];
-                            newList.push(currentLine);
-                            politicsName[extractText(infos[5])] = newList;
-                        }
-                    }
-                };
-                reader.readAsText(file);
-            };
+                   // Give entire file to the function CSVToHashmap
+                   hashmap = CSVToHashmap(this.result);
+                   
+               };
+               reader.readAsText(file);
+           };
 
             launchProcess();
 
@@ -76,28 +61,113 @@
     function launchProcess() {
       searchNames();
       $('#content-main').append('<span id="politicians"></div>');
-      return ;
     }
 
-    function loadSampleData() {
 
-        // Executez une opération de traitement par lots sur le modèle objet Word.
+/*****************************************************************************************************************/
+    
+
+    /*********************************************/
+    /***** SEARCH RELATED AUXILIARY FUNCTIONS*****/
+    /*********************************************/
+
+    /**
+     * Displays infos of a specific politician
+     * in the add-in panel.
+     *
+     * @index allows to retrieve the first name
+     * of the policitian.
+     */ 
+    function display(hashmap, name, index, context) {
+
         Word.run(function (context) {
 
-            // Creez un objet proxy pour le corps du document.
+            // Mettez en file d'attente une commande pour obtenir la selection actuelle, puis
+            // creez un objet de plage proxy avec les resultats.
             var body = context.document.body;
+            context.load(body, 'text');
 
-            // Mettez en file d'attente une commande pour effacer le contenu du corps.
-            body.clear();
+            console.log("Name to display : " + hashmap[name][index]);
 
-            // Synchronisez l'etat du document en exécutant les commandes en file d'attente, puis retournez une promesse pour indiquer l'achevement de la tache.
-            return context.sync();
+            var bdate = new Date(hashmap[name][index][6] + 'T10:20:30Z');
+            bdate = calculateAge(bdate);
+
+            $('#politicians').append(
+                    '<div class="panel panel-default" id="panel' + index + '">\
+                        <div class="panel-heading">\
+                            <a data-toggle="collapse" data-target="#collapse'+ index + '">\
+                            <h4 class="panel-title">' + hashmap[name][index][4] + " " + hashmap[name][index][5] + '</h4>\
+                            </a>\
+                        </div>\
+                        <div id="collapse'+ index + '" class="panel-collapse collapse ">\
+                            <div class="panel-body">\
+                                <div class="row">\
+                                    <div class="col-xs-2" id="photo"> <i class="material-icons md-60">face</i> </div>\
+                                    <div class="col-xs-10">\
+                                <div class="row"> ' + hashmap[name][index][8] + '</div>\
+                                <div class="row"> ' + hashmap[name][index][2] + '</div>\
+                                <div class="row"> ' + hashmap[name][index][7] + '</div>\
+                                <div class="row"> ' + bdate + ' years old' + '</div>\
+                                <div class="row"> <a href="http://www.wecitizens.be">More on Wecitizens.be</a> </div>\
+                            </div>\
+                        </div>\
+                        </div>\
+                    </div>\
+                </div>\ '
+                );
         })
-        .catch(errorHandler);
     }
 
-    /*
-    Search for the names matching the names in the politicians database
+    /**
+     * Given the name of a politician, displays
+     * the infos of all the policitians in the DB matching 
+     * this name.
+     */
+    function display_multiple(hashmap, name, context) {
+
+        Word.run(function (context) {
+            console.log("Name to display : " + name);
+            // Mettez en file d'attente une commande pour obtenir la selection actuelle, puis
+            // creez un objet de plage proxy avec les resultats.
+            var body = context.document.body;
+            context.load(body, 'text');
+
+            for (var i = 0; i < hashmap[name].length; i++) {
+                var person = hashmap[name][i];
+                var bdate = new Date(person[6] + 'T10:20:30Z');
+                bdate = calculateAge(bdate);
+
+                $('#politicians').append(
+                    '<div class="panel panel-default" id="panel' + i + '">\
+                        <div class="panel-heading">\
+                            <a data-toggle="collapse" data-target="#collapse'+ i + '">\
+                            <h4 class="panel-title">' + person[4] + " " + person[5] + '</h4>\
+                            </a>\
+                        </div>\
+                        <div id="collapse'+ i + '" class="panel-collapse collapse ">\
+                            <div class="panel-body">\
+                                <div class="row">\
+                                    <div class="col-xs-2" id="photo"> <i class="material-icons md-60">face</i> </div>\
+                                    <div class="col-xs-10">\
+                                <div class="row"> ' + person[8] + '</div>\
+                                <div class="row"> ' + person[2] + '</div>\
+                                <div class="row"> ' + person[7] + '</div>\
+                                <div class="row"> ' + bdate + ' years old' + '</div>\
+                                <div class="row"> <a href="http://www.wecitizens.be">More on Wecitizens.be</a> </div>\
+                            </div>\
+                        </div>\
+                        </div>\
+                    </div>\
+                </div>\ '
+                    );
+            }
+        })
+    }
+
+   /**
+    * General function which launches the search for politicians.
+    * Loads the text of the documents (body.text),
+    * then calls inspectText().
     */
     function searchNames() {
 
@@ -108,113 +178,102 @@
             var body = context.document.body;
             context.load(body, 'text');
 
+            // Empties the politicians already found since we "relaunch" the search.
+            alreadyFoundPoliticians = {};
             
-            // Clears the search results and the display when "relaunching" the search
-            var searchResults = [];
-            $('#politicians').empty();
-            alreadyFoundPoliticians = {}
+            $('#politicians').empty();  // Empties all the content of the panel.
 
-            return context.sync()
-            .then(function () {
+            return context.sync().then(function () {
+                
+                var wholeText = body.text;  // Get the whole text of the body as a String
 
-                // Search for politicians
-                for (var name in politicsName) {
-                    searchResults.push(body.search(name, { matchCase: true, matchWholeWord: true }));
-                }
+                // Launch the search
+                inspectText(wholeText, context);
 
-                var arrayLength = searchResults.length;
-                for (var i = 0; i < arrayLength; i++) {
-                    context.load(searchResults[i], 'font');
-                    context.load(searchResults[i], 'text');
-                }
-
-            })
-            .then(context.sync)
-            .then(function () {
-              // Displays in the panel the politicians found
-                var arrayLength = searchResults.length;
-                for (var i = 0; i < arrayLength; i++) {
-                    if (searchResults[i].items[0] != null && alreadyFoundPoliticians[searchResults[i].items[0].text] == null) {
-                        alreadyFoundPoliticians[searchResults[i].items[0].text] = true;
-                        var currentNameList = politicsName[searchResults[i].items[0].text];
-
-                        // Goes through all politicians with the same name and displays them
-                        for (var j = 0; j < currentNameList.length;j++) {
-                            var currentPolName = currentNameList[j].split(",");
-                            $('#politicians').append(
-               '<div class="panel panel-default" id="panel' + j + '">\
-          <div class="panel-heading">\
-             <a data-toggle="collapse" data-target="#collapse'+ j + '">\
-                 <h4 class="panel-title">' + extractText(currentPolName[4]) + ' ' + extractText(currentPolName[5]) + '</h4>\
-             </a>\
-          </div>\
-          <div id="collapse'+ j + '" class="panel-collapse collapse ">\
-              <div class="panel-body">\
-                <div class="row">\
-                 <div class="col-xs-2" id="photo"> <i class="material-icons md-60">face</i> </div>\
-                  <div class="col-xs-10">\
-                    <div class="row"> ' + 'Job :' + displayJob(extractText(currentPolName[8])) + '</div>\
-                    <div class="row"> ' + 'Political Party :' + extractText(currentPolName[2]) + '</div>\
-                    <div class="row"> ' + 'City: ' + extractText(currentPolName[7]) + '</div>\
-                    <div class="row"> ' + 'Age: ' + computeAge(extractText(currentPolName[6])) + '</div>\
-                    <div class="row"> <a href="http://www.wecitizens.be">More on Wecitizens.be</a> </div>\
-                  </div>\
-                 </div>\
-                </div>\
-              </div>\
-          </div>\ '
-                          );
-                        }
-                    }
-                }
-            })
-            .then(context.sync);
+            }).then(context.sync);
         })
         .catch(errorHandler);
+
     }
 
-    // Code found on stackoverflow.com : 
-    // http://stackoverflow.com/questions/19793221/javascript-text-between-double-quotes
-    function extractText(str) {
-        var ret = "";
+    /**
+     * Given a text as a String object (body), 
+     * the function searches for any politicians' names in the text of the document.
+     * It uses a regular expression.
+     */
+    function inspectText(body, context) {
+        var toDisplay = [];
+        console.log(body);
+        var prev, pref, word;
+        var prefix = ["", "den ", "der ", "de ", "van "];
+        var reg = /[A-Z]+[a-z\-]*/gm;
+        var i = 0;
+        while (word = reg.exec(body)) {
+            if (word == "De" || word == "Van" || word == "Di" || word == "Vanden" || word == "Ver") {		//Di Rupo rpz
+                pref = word;
+                console.log("Prefix found: " + pref);
+                continue;
+            }
+            var name;
+            var found = false;
+            var iter = 0;
+            while (!found && iter < prefix.length) {
+                // Search for prefixes
+                if (pref != null) {
+                    name = pref + " " + prefix[iter] + word;
+                } else {
+                    name = prefix[iter] + word;
+                }
+                // Search for the name in the hashmap
+                if (name in hashmap) {
+                    found = true;
+                    var matching = [];
+                    var pol = null;
+                    // If only one politician has this name
+                    var twoNames = false;
+                    if (hashmap[name].length == 1) {
+                        pol = 0;
+                    }
+                        // If a politician has his first name cited just before his last name in the text
+                    else for (var i in hashmap[name]) {
+                        matching.push(hashmap[name][i]);
+                        if (prev == hashmap[name][i][4]) { //Matching also firstname
+                            pol = i;
+                            twoNames = true;
+                        }
+                    }
+                    var nameLength = name.length;
+                    if (twoNames) {
+                        prev += " ";
+                        nameLength += prev.length;
+                    }
+                    else {
+                        prev = "";
+                    }
 
-        if (/"/.test(str)) {
-            ret = str.match(/"(.*?)"/)[1];
-        } else {
-            ret = str;
+                    // Only one politician
+                    if (pol != null) {
+                        display(hashmap, name, pol, context);
+                    }
+                        //Multiple policitians
+                    else {
+                        console.log("display multiple");
+                        display_multiple(hashmap, name, context);
+                    }
+                    pref = null;
+                }
+                prev = word;
+                iter++;
+            }
         }
-        return ret;
     }
-
-    // Given a date of birth, returns the age of the policitian
-    function computeAge(dateOfBirth) {
-        var informations = dateOfBirth.split("-");
-        var year = parseInt(informations[0]);
-        var today = new Date();
-        return (today.getFullYear() - year).toString();
+    
+    //http://stackoverflow.com/questions/4060004/calculate-age-in-javascript
+    function calculateAge(birthday) { // birthday is a date
+        var ageDifMs = Date.now() - birthday.getTime();
+        var ageDate = new Date(ageDifMs); // miliseconds from epoch
+        return Math.abs(ageDate.getUTCFullYear() - 1970);
     }
-
-    /* Checks if job is not null. I
-     *  If so returns it, if not returns "n/a" (not available)
-     */ 
-    function displayJob(job) {
-        if (job === "\N" || job === "") {
-            return " n/a";
-        }
-        else {
-            return job;
-        }
-    }
-
-    // creates the hashmap
-    function getHashMap(filename) {
-        var csv = 'http://34bw.be/wp-content/uploads/2016/10/temp_database.csv';
-        var strContent = readTextFile(csv);
-        var hashmap = {};
-        hashmap = CSVToArray(strContent);
-        //alert(hashmap);
-        return hashmap;
-    }// JavaScript source code
 
     //$$(Helper function for treating errors, $loc_script_taskpane_home_js_comment34$)$$
     function errorHandler(error) {
@@ -232,6 +291,94 @@
         $("#notificationBody").text(content);
         messageBanner.showBanner();
         messageBanner.toggleExpansion();
+    }
+
+    //Code found on STACKOVERFLOW
+    function CSVToHashmap(strData) {
+        // Check to see if the delimiter is defined. If not,
+        // then default to comma.
+        var strDelimiter = ",";
+        // Create a regular expression to parse the CSV values.
+        var objPattern = new RegExp(
+            (
+                // Delimiters.
+                "(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
+                // Quoted fields.
+                "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+                // Standard fields.
+                "([^\"\\" + strDelimiter + "\\r\\n]*))"
+            ),
+            "gi"
+            );
+        // Create an array to hold our data. Give the array
+        // a default empty first row.
+        var arrData = [[]];
+        // Create an array to hold our individual pattern
+        // matching groups.
+        var arrMatches = null;
+        var hashmap = {};
+
+        // Keep looping over the regular expression matches
+        // until we can no longer find a match.
+        while (arrMatches = objPattern.exec(strData)) {
+
+
+            // Get the delimiter that was found.
+            var strMatchedDelimiter = arrMatches[1];
+            // Check to see if the given delimiter has a length
+            // (is not the start of string) and if it matches
+            // field delimiter. If id does not, then we know
+            // that this delimiter is a row delimiter.
+            if (
+                strMatchedDelimiter.length &&
+                strMatchedDelimiter !== strDelimiter
+                ) {
+                // Since we have reached a new row of data,
+                // add an empty row to our data array.
+                arrData.push([]);
+            }
+            var strMatchedValue;
+            // Now that we have our delimiter out of the way,
+            // let's check to see which kind of value we
+            // captured (quoted or unquoted).
+            if (arrMatches[2]) {
+                // We found a quoted value. When we capture
+                // this value, unescape any double quotes.
+                strMatchedValue = arrMatches[2].replace(
+                    new RegExp("\"\"", "g"),
+                    "\""
+                    );
+            } else {
+                // We found a non-quoted value.
+                strMatchedValue = arrMatches[3];
+            }
+            // Now that we have our value string, let's add
+            // it to the data array.
+            arrData[arrData.length - 1].push(strMatchedValue);
+            if (arrData[arrData.length - 1].length == 9) {
+                var line = arrData[arrData.length - 1];
+                addToHashMap(hashmap, line);
+
+            }
+        }
+        //Return the parsed data.
+        // var test = hashmap['Michel'];
+        // for(var i = 0; i<test.length; i++){
+        //     alert(test[i]);
+        // }
+        return (hashmap);
+    }
+
+    /*
+     * Add the line to the hashmap.
+     * In case of conflict, appends the line to the end of the array stored at
+     * hashmap[line[5]]
+     **/
+    function addToHashMap(hashmap, line) {
+        if (hashmap[line[5]] == undefined) {
+            hashmap[line[5]] = [];
+        }
+        hashmap[line[5]].push(line);
     }
 
 })();
