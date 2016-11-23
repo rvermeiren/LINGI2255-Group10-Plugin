@@ -33,6 +33,7 @@ chrome.runtime.onMessage.addListener(
 		console.log("We are there");
 		if (request.notification == true)
 			notification(request.count)
+		chrome.browserAction.setBadgeText({text: request.count.toString()})
 		sendResponse();
 	}
 );
@@ -49,7 +50,6 @@ function notification(count) {
 			console.log("Received the notif msg");
         }
     );
-	chrome.browserAction.setBadgeText({text: count.toString()})
 }
 
 function update_research(cb) {

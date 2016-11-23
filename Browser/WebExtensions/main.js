@@ -28,10 +28,14 @@ function start(){
 	var retrievedObject = chrome.storage.local.get('database_csv',
 		function(result){
 			hashmap = CSVToHashmap(result.database_csv);
-			if (pdf)
+			if (pdf){
 				launchPDFSearch(hashmap, url);
-			else
+				chrome.runtime.sendMessage({notification: true, count: politicianInfos.length}, function(response) {});
+			}
+			else {
 				launchHTMLSearch(hashmap);
+				chrome.runtime.sendMessage({notification: false, count: politicianInfos.length}, function(response) {});
+			}
 		}
 	);
 
@@ -84,7 +88,6 @@ function launchPDFSearch(hashmap, url) {
 	        });
 	    }
 	});
-	chrome.runtime.sendMessage({notification: true, count: politicianInfos.length}, function(response) {});
 }
 
 function launchHTMLSearch(hashmap) {
