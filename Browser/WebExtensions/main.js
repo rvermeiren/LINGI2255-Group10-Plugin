@@ -62,7 +62,7 @@ function launchPDFSearch(hashmap, url) {
 	var pdfName = url.split("/");
 	pdfName = pdfName[pdfName.length-1];
 	console.log(pdfName);
-	PDFJS.workerSrc = "chrome-extension://hnlmioddbfkicclcicgmdgfjdnmenlkd/pdf.worker.js";
+	PDFJS.workerSrc = chrome.extension.getURL("pdf.worker.js");
 	var counter = {i : 0};
 	// PDFJS.disableWorker = true;
 	PDFJS.getDocument(url).then(function(pdf) {
