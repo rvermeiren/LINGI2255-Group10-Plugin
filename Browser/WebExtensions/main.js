@@ -9,43 +9,50 @@ var politicianInfos = [];
 **********************************************/
 
 $(document).ready(function(){
-	//to know if it is a pdf file
-	var url = document.location.href;
-	if (url.substr(url.length-3, url.length) == "pdf")
-		pdf=true;
-	else
-		pdf=false;
-
-
-	// console.log('Document is ready.. scanning for politicians...');
-	var retrievedObject = chrome.storage.local.get('database_csv',
+	var retrievedObject = chrome.storage.local.get('search',
 		function(result){
-			hashmap = CSVToHashmap(result.database_csv);
-			if (pdf)
-				launchPDFSearch(hashmap, url);
-			else
-				launchHTMLSearch(hashmap);
+			if (result.search == true || JSON.stringify(result) == '{}') { start(); }
 		}
-	);
+	);});
 
-	// Listen for messages from the popup
-	chrome.runtime.onMessage.addListener(function (msg, sender, response) {
-		if ((msg.from === 'popup') && (msg.subject === 'politicianInfos')) {
-			console.log('Message sent to popup');
-			response(politicianInfos);
-		}
-	});
+function start(){
+		//to know if it is a pdf file
+		var url = document.location.href;
+		if (url.substr(url.length-3, url.length) == "pdf")
+			pdf=true;
+		else
+			pdf=false;
+
+
+		// console.log('Document is ready.. scanning for politicians...');
+		var retrievedObject = chrome.storage.local.get('database_csv',
+			function(result){
+				hashmap = CSVToHashmap(result.database_csv);
+				if (pdf)
+					launchPDFSearch(hashmap, url);
+				else
+					launchHTMLSearch(hashmap);
+			}
+		);
+
+		// Listen for messages from the popup
+		chrome.runtime.onMessage.addListener(function (msg, sender, response) {
+			if ((msg.from === 'popup') && (msg.subject === 'politicianInfos')) {
+				console.log('Message sent to popup');
+				response(politicianInfos);
+			}
+		});
 
 
 
-	$('head').append("<script>\
-	$('[data-toggle=\"popover\"]').popover({\
-        placement : 'top',\
-        trigger : 'hover'\
-    });\
-	</script>");
+		$('head').append("<script>\
+		$('[data-toggle=\"popover\"]').popover({\
+	        placement : 'top',\
+	        trigger : 'hover'\
+	    });\
+		</script>");
 
-});
+}
 
 function textNodesUnder(el){
 	var pred;

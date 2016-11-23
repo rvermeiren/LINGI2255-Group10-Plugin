@@ -1,5 +1,18 @@
 //Once the DOM is ready
 window.addEventListener('DOMContentLoaded', function () {
+	document.getElementById("checkbox").addEventListener("click", function(){
+    	update_research(document.getElementById("checkbox"));
+	});
+
+
+	var retrievedObject = chrome.storage.local.get('search',
+		function(result){
+			if(JSON.stringify(result) != '{}')
+				document.getElementById("checkbox").checked = result.search
+			else document.getElementById("checkbox").checked = true
+		}
+	);
+
 	//Query for the active tab
 	chrome.tabs.query({
 		active: true,
@@ -14,6 +27,13 @@ window.addEventListener('DOMContentLoaded', function () {
 		console.log('Message sent from popup.js');
 	});
 });
+
+function update_research(cb) {
+	chrome.storage.local.set({'search': cb.checked},
+		function(){
+			console.log("Search setted to: "+ cb.checked);
+		});
+}
 
 
 function containsObject(obj, array) {
@@ -54,7 +74,7 @@ function replaceHTML(politicianInfos) {
 					                <div class="panel panel-default"">\
 					                    <div class="panel-heading">\
 					                        <h4 class="panel-title">\
-					                            <a data-toggle="collapse" data-target="#collapsing'+i+'" href="#collapsing" class="collapsed">' + name + " " 
+					                            <a data-toggle="collapse" data-target="#collapsing'+i+'" href="#collapsing" class="collapsed">' + name + " "
 					                            + surname + '</a>\
 					                        </h4>\
 					                    </div>\
