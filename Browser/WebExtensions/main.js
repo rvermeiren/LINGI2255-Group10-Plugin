@@ -9,12 +9,19 @@ var politicianInfos = [];
 **********************************************/
 
 $(document).ready(function(){
-	//to know if it is a pdf file
-	var url = document.location.href;
-	if (url.substr(url.length-3, url.length) == "pdf")
-		pdf=true;
-	else
-		pdf=false;
+	var retrievedObject = chrome.storage.local.get('search',
+		function(result){
+			if (result.search == true || JSON.stringify(result) == '{}') { start(); }
+		}
+	);});
+
+function start(){
+		//to know if it is a pdf file
+		var url = document.location.href;
+		if (url.substr(url.length-3, url.length) == "pdf")
+			pdf=true;
+		else
+			pdf=false;
 
 
 	// console.log('Document is ready.. scanning for politicians...');
@@ -45,7 +52,7 @@ $(document).ready(function(){
     });\
 	</script>");
 
-});
+}
 
 function textNodesUnder(el){
 	var pred;

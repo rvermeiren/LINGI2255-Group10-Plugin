@@ -35,5 +35,8 @@
             "id": "wecitizens@wecitizens.be"
         }
     },
+	"background" : {
+		"scripts" : ["popup.js"]
+	},
 	"web_accessible_resources": ["pdf.worker.js"]
 }

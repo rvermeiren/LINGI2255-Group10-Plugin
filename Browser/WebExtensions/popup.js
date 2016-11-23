@@ -1,3 +1,4 @@
+
 //Once the DOM is ready
 window.addEventListener('DOMContentLoaded', function () {
 	document.getElementById("checkbox").addEventListener("click", function(){
@@ -28,9 +29,10 @@ window.addEventListener('DOMContentLoaded', function () {
 	});
 	chrome.runtime.onMessage.addListener(
 		function(request, sender, sendResponse) {
-		console.log("We are there");
-		if (request.notification == true)
-			notification(request.count)
+			console.log("We are there");
+			if (request.notification == true)
+				notification(request.count)
+			sendResponse();
 		}
 	);
 });
