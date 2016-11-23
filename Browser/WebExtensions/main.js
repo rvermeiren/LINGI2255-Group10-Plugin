@@ -83,8 +83,8 @@ function launchPDFSearch(hashmap, url) {
 				});
 	        });
 	    }
-		chrome.runtime.sendMessage({notification: true, count: politicianInfos.length}, function(response) {});
 	});
+	chrome.runtime.sendMessage({notification: true, count: politicianInfos.length}, function(response) {});
 }
 
 function launchHTMLSearch(hashmap) {

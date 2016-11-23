@@ -1,10 +1,8 @@
-
 //Once the DOM is ready
 window.addEventListener('DOMContentLoaded', function () {
 	document.getElementById("checkbox").addEventListener("click", function(){
     	update_research(document.getElementById("checkbox"));
 	});
-
 
 	var retrievedObject = chrome.storage.local.get('search',
 		function(result){
@@ -27,15 +25,17 @@ window.addEventListener('DOMContentLoaded', function () {
 	    	replaceHTML);
 		console.log('Message sent from popup.js');
 	});
-	chrome.runtime.onMessage.addListener(
-		function(request, sender, sendResponse) {
-			console.log("We are there");
-			if (request.notification == true)
-				notification(request.count)
-			sendResponse();
-		}
-	);
+
 });
+
+chrome.runtime.onMessage.addListener(
+	function(request, sender, sendResponse) {
+		console.log("We are there");
+		if (request.notification == true)
+			notification(request.count)
+		sendResponse();
+	}
+);
 
 function notification(count) {
 	chrome.notifications.create(
