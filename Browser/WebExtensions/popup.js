@@ -1,5 +1,18 @@
 //Once the DOM is ready
 window.addEventListener('DOMContentLoaded', function () {
+	document.getElementById("checkbox").addEventListener("click", function(){
+    	update_research(document.getElementById("checkbox"));
+	});
+
+
+	var retrievedObject = chrome.storage.local.get('search',
+		function(result){
+			if(JSON.stringify(result) != '{}')
+				document.getElementById("checkbox").checked = result.search
+			else document.getElementById("checkbox").checked = true
+		}
+	);
+
 	//Query for the active tab
 	chrome.tabs.query({
 		active: true,
@@ -31,10 +44,17 @@ function notification(count) {
             iconUrl:"http://internetmatuer.com/wp-content/uploads/2016/01/Quand-la-blague-est-trop-dr%C3%B4le.jpg"
         },
         function() {
-			alert(chrome.runtime.lastError);
-			console.log("We are here");
+			console.log("Received the notif msg");
         }
     );
+	chrome.browserAction.setBadgeText({text: count.toString()})
+}
+
+function update_research(cb) {
+	chrome.storage.local.set({'search': cb.checked},
+		function(){
+			console.log("Search setted to: "+ cb.checked);
+		});
 }
 
 

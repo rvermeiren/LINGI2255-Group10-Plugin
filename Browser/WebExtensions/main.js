@@ -76,8 +76,8 @@ function launchPDFSearch(hashmap, url) {
 				});
 	        });
 	    }
+		chrome.runtime.sendMessage({notification: true, count: politicianInfos.length}, function(response) {});
 	});
-	notification(3);
 }
 
 function launchHTMLSearch(hashmap) {
@@ -128,12 +128,6 @@ function launchHTMLSearch(hashmap) {
 	});
 }
 
-function notification(count) {
-	// chrome.notifications.getPermissionLevel(function(level) {
-	// 	if (level != "granted") {
-	chrome.runtime.sendMessage({notification: true, count: count}, function(response) {});
-	console.log("Asked for a notification...");
-}
 
 /*********************************************
 **** Search through textNode and add icons ***
