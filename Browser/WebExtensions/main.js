@@ -71,13 +71,13 @@ function launchPDFSearch(hashmap, url) {
 	        var page = pdf.getPage(j).then(function(page) {
 	            var textContent  = page.getTextContent().then(function(textContent){
 					for(var i = 0; i < textContent.items.length; i++) {
-						console.log(textContent.items[i].str);
 						inspectTextNode(null, null, textContent.items[i].str, counter, true);
 					}
 				});
 	        });
 	    }
 	});
+	notification(3);
 }
 
 function launchHTMLSearch(hashmap) {
@@ -126,6 +126,13 @@ function launchHTMLSearch(hashmap) {
 	        $('[data-toggle="popover"]').popover('hide');
 	    }
 	});
+}
+
+function notification(count) {
+	// chrome.notifications.getPermissionLevel(function(level) {
+	// 	if (level != "granted") {
+	chrome.runtime.sendMessage({notification: true, count: count}, function(response) {});
+	console.log("Asked for a notification...");
 }
 
 /*********************************************
@@ -272,8 +279,8 @@ function removeAccent(str) {
 }
 
 function urlBuild(name, firstname, id) {
-	linkedName = name.replace(" ", "-");
-	linkedFirstname = firstname.replace(" ", "-");
+	var linkedName = name.replace(" ", "-");
+	var linkedFirstname = firstname.replace(" ", "-");
 	var res = linkedFirstname.concat(linkedName);
 	res.toLowerCase();
 	res.replace(" ", "-");

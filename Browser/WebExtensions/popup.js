@@ -13,7 +13,29 @@ window.addEventListener('DOMContentLoaded', function () {
 	    	replaceHTML);
 		console.log('Message sent from popup.js');
 	});
+	chrome.runtime.onMessage.addListener(
+		function(request, sender, sendResponse) {
+		console.log("We are there");
+		if (request.notification == true)
+			notification(request.count)
+		}
+	);
 });
+
+function notification(count) {
+	chrome.notifications.create(
+        'pol_found',{
+            type:"basic",
+            title:"We Citizens",
+            message: count + " politicians were found in this document.",
+            iconUrl:"http://internetmatuer.com/wp-content/uploads/2016/01/Quand-la-blague-est-trop-dr%C3%B4le.jpg"
+        },
+        function() {
+			alert(chrome.runtime.lastError);
+			console.log("We are here");
+        }
+    );
+}
 
 
 function containsObject(obj, array) {
@@ -54,7 +76,7 @@ function replaceHTML(politicianInfos) {
 					                <div class="panel panel-default"">\
 					                    <div class="panel-heading">\
 					                        <h4 class="panel-title">\
-					                            <a data-toggle="collapse" data-target="#collapsing'+i+'" href="#collapsing" class="collapsed">' + name + " " 
+					                            <a data-toggle="collapse" data-target="#collapsing'+i+'" href="#collapsing" class="collapsed">' + name + " "
 					                            + surname + '</a>\
 					                        </h4>\
 					                    </div>\
