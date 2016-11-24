@@ -1,3 +1,5 @@
+var count = -1;
+
 //Once the DOM is ready
 window.addEventListener('DOMContentLoaded', function () {
 	document.getElementById("checkbox").addEventListener("click", function(){
@@ -28,27 +30,57 @@ window.addEventListener('DOMContentLoaded', function () {
 
 });
 
-chrome.runtime.onMessage.addListener(
-	function(request, sender, sendResponse) {
-		console.log("We are there");
-		if (request.notification == true)
-			notification(request.count)
-		chrome.browserAction.setBadgeText({text: request.count.toString()})
-		sendResponse();
-	}
-);
+/* Listens for tabs changes and updates the badge if it changes*/
+chrome.tabs.onActivated.addListener(function(activeInfo) {
+	// Clears the notification if there was one
+	chrome.notifications.clear("pol_found", function(){});
+	count = 0;
+    badgeMessage();
+});
 
+chrome.notifications.onClicked.addListener(function(Id) {
+	chrome.notifications.clear(Id, function(){});
+});
+
+/* This updates the badge every 2 seconds*/
+window.setInterval(function(){
+	badgeMessage();
+}, 1000);
+
+/* Sends a message to the tab to know how many politicians were found*/
+function badgeMessage() {
+	chrome.tabs.query({
+		active: true,
+		currentWindow: true
+	}, function (tabs) {
+		chrome.tabs.sendMessage(
+			tabs[0].id,
+			{from: 'popup', subject: 'badge'},
+			badge);
+	});
+}
+
+/* Updates the badge and sets a notification if necessary*/
+function badge(request) {
+	if (request.notification == true && request.count != count && request.count != 0) {
+		count = request.count;
+		notification(request.count);
+	}
+	chrome.browserAction.setBadgeText({text: request.count.toString()})
+}
+
+/* Displays a notification with how many politicians were found in the pdf*/
 function notification(count) {
+	console.log("HERE");
 	chrome.notifications.create(
         'pol_found',{
             type:"basic",
             title:"We Citizens",
             message: count + " politicians were found in this document.",
-            iconUrl:"http://internetmatuer.com/wp-content/uploads/2016/01/Quand-la-blague-est-trop-dr%C3%B4le.jpg"
+            iconUrl:chrome.extension.getURL("icons/icon128.png"),
+			contextMessage: "Click on the We Citizens icon in the top right of the browser to show the list"
         },
-        function() {
-			console.log("Received the notif msg");
-        }
+        function() {}
     );
 }
 

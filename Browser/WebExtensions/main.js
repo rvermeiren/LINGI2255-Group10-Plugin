@@ -30,11 +30,9 @@ function start(){
 			hashmap = CSVToHashmap(result.database_csv);
 			if (pdf){
 				launchPDFSearch(hashmap, url);
-				chrome.runtime.sendMessage({notification: true, count: politicianInfos.length}, function(response) {});
 			}
 			else {
 				launchHTMLSearch(hashmap);
-				chrome.runtime.sendMessage({notification: false, count: politicianInfos.length}, function(response) {});
 			}
 		}
 	);
@@ -42,8 +40,10 @@ function start(){
 	// Listen for messages from the popup
 	chrome.runtime.onMessage.addListener(function (msg, sender, response) {
 		if ((msg.from === 'popup') && (msg.subject === 'politicianInfos')) {
-			console.log('Message sent to popup');
 			response(politicianInfos);
+		}
+		else if ((msg.from === 'popup') && (msg.subject === 'badge')) {
+			response({notification: pdf, count: politicianInfos.length});
 		}
 	});
 
@@ -51,9 +51,9 @@ function start(){
 
 	$('head').append("<script>\
 	$('[data-toggle=\"popover\"]').popover({\
-        placement : 'top',\
-        trigger : 'hover'\
-    });\
+		placement : 'top',\
+		trigger : 'hover'\
+	});\
 	</script>");
 
 }
@@ -75,24 +75,23 @@ function launchPDFSearch(hashmap, url) {
 	console.log(pdfName);
 	PDFJS.workerSrc = chrome.extension.getURL("pdf.worker.js");
 	var counter = {i : 0};
-	// PDFJS.disableWorker = true;
+
 	PDFJS.getDocument(url).then(function(pdf) {
-	    var maxPages = pdf.pdfInfo.numPages;
-	    for (var j = 1; j < maxPages; j++) {
-	        var page = pdf.getPage(j).then(function(page) {
-	            var textContent  = page.getTextContent().then(function(textContent){
+		var maxPages = pdf.pdfInfo.numPages;
+		for (var j = 1; j < maxPages; j++) {
+			var page = pdf.getPage(j).then(function(page) {
+				var textContent  = page.getTextContent().then(function(textContent){
 					for(var i = 0; i < textContent.items.length; i++) {
 						inspectTextNode(null, null, textContent.items[i].str, counter, true);
 					}
 				});
-	        });
-	    }
+			});
+		}
 	});
 }
 
 function launchHTMLSearch(hashmap) {
 	var counter = {i: 0}; //Occurences. Singleton to be passed by reference and not by value.
-
 	var arr = textNodesUnder(document.body);
 	for (var i = 0; i < arr.length; i++) {
 		for (var j = 0; j < arr[i].childNodes.length; j++) {
@@ -110,18 +109,18 @@ function launchHTMLSearch(hashmap) {
 			$(\'[data-toggle=\"popover\"]\')\
 			.popover({ trigger: \"manual\" , html: true, animation:false})\
 			.on(\"mouseenter\", function () {\
-			    var _this = this;\
-			    $(this).popover(\"show\");\
-			    $(\".popover\").on(\"mouseleave\", function () {\
-			        $(_this).popover('hide');\
-			    });\
+				var _this = this;\
+				$(this).popover(\"show\");\
+				$(\".popover\").on(\"mouseleave\", function () {\
+					$(_this).popover('hide');\
+				});\
 			}).on(\"mouseleave\", function () {\
-			    var _this = this;\
-			    setTimeout(function () {\
-			        if (!$(\".popover:hover\").length) {\
-			            $(_this).popover(\"hide\");\
-			        }\
-			    }, 300);\
+				var _this = this;\
+				setTimeout(function () {\
+					if (!$(\".popover:hover\").length) {\
+						$(_this).popover(\"hide\");\
+					}\
+				}, 300);\
 			});\
 		});\
 		</script> "
@@ -130,11 +129,11 @@ function launchHTMLSearch(hashmap) {
 	/* Hide the popover when clicking anywhere on the page*/
 	$('body').on('click', function (e) {
 
-    //only buttons
-	    if ($(e.target).data('toggle') !== 'popover'
-	        && $(e.target).parents('.popover.in').length === 0) {
-	        $('[data-toggle="popover"]').popover('hide');
-	    }
+	//only buttons
+		if ($(e.target).data('toggle') !== 'popover'
+			&& $(e.target).parents('.popover.in').length === 0) {
+			$('[data-toggle="popover"]').popover('hide');
+		}
 	});
 }
 
@@ -201,7 +200,6 @@ function inspectTextNode(parent, nodeIndex, textNode, counter, pdf) {
 				// Only one politician
 				if (pol != null) {
 					if (pdf) {
-						console.log("LOL we create a politician");
 						createSinglePopover(hashmap, name, pol, counter);
 					}
 					else
@@ -210,13 +208,12 @@ function inspectTextNode(parent, nodeIndex, textNode, counter, pdf) {
 				//Multiple policitians
 				else {
 					if (pdf) {
-						console.log("LOL we create multiple politicians");
 						createListPopover(hashmap, name, counter);
 					}
 					else
 						toDisplay.push({"index" : reg.lastIndex, "nameLength" : nameLength ,"span" : prev + name + createListPopover(hashmap, name, counter)});
 				}
-                pref = null;
+				pref = null;
 			}
 			prev = word;
 			iter++;
@@ -258,28 +255,28 @@ function displayIcons(textNode, parent, toDisplay) {
 
 //http://stackoverflow.com/questions/4060004/calculate-age-in-javascript
 function calculateAge(birthday) { // birthday is a date
-    var ageDifMs = Date.now() - birthday.getTime();
-    var ageDate = new Date(ageDifMs); // miliseconds from epoch
-    return Math.abs(ageDate.getUTCFullYear() - 1970);
+	var ageDifMs = Date.now() - birthday.getTime();
+	var ageDate = new Date(ageDifMs); // miliseconds from epoch
+	return Math.abs(ageDate.getUTCFullYear() - 1970);
 }
 
 function removeAccent(str) {
 	var accent = [
-        /[\300-\306]/g, /[\340-\346]/g, // A, a
-        /[\310-\313]/g, /[\350-\353]/g, // E, e
-        /[\314-\317]/g, /[\354-\357]/g, // I, i
-        /[\322-\330]/g, /[\362-\370]/g, // O, o
-        /[\331-\334]/g, /[\371-\374]/g, // U, u
-        /[\321]/g, /[\361]/g, // N, n
-        /[\307]/g, /[\347]/g, // C, c
-    ];
-    var noaccent = ['A','a','E','e','I','i','O','o','U','u','N','n','C','c'];
+		/[\300-\306]/g, /[\340-\346]/g, // A, a
+		/[\310-\313]/g, /[\350-\353]/g, // E, e
+		/[\314-\317]/g, /[\354-\357]/g, // I, i
+		/[\322-\330]/g, /[\362-\370]/g, // O, o
+		/[\331-\334]/g, /[\371-\374]/g, // U, u
+		/[\321]/g, /[\361]/g, // N, n
+		/[\307]/g, /[\347]/g, // C, c
+	];
+	var noaccent = ['A','a','E','e','I','i','O','o','U','u','N','n','C','c'];
 
-    for(var i = 0; i < accent.length; i++){
-        str = str.replace(accent[i], noaccent[i]);
-    }
+	for(var i = 0; i < accent.length; i++){
+		str = str.replace(accent[i], noaccent[i]);
+	}
 
-    return str;
+	return str;
 }
 
 function urlBuild(name, firstname, id) {
@@ -294,11 +291,11 @@ function urlBuild(name, firstname, id) {
 
 function imgBuild(name, imgName) {
 	if (imgName != "\\N" && imgName != 0) {
-        var photo = ("http://directory.wecitizens.be/images/generic/politician-thumb/" + imgName);
-    } else {
-        var photo = ("http://directory.wecitizens.be/images/img-no-photo.png");
-    }
-    return "<img src="+ photo +" height=75 alt="+ name +">";
+		var photo = ("http://directory.wecitizens.be/images/generic/politician-thumb/" + imgName);
+	} else {
+		var photo = ("http://directory.wecitizens.be/images/img-no-photo.png");
+	}
+	return "<img src="+ photo +" height=75 alt="+ name +">";
 }
 
 
@@ -309,9 +306,9 @@ function createSinglePopover(hashmap, name, index, counter) {
 	var bdate = new Date(hashmap[name][index][6]+'T10:20:30Z');
 	bdate = calculateAge(bdate);
 
-    var img = imgBuild(name, hashmap[name][index][3]);
+	var img = imgBuild(name, hashmap[name][index][3]);
 
-    var url = urlBuild(name, hashmap[name][index][4], hashmap[name][index][0]);
+	var url = urlBuild(name, hashmap[name][index][4], hashmap[name][index][0]);
 
 	var html = initSinglePanel(img, hashmap[name][index][8], hashmap[name][index][2], hashmap[name][index][7], bdate, url)
 
@@ -337,7 +334,7 @@ function createListPopover(hashmap, name, counter){
 
 		var img = imgBuild(name, person[3]);
 
-	    var url = urlBuild(name, person[4], person[0]);
+		var url = urlBuild(name, person[4], person[0]);
 
 		html += initMultiplePanel(counter.i, person[4], person[5], img, person[8], person[2], person[7], bdate, url);
 
