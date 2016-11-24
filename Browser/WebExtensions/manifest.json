@@ -8,12 +8,12 @@
         {
             "matches": ["<all_urls>"],
             "css": ["css/bootstrap_popover.css"],
-            "js": ["jquery-1.9.1.min.js", "bootstrap.min.js", "db_reader.js", "compatibility.js", "pdf.js", "main.js"]
+            "js": ["lib/jquery-1.9.1.min.js", "lib/bootstrap.min.js", "utils/db_reader.js", "lib/compatibility.js", "lib/pdf.js", "scripts/main.js"]
         }
     ],
     "browser_action": {
         "default_title": "WeCitizens",
-        "default_popup": "popup.html",
+        "default_popup": "views/popup.html",
         "default_icons": {
             "16": "icons/icon16.png",
             "48": "icons/icon48.png",
@@ -36,7 +36,7 @@
         }
     },
 	"background" : {
-		"scripts" : ["popup.js"]
+		"scripts" : ["scripts/popup.js"]
 	},
-	"web_accessible_resources": ["pdf.worker.js"]
+	"web_accessible_resources": ["lib/pdf.worker.js"]
 }

@@ -73,10 +73,11 @@ function launchPDFSearch(hashmap, url) {
 	var pdfName = url.split("/");
 	pdfName = pdfName[pdfName.length-1];
 	console.log(pdfName);
-	PDFJS.workerSrc = chrome.extension.getURL("pdf.worker.js");
+	PDFJS.workerSrc = chrome.extension.getURL("../lib/pdf.worker.js");
 	var counter = {i : 0};
 
 	PDFJS.getDocument(url).then(function(pdf) {
+		console.log("Searching the pdf");
 		var maxPages = pdf.pdfInfo.numPages;
 		for (var j = 1; j < maxPages; j++) {
 			var page = pdf.getPage(j).then(function(page) {

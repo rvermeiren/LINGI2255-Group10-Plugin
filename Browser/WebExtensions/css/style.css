@@ -39,9 +39,7 @@ body {
     float: right;
     color: grey;
 }
-.panel-heading a.collapsed:after {
-    content:"\e080";
-}
+
 
 .md-60 {
   font-size: 60px !important;

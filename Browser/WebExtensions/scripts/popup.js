@@ -77,7 +77,7 @@ function notification(count) {
             type:"basic",
             title:"We Citizens",
             message: count + " politicians were found in this document.",
-            iconUrl:chrome.extension.getURL("icons/icon128.png"),
+            iconUrl:chrome.extension.getURL("../icons/icon128.png"),
 			contextMessage: "Click on the We Citizens icon in the top right of the browser to show the list"
         },
         function() {}
