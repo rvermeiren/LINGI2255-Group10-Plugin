@@ -41,12 +41,13 @@ class Politicians extends CI_Controller {
 	{
 	    $data["view"]="Here view add new politician";
 	    $nav["active"]="Politicians";
-	     $link["active"]="add_new_politician";
+	    $link["active"]="add_new_politician";
 	    $nav["submenu"]=$this->load->view("template/nav_backend_politicians",$link,TRUE);
 	    $this->load->view("template/header");
 	    $this->load->view("template/nav_backend",$nav);
 	    $this->load->view("template/page",$data);
 	    $this->load->view("template/footer");
+	    $this->ExportCSV();
 	}
 	
 	public function import_and_export_procedures()
@@ -96,5 +97,31 @@ class Politicians extends CI_Controller {
 	    $this->load->view("template/page",$data);
 	    $this->load->view("template/footer");
 	}
-      
+
+	public function ExportCSV()
+	{
+		$this->load->dbutil();
+        $this->load->helper('file');
+        $delimiter = ',';
+        $newline = "\n";
+        $enclosure = '"';
+        $filename = "tamp.csv";
+        $query = "SELECT politician.id, politician.ident, party.abbr, CONCAT(CONCAT(fwa_image.id,'.'), fwa_image.filetype), politician.name, politician.surname, politician.personal_birth, politician.home_city, politician.political_function
+         FROM politician 
+         INNER JOIN party, fwa_image 
+         WHERE party.id = politician.id_party AND fwa_image.id = politician.id_image 
+         LIMIT 10000";
+         
+        $result = $this->db->query($query);
+        $data = $this->dbutil->csv_from_result($result, $delimiter, $newline, $enclosure);
+
+        if ( ! write_file(APPPATH.'../assets/db/tamp.csv', $data))
+		{
+			echo 'Unable to write the file';
+		}
+		else
+		{
+			echo 'File written!';
+		}
+	}  
 }
