@@ -109,8 +109,7 @@ class Politicians extends CI_Controller {
         $query = "SELECT politician.id, politician.ident, party.abbr, CONCAT(CONCAT(fwa_image.id,'.'), fwa_image.filetype), politician.name, politician.surname, politician.personal_birth, politician.home_city, politician.political_function
          FROM politician 
          INNER JOIN party, fwa_image 
-         WHERE party.id = politician.id_party AND fwa_image.id = politician.id_image 
-         LIMIT 10000";
+         WHERE party.id = politician.id_party AND fwa_image.id = politician.id_image";
          
         $result = $this->db->query($query);
         $data = $this->dbutil->csv_from_result($result, $delimiter, $newline, $enclosure);
