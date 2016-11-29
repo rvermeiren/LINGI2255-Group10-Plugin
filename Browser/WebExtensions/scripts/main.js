@@ -364,7 +364,7 @@ function createListPopover(hashmap, name, counter, node){
 		+ html + String('"></span>');
 	} else {
 		console.log(node.getBoundingClientRect().left);
-		if (node.getBoundingClientRect().left < 500) {
+		if (node.getBoundingClientRect().left < 450) {
 			var popover = String(' <span id="popoverWeCitizens"><img data-popover="true" data-placement="right" data-toggle="popover" data-trigger="hover" title="Politicians found" id="popover')
 			+ counter.i + String('"data-html="true" src="http://i.imgur.com/neBExfj.png" class="politicianFind" data-content="')
 			+ html + String('"></span>');
