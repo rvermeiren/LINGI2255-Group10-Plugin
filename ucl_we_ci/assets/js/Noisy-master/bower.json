@@ -1,7 +1,0 @@
-{
-  "name": "Noisy",
-  "version": "0.0.1",
-  "main": "./jquery/jquery.noisy.js",
-  "dependencies": {
-  }
-}
