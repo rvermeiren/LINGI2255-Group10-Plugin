@@ -2,7 +2,7 @@ var font = false;
 var windowWidth = 0;
 var windowHeight = 0;
 var pdf = false;
-var politicianInfos = [];
+var politicianInfos = {};
 
 
 /*********************************************
@@ -50,7 +50,7 @@ function start(search){
 			response(politicianInfos);
 		}
 		else if ((msg.from === 'popup') && (msg.subject === 'badge')) {
-			response({notification: pdf, count: politicianInfos.length});
+			response({notification: pdf, count: Object.keys(politicianInfos).length});
 		}
 	});
 
@@ -149,7 +149,9 @@ function launchHTMLSearch(hashmap) {
 
 function inspectTextNode(parent, nodeIndex, textNode, counter, pdf) {
 	var toDisplay = [];
+	var politiciansToAdd = []
 	var body;
+	var pushed = 0;
 	if (pdf)
 		body = textNode;
 	else
@@ -190,6 +192,9 @@ function inspectTextNode(parent, nodeIndex, textNode, counter, pdf) {
 					matching.push(hashmap[name][i]);
 					if (prev == hashmap[name][i][4]) { //Matching also firstname
 						toDisplay.pop()
+						for(var j = 0; j < pushed; j++) {
+							politiciansToAdd.pop();
+						}
 						pol = i;
 						twoNames = true;
 					}
@@ -205,18 +210,28 @@ function inspectTextNode(parent, nodeIndex, textNode, counter, pdf) {
 
 				// Only one politician
 				if (pol != null) {
-					if (pdf) {
-						createSinglePopover(hashmap, name, pol, counter, textNode);
-					}
-					else
+					var lastName = hashmap[name][pol][4];
+					var firstName = hashmap[name][pol][5];
+					person = hashmap[name][pol];
+					var infos = cleanData(person);
+					pushed = 1;
+					var img = imgBuild(name, person[3]);
+					var url = urlBuild(name, person[4], person[0]);
+					politiciansToAdd.push({name: lastName, surname: firstName, birthDate: infos[0], politicalParty: hashmap[name][pol][2], city: infos[1], job: infos[2], photo: img, link: url});
+					if(!pdf)
 						toDisplay.push({"index" : reg.lastIndex, "nameLength" : nameLength ,"span" : prev + name + createSinglePopover(hashmap, name, pol, counter, parent)});
 				}
 				//Multiple policitians
 				else {
-					if (pdf) {
-						createListPopover(hashmap, name, counter, parent, textNode);
+					for(i = 0; i < hashmap[name].length; i++){
+						person = hashmap[name][i]
+						var infos = cleanData(person)
+						var img = imgBuild(name, person[3]);
+						var url = urlBuild(name, person[4], person[0]);
+						politiciansToAdd.push({name: person[4], surname: name, birthDate: infos[0], politicalParty: person[2], city: infos[1], job: infos[2], photo: img, link: url});
 					}
-					else
+					pushed = hashmap[name].length;
+					if(!pdf)
 						toDisplay.push({"index" : reg.lastIndex, "nameLength" : nameLength ,"span" : prev + name + createListPopover(hashmap, name, counter, parent)});
 				}
 				pref = null;
@@ -224,6 +239,9 @@ function inspectTextNode(parent, nodeIndex, textNode, counter, pdf) {
 			prev = word;
 			iter++;
 		}
+	}
+	for(var i = 0; i < politiciansToAdd.length; i++) {
+		politicianInfos[politiciansToAdd[i].name+politiciansToAdd[i].surname] = politiciansToAdd[i];
 	}
 	if(toDisplay.length > 0 && !pdf) {
 		displayIcons(textNode, parent, toDisplay);
@@ -259,6 +277,32 @@ function displayIcons(textNode, parent, toDisplay) {
 /*********************************************
 ********** Auxiliary functions ***************
 **********************************************/
+
+function cleanData(person) {
+	var bdate;
+	if (person[6] == "\\N" || typeof person[6] == 'undefined'){
+		bdate = "Unknown age";
+	}else{
+		bdate = new Date(person[6]+'T10:20:30Z');
+		bdate = calculateAge(bdate);
+	}
+
+	var city;
+	if (person[7] == "\\N" || typeof person[7] == 'undefined'){
+		city = "Unknown city";
+	}else{
+		city= person[7];
+	}
+
+	var post;
+	if (person[8] == "\\N" || typeof person[8] == 'undefined'){
+		post = "Unknown post";
+	}else{
+		post = person[8];
+	}
+
+	return [bdate, city, post];
+}
 
 //http://stackoverflow.com/questions/4060004/calculate-age-in-javascript
 function calculateAge(birthday) { // birthday is a date
@@ -325,10 +369,7 @@ function createSinglePopover(hashmap, name, index, counter, node) {
 	+ counter.i + String('"data-html="true" src="http://i.imgur.com/neBExfj.png" class="politicianFind pop" data-content="')
 	+ html + String('"></span>');
 
-
 	counter.i++;
-	politicianInfos.push({name: hashmap[name][index][4], surname: hashmap[name][index][5], birthDate: bdate,
-		politicalParty: hashmap[name][index][2], city: hashmap[name][index][7], job: hashmap[name][index][8], photo: img, link: url});
 
 	return popover;
 }
@@ -349,7 +390,7 @@ function createListPopover(hashmap, name, counter, node){
 		html += initMultiplePanel(counter.i, person[4], person[5], img, person[8], person[2], person[7], bdate, url);
 
 		counter.i++;
-		politicianInfos.push({name: person[4], surname:name , birthDate: bdate, politicalParty: person[2], city: person[7], job: person[8], photo: img, link: url});
+
 	}
 	html += "</div></div>";
 

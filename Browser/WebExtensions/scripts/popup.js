@@ -50,55 +50,48 @@ function containsObject(obj, array) {
 // Update the relevant fields with the new data
 function replaceHTML(politicianInfos) {
 
-	for (var i = 0; i < politicianInfos.length; i++) {
+	for (var i in politicianInfos) {
 
-		var index = containsObject(politicianInfos[i], politicianInfos);
+		var name			= politicianInfos[i].name;
+		var surname			= politicianInfos[i].surname;
+		var birthDate		= politicianInfos[i].birthDate;
+		var politicalParty	= politicianInfos[i].politicalParty;
+		var city			= politicianInfos[i].city;
+		var job 			= politicianInfos[i].job;
+		var photo			= politicianInfos[i].photo;
+		var link			= politicianInfos[i].link;
 
-		var alreadyMet = (index >= -1);
-
-		if (!alreadyMet) {
-
-			var name			= politicianInfos[i].name;
-			var surname			= politicianInfos[i].surname;
-			var birthDate		= politicianInfos[i].birthDate;
-			var politicalParty	= politicianInfos[i].politicalParty;
-			var city			= politicianInfos[i].city;
-			var job 			= politicianInfos[i].job;
-			var photo			= politicianInfos[i].photo;
-			var link			= politicianInfos[i].link;
-
-			$('#content-main').append('<div class="panel-group" id="accordion'+i+'">\
-					                <div class="panel panel-default"">\
-					                    <div class="panel-heading">\
-					                        <h4 class="panel-title">\
-					                            <a data-toggle="collapse" data-target="#collapsing'+i+'" href="#collapsing" class="collapsed">' + name + " "
-					                            + surname + '</a>\
-					                        </h4>\
-					                    </div>\
-					                    <div id="collapsing'+i+'" class="panel-collapse collapse">\
-					                        <div class="panel-body">\
-					                        	<div class=\'col-xs-3\' id=\'photo\'>'+ photo +' </div>\
-					                        	<div class=\'col-xs-9\'>\
-													<div class=\'row\'>\
-														<strong>Job</strong>: '+ job +'\
-													</div>\
-													<div class=\'row\'>\
-														<strong>Political party</strong>: '+ politicalParty +'\
-													</div>\
-													<div class=\'row\'>\
-														<strong>City</strong>: '+ city +'\
-													</div>\
-													<div class=\'row\'>\
-														<strong>Age</strong>: '+ birthDate +' years old\
-													</div>\
-													<div class=\'row\'>\
-														<a target="_blank" href=\''+ link +'\'>Voir sur wecitizens</a>\
-													</div>\
+		$('#content-main').append('<div class="panel-group" id="accordion'+i+'">\
+				                <div class="panel panel-default"">\
+				                    <div class="panel-heading">\
+				                        <h4 class="panel-title">\
+				                            <a data-toggle="collapse" data-target="#collapsing'+i+'" href="#collapsing" class="collapsed">' + name + " "
+				                            + surname + '</a>\
+				                        </h4>\
+				                    </div>\
+				                    <div id="collapsing'+i+'" class="panel-collapse collapse">\
+				                        <div class="panel-body">\
+				                        	<div class=\'col-xs-3\' id=\'photo\'>'+ photo +' </div>\
+				                        	<div class=\'col-xs-9\'>\
+												<div class=\'row\'>\
+													<strong>Job</strong>: '+ job +'\
 												</div>\
-					                        </div>\
-					                    </div>\
-					                </div>\
-					            </div>');
-		}
+												<div class=\'row\'>\
+													<strong>Political party</strong>: '+ politicalParty +'\
+												</div>\
+												<div class=\'row\'>\
+													<strong>City</strong>: '+ city +'\
+												</div>\
+												<div class=\'row\'>\
+													<strong>Age</strong>: '+ birthDate +' years old\
+												</div>\
+												<div class=\'row\'>\
+													<a target="_blank" href=\''+ link +'\'>Voir sur wecitizens</a>\
+												</div>\
+											</div>\
+				                        </div>\
+				                    </div>\
+				                </div>\
+				            </div>');
 	}
 }

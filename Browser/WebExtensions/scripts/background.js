@@ -1,5 +1,4 @@
 var counts = {}
-alert("Creating a popup");
 
 /* Listens for tabs changes and updates the badge if it changes*/
 chrome.tabs.onActivated.addListener(function(activeInfo) {
@@ -15,7 +14,7 @@ chrome.notifications.onClicked.addListener(function(Id) {
 /* This updates the badge every seconds*/
 window.setInterval(function(){
 	badgeMessage();
-}, 1000);
+}, 4000);
 
 /* Sends a message to the tab to know how many politicians were found*/
 function badgeMessage() {
@@ -27,6 +26,7 @@ function badgeMessage() {
 			tabs[0].id,
 			{from: 'popup', subject: 'badge'},
 			function(request){
+				// alert(request.notification + " "+ tabs[0].id)
 				badge(request, tabs[0].id);
 			});
 	});
@@ -34,14 +34,12 @@ function badgeMessage() {
 
 /* Updates the badge and sets a notification if necessary*/
 function badge(request, id) {
-	console.log(request);
-	console.log(counts);
-	console.log("counts[id] " + counts[id.toString()]);
-	console.log("id: " + id);
 	if (request.notification == true && request.count != counts[id.toString()] && request.count != 0) {
 		notification(request.count);
 	}
 	counts[id.toString()] = request.count;
+	// alert(request.count.toString());
+	console.log(request);
 	chrome.browserAction.setBadgeText({text: request.count.toString()})
 }
 
