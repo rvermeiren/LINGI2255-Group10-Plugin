@@ -25,7 +25,7 @@ window.addEventListener('DOMContentLoaded', function () {
 	   		{from: 'popup', subject: 'politicianInfos'},
 	   		//Specifying a callback to be called from the receiving end (content script)
 	    	replaceHTML);
-		console.log('Message sent from popup.js');
+		console.log('Message sent from background.js');
 	});
 
 });
