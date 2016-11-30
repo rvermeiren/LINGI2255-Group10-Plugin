@@ -42,7 +42,7 @@ chrome.notifications.onClicked.addListener(function(Id) {
 	chrome.notifications.clear(Id, function(){});
 });
 
-/* This updates the badge every 2 seconds*/
+/* This updates the badge every seconds*/
 window.setInterval(function(){
 	badgeMessage();
 }, 1000);
