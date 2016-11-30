@@ -140,17 +140,6 @@ function launchHTMLSearch(hashmap) {
 		</script> "
 	);
 
-	/* Hide the popover when clicking anywhere on the page*/
-	$('body').on('click', function (e) {
-
-	//only buttons
-		if ($(e.target).data('toggle') !== 'popover'
-			&& $(e.target).parents('.popover.in').length === 0) {
-			$('[data-toggle="popover"]').popover('hide');
-		}
-	});
-
-
 }
 
 
@@ -200,6 +189,7 @@ function inspectTextNode(parent, nodeIndex, textNode, counter, pdf) {
 				else for (var i in hashmap[name]) {
 					matching.push(hashmap[name][i]);
 					if (prev == hashmap[name][i][4]) { //Matching also firstname
+						toDisplay.pop()
 						pol = i;
 						twoNames = true;
 					}
@@ -272,6 +262,8 @@ function displayIcons(textNode, parent, toDisplay) {
 
 //http://stackoverflow.com/questions/4060004/calculate-age-in-javascript
 function calculateAge(birthday) { // birthday is a date
+	if (birthday == "\N" || birthday == "null" || birthday == "Null" || birthday == "")
+		return "Unknown";
 	var ageDifMs = Date.now() - birthday.getTime();
 	var ageDate = new Date(ageDifMs); // miliseconds from epoch
 	return Math.abs(ageDate.getUTCFullYear() - 1970);

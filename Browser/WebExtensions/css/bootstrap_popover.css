@@ -6777,5 +6777,8 @@ button.list-group-item-danger.active:focus {
   cursor: pointer;
 }
 
+/*#popoverWeCitizens .popover{
+	position: absolute;
+}*/
 
 /*# sourceMappingURL=bootstrap.css.map */
