@@ -109,9 +109,15 @@ function launchHTMLSearch(hashmap) {
 	// Let the popover opened if we hover over it
 	$('head').append(
 		"<script>\
+		function get_popover_placement(pop, dom_el) {\
+			var width = window.innerWidth;\
+			var left_pos = $(dom_el).offset().left;\
+			if (width - left_pos > 600) return 'right';\
+			return 'left';\
+ 		}\
 		$(function(){\
 			$(\'[data-toggle=\"popover\"]\')\
-			.popover({ trigger: \"manual\" , html: true, animation:false})\
+			.popover({ trigger: \"manual\", placement: get_popover_placement, html: true, animation:true})\
 			.on(\"mouseenter\", function () {\
 				var _this = this;\
 				$(this).popover(\"show\");\
@@ -139,6 +145,8 @@ function launchHTMLSearch(hashmap) {
 			$('[data-toggle="popover"]').popover('hide');
 		}
 	});
+
+
 }
 
 
@@ -246,6 +254,7 @@ function displayIcons(textNode, parent, toDisplay) {
 		toAdd.innerHTML = icon.span;
 		fragment.insertBefore(toAdd, fragment.firstChild);
 
+
 		// Now we handle the rest of the names, the ones in the beginning of the text
 		ret = ret.substr(0, icon.index-icon.nameLength);
 	}
@@ -315,21 +324,10 @@ function createSinglePopover(hashmap, name, index, counter, node) {
 	var url = urlBuild(name, hashmap[name][index][4], hashmap[name][index][0]);
 
 	var html = initSinglePanel(img, hashmap[name][index][8], hashmap[name][index][2], hashmap[name][index][7], bdate, url);
-	if(node == undefined){
-		var popover = String(' <span id="popoverWeCitizens"><img data-popover="true" data-placement="right" data-toggle="popover" data-trigger="hover" title="') + hashmap[name][index][4] + " " + hashmap[name][index][5] + String('" id="popover')
-		+ counter.i + String('"data-html="true" src="http://i.imgur.com/neBExfj.png" class="politicianFind pop" data-content="')
-		+ html + String('"></span>');
-	} else {
-		if (node.getBoundingClientRect().left < 30) {
-			var popover = String(' <span id="popoverWeCitizens"><img data-popover="true" data-placement="right" data-toggle="popover" data-trigger="hover" title="') + hashmap[name][index][4] + " " + hashmap[name][index][5] + String('" id="popover')
-			+ counter.i + String('"data-html="true" src="http://i.imgur.com/neBExfj.png" class="politicianFind pop" data-content="')
-			+ html + String('"></span>');
-		} else {
-			var popover = String(' <span id="popoverWeCitizens"><img data-popover="true" data-placement="left" data-toggle="popover" data-trigger="hover" title="') + hashmap[name][index][4] + " " + hashmap[name][index][5] + String('" id="popover')
-			+ counter.i + String('"data-html="true" src="http://i.imgur.com/neBExfj.png" class="politicianFind pop" data-content="')
-			+ html + String('"></span>');
-		}
-	}
+
+	var popover = String(' <span id="popoverWeCitizens"><img data-popover="true" data-placement="left" data-toggle="popover" data-trigger="hover" title="') + hashmap[name][index][4] + " " + hashmap[name][index][5] + String('" id="popover')
+	+ counter.i + String('"data-html="true" src="http://i.imgur.com/neBExfj.png" class="politicianFind pop" data-content="')
+	+ html + String('"></span>');
 
 
 	counter.i++;
@@ -358,22 +356,11 @@ function createListPopover(hashmap, name, counter, node){
 		politicianInfos.push({name: person[4], surname:name , birthDate: bdate, politicalParty: person[2], city: person[7], job: person[8], photo: img, link: url});
 	}
 	html += "</div></div>";
-	if(node == undefined){
-		var popover = String(' <span id="popoverWeCitizens"><img data-popover="true" data-placement="right" data-toggle="popover" data-trigger="hover" title="Politicians found" id="popover')
-		+ counter.i + String('"data-html="true" src="http://i.imgur.com/neBExfj.png" class="politicianFind" data-content="')
-		+ html + String('"></span>');
-	} else {
-		console.log(node.getBoundingClientRect().left);
-		if (node.getBoundingClientRect().left < 450) {
-			var popover = String(' <span id="popoverWeCitizens"><img data-popover="true" data-placement="right" data-toggle="popover" data-trigger="hover" title="Politicians found" id="popover')
-			+ counter.i + String('"data-html="true" src="http://i.imgur.com/neBExfj.png" class="politicianFind" data-content="')
-			+ html + String('"></span>');
-		} else {
-			var popover = String(' <span id="popoverWeCitizens"><img data-popover="true" data-placement="left" data-toggle="popover" data-trigger="hover" title="Politicians found" id="popover')
-			+ counter.i + String('"data-html="true" src="http://i.imgur.com/neBExfj.png" class="politicianFind" data-content="')
-			+ html + String('"></span>');
-		}
-	}
+
+	var popover = String(' <span id="popoverWeCitizens"><img data-popover="true" data-placement="left" data-toggle="popover" data-trigger="hover" title="Politicians found" id="popover')
+	+ counter.i + String('"data-html="true" src="http://i.imgur.com/neBExfj.png" class="politicianFind" data-content="')
+	+ html + String('"></span>');
+
 	return popover;
 }
 
