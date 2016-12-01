@@ -280,9 +280,9 @@ function displayIcons(textNode, parent, toDisplay) {
 
 function cleanData(person) {
 	var bdate;
-	if (person[6] == "\\N" || typeof person[6] == 'undefined'){
+	if (person[6] == "\\N" || typeof person[6] == 'undefined') {
 		bdate = "Unknown age";
-	}else{
+	} else {
 		bdate = new Date(person[6]+'T10:20:30Z');
 		bdate = calculateAge(bdate);
 	}
@@ -306,11 +306,10 @@ function cleanData(person) {
 
 //http://stackoverflow.com/questions/4060004/calculate-age-in-javascript
 function calculateAge(birthday) { // birthday is a date
-	if (birthday == "\N" || birthday == "null" || birthday == "Null" || birthday == "")
-		return "Unknown";
 	var ageDifMs = Date.now() - birthday.getTime();
 	var ageDate = new Date(ageDifMs); // miliseconds from epoch
-	return Math.abs(ageDate.getUTCFullYear() - 1970);
+	ret = Math.abs(ageDate.getUTCFullYear() - 1970);
+	return (ret + " years old");
 }
 
 function removeAccent(str) {
@@ -355,15 +354,20 @@ function imgBuild(name, imgName) {
 /*********************************************
 ************* Creating popovers **************
 **********************************************/
+
 function createSinglePopover(hashmap, name, index, counter, node) {
-	var bdate = new Date(hashmap[name][index][6]+'T10:20:30Z');
-	bdate = calculateAge(bdate);
+	var cleanD = cleanData(hashmap[name][index]);
+
+	var bdate = cleanD[0];
+	if (bdate != "Unknown age"){
+		bdate = calculateAge(bdate);
+	}
 
 	var img = imgBuild(name, hashmap[name][index][3]);
 
 	var url = urlBuild(name, hashmap[name][index][4], hashmap[name][index][0]);
 
-	var html = initSinglePanel(img, hashmap[name][index][8], hashmap[name][index][2], hashmap[name][index][7], bdate, url);
+	var html = initSinglePanel(img, cleanD[2], hashmap[name][index][2], cleanD[1], bdate, url);
 
 	var popover = String(' <span id="popoverWeCitizens"><img data-popover="true" data-placement="left" data-toggle="popover" data-trigger="hover" title="') + hashmap[name][index][4] + " " + hashmap[name][index][5] + String('" id="popover')
 	+ counter.i + String('"data-html="true" src="http://i.imgur.com/neBExfj.png" class="politicianFind pop" data-content="')
@@ -380,17 +384,20 @@ function createListPopover(hashmap, name, counter, node){
 		<div class='panel-group' id='accordion'>";
 	for(i = 0; i < hashmap[name].length; i++){
 		var person = hashmap[name][i];
-		var bdate = new Date(person[6]+'T10:20:30Z');
-		bdate = calculateAge(bdate);
+		var cleanD = cleanData(person);
+
+		var bdate = cleanD[0];
+		if (bdate != "Unknown age"){
+			bdate = calculateAge(bdate);
+		}
 
 		var img = imgBuild(name, person[3]);
 
 		var url = urlBuild(name, person[4], person[0]);
 
-		html += initMultiplePanel(counter.i, person[4], person[5], img, person[8], person[2], person[7], bdate, url);
+		html += initMultiplePanel(counter.i, person[4], person[5], img, cleanD[2], person[2], cleanD[1], bdate, url);
 
 		counter.i++;
-
 	}
 	html += "</div></div>";
 
@@ -425,7 +432,7 @@ function initMultiplePanel(i, firstName, lastName, img, job, party, city, bdate,
 					<strong>City</strong>: "+ city +"\
 				</div>\
 				<div class=\'row\'>\
-					<strong>Age</strong>: "+ bdate +" years old\
+					<strong>Age</strong>: "+ bdate +"\
 				</div>\
 				<div class='row'>\
 					<a target=\'_blank\' href='"+ url +"'>Voir sur wecitizens</a>\
@@ -451,7 +458,7 @@ function initSinglePanel(img, job, party, city, bdate, url) {
 					"+ city +"\
 				</div>\
 				<div class='row'>\
-					"+ bdate +" years old\
+					"+ bdate +"\
 				</div>\
 				<div class='row'>\
 					<a target=\'_blank\' href='"+ url +"'>Voir sur wecitizens</a>\
