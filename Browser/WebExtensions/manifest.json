@@ -8,7 +8,15 @@
         {
             "matches": ["<all_urls>", "file:///*"],
             "css": ["css/bootstrap_popover.css"],
-            "js": ["lib/jquery-1.9.1.min.js", "lib/bootstrap.min.js", "utils/db_reader.js", "lib/compatibility.js", "lib/pdf.js", "scripts/content_script.js"]
+            "js":
+				["lib/jquery-1.9.1.min.js",
+				"lib/bootstrap.min.js",
+				"utils/db_reader.js",
+				"lib/compatibility.js",
+				"lib/pdf.js",
+				"utils/data_handler.js",
+				"utils/init_popover.js",
+				"scripts/content_script.js"]
         }
     ],
     "browser_action": {

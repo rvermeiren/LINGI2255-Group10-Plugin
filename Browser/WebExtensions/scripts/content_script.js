@@ -1,7 +1,13 @@
-var font = false;
-var windowWidth = 0;
-var windowHeight = 0;
+/** content-script.js
+ * This script is executed for every page
+ * It searches for politicians names, and adds an image next to them.
+ * When hovering the image, it displays more info about the corresponding
+ * politician(s)
+ */
+
+// indicates if the page is a pdf or not
 var pdf = false;
+// hashmap that contains infomation about the politicians
 var politicianInfos = {};
 
 
@@ -9,28 +15,30 @@ var politicianInfos = {};
 ************ Start functions *****************
 **********************************************/
 
+// When the page is loaded
 $(document).ready(function(){
-	windowWidth = $(window).width();
-	windowHeight = $(window).height();
+	// "Search" in local storage tell us if the search is activated or not
 	var retrievedObject = chrome.storage.local.get('search',
 		function(result){
+			// == '{}' checks if "Search" is present or not
 			if (JSON.stringify(result) == '{}') {start(true); }
 			else start(result.search);
 		}
-	);});
+	);
+});
 
+// Start searching for politicians
 function start(search){
-	console.log(search);
-	//to know if it is a pdf file
+	// Check if it is a pdf file
 	var url = document.location.href;
 	if (url.substr(url.length-3, url.length) == "pdf")
 		pdf=true;
 	else
 		pdf=false;
 
-
-	// console.log('Document is ready.. scanning for politicians...');
-	if(search){
+	// If the search checkbox is activated
+	if(search) {
+		// Retrieve the database
 		var retrievedObject = chrome.storage.local.get('database_csv',
 			function(result){
 				hashmap = CSVToHashmap(result.database_csv);
@@ -44,7 +52,8 @@ function start(search){
 		);
 	}
 
-	// Listen for messages from the popup
+	// Message passing with the popup - useful to pass the politician infos for
+	// the popup, the notification and the badge.
 	chrome.runtime.onMessage.addListener(function (msg, sender, response) {
 		if ((msg.from === 'popup') && (msg.subject === 'politicianInfos')) {
 			response(politicianInfos);
@@ -53,40 +62,20 @@ function start(search){
 			response({notification: pdf, count: Object.keys(politicianInfos).length});
 		}
 	});
-
-
-
-	$('head').append("<script>\
-	$('[data-toggle=\"popover\"]').popover({\
-		placement : 'top',\
-		trigger : 'hover'\
-	});\
-	</script>");
-
 }
 
-function textNodesUnder(el){
-	var pred;
-	var n, a=[], walk=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,null,false);
-	while(n=walk.nextNode()){
-		if (pred != n.parentNode)
-			a.push(n.parentNode);
-		pred = n.parentNode;
-	}
-	return a;
-}
-
+// Search the pdf for politicians
 function launchPDFSearch(hashmap, url) {
-	var pdfName = url.split("/");
-	pdfName = pdfName[pdfName.length-1];
-	console.log(pdfName);
+
+	// Mandatory for PDFJS
 	PDFJS.workerSrc = chrome.extension.getURL("../lib/pdf.worker.js");
 	var counter = {i : 0};
 
+	// Load text from PDF then launch the search on it
 	PDFJS.getDocument(url).then(function(pdf) {
-		console.log("Searching the pdf");
 		var maxPages = pdf.pdfInfo.numPages;
 		for (var j = 1; j < maxPages; j++) {
+			// Get the text from every page
 			var page = pdf.getPage(j).then(function(page) {
 				var textContent  = page.getTextContent().then(function(textContent){
 					for(var i = 0; i < textContent.items.length; i++) {
@@ -142,6 +131,17 @@ function launchHTMLSearch(hashmap) {
 
 }
 
+//
+function textNodesUnder(el){
+	var pred;
+	var n, a=[], walk=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,null,false);
+	while(n=walk.nextNode()){
+		if (pred != n.parentNode)
+		a.push(n.parentNode);
+		pred = n.parentNode;
+	}
+	return a;
+}
 
 /*********************************************
 **** Search through textNode and add icons ***
@@ -245,9 +245,7 @@ function inspectTextNode(parent, nodeIndex, textNode, counter, pdf) {
 	}
 	if(toDisplay.length > 0 && !pdf) {
 		displayIcons(textNode, parent, toDisplay);
-		return 1;
 	}
-	return 0;
 }
 
 function displayIcons(textNode, parent, toDisplay) {
@@ -272,188 +270,4 @@ function displayIcons(textNode, parent, toDisplay) {
 	}
 	fragment.insertBefore(document.createTextNode(ret), fragment.firstChild);
 	parent.replaceChild(fragment, textNode);
-}
-
-/*********************************************
-********** Auxiliary functions ***************
-**********************************************/
-
-function cleanData(person) {
-	var bdate;
-	if (person[6] == "\\N" || typeof person[6] == 'undefined') {
-		bdate = "Unknown age";
-	} else {
-		bdate = new Date(person[6]+'T10:20:30Z');
-		bdate = calculateAge(bdate);
-	}
-
-	var city;
-	if (person[7] == "\\N" || typeof person[7] == 'undefined'){
-		city = "Unknown city";
-	}else{
-		city= person[7];
-	}
-
-	var post;
-	if (person[8] == "\\N" || typeof person[8] == 'undefined'){
-		post = "Unknown post";
-	}else{
-		post = person[8];
-	}
-
-	return [bdate, city, post];
-}
-
-//http://stackoverflow.com/questions/4060004/calculate-age-in-javascript
-function calculateAge(birthday) { // birthday is a date
-	var ageDifMs = Date.now() - birthday.getTime();
-	var ageDate = new Date(ageDifMs); // miliseconds from epoch
-	ret = Math.abs(ageDate.getUTCFullYear() - 1970);
-	return (ret + " years old");
-}
-
-function removeAccent(str) {
-	var accent = [
-		/[\300-\306]/g, /[\340-\346]/g, // A, a
-		/[\310-\313]/g, /[\350-\353]/g, // E, e
-		/[\314-\317]/g, /[\354-\357]/g, // I, i
-		/[\322-\330]/g, /[\362-\370]/g, // O, o
-		/[\331-\334]/g, /[\371-\374]/g, // U, u
-		/[\321]/g, /[\361]/g, // N, n
-		/[\307]/g, /[\347]/g, // C, c
-	];
-	var noaccent = ['A','a','E','e','I','i','O','o','U','u','N','n','C','c'];
-
-	for(var i = 0; i < accent.length; i++){
-		str = str.replace(accent[i], noaccent[i]);
-	}
-
-	return str;
-}
-
-function urlBuild(name, firstname, id) {
-	var linkedName = name.replace(" ", "-");
-	var linkedFirstname = firstname.replace(" ", "-");
-	var res = linkedFirstname.concat(linkedName);
-	res.toLowerCase();
-	res.replace(" ", "-");
-	res = removeAccent(res);
-	return("http://directory.wecitizens.be/fr/politician/" + res + "-" + id);
-}
-
-function imgBuild(name, imgName) {
-	if (imgName != "\\N" && imgName != 0) {
-		var photo = ("http://directory.wecitizens.be/images/generic/politician-thumb/" + imgName);
-	} else {
-		var photo = ("http://directory.wecitizens.be/images/img-no-photo.png");
-	}
-	return "<img src="+ photo +" height=75 alt="+ name +">";
-}
-
-
-/*********************************************
-************* Creating popovers **************
-**********************************************/
-
-function createSinglePopover(hashmap, name, index, counter, node) {
-	var cleanD = cleanData(hashmap[name][index]);
-
-	var img = imgBuild(name, hashmap[name][index][3]);
-
-	var url = urlBuild(name, hashmap[name][index][4], hashmap[name][index][0]);
-
-	var html = initSinglePanel(img, cleanD[2], hashmap[name][index][2], cleanD[1], cleanD[0], url);
-
-	var popover = String(' <span id="popoverWeCitizens"><img data-popover="true" data-placement="left" data-toggle="popover" data-trigger="hover" title="') + hashmap[name][index][4] + " " + hashmap[name][index][5] + String('" id="popover')
-	+ counter.i + String('"data-html="true" src="http://i.imgur.com/neBExfj.png" class="politicianFind pop" data-content="')
-	+ html + String('"></span>');
-
-	counter.i++;
-
-	return popover;
-}
-
-
-function createListPopover(hashmap, name, counter, node){
-	var html = "<div class='container' id='content-main'>\
-		<div class='panel-group' id='accordion'>";
-	for(i = 0; i < hashmap[name].length; i++){
-		var person = hashmap[name][i];
-		var cleanD = cleanData(person);
-
-		var img = imgBuild(name, person[3]);
-
-		var url = urlBuild(name, person[4], person[0]);
-
-		html += initMultiplePanel(counter.i, person[4], person[5], img, cleanD[2], person[2], cleanD[1], cleanD[0], url);
-
-		counter.i++;
-	}
-	html += "</div></div>";
-
-	var popover = String(' <span id="popoverWeCitizens"><img data-popover="true" data-placement="left" data-toggle="popover" data-trigger="hover" title="Politicians found" id="popover')
-	+ counter.i + String('"data-html="true" src="http://i.imgur.com/neBExfj.png" class="politicianFind" data-content="')
-	+ html + String('"></span>');
-
-	return popover;
-}
-
-/*********************************************
-***** Boring HTML templates functions ********
-**********************************************/
-function initMultiplePanel(i, firstName, lastName, img, job, party, city, bdate, url) {
-	return "<div class='panel panel-default'>\
-	<div class='panel-heading'>\
-		<h4 class='panel-title'>\
-			<a data-toggle='collapse' href='javascript:;' data-target='#collapsing"+i+"' class='collapsed'>" + firstName + " "+ lastName + "</a>\
-		</h4>\
-	</div>\
-	<div id='collapsing"+i+"' class='panel-collapse collapse'>\
-		<div class='panel-body'>\
-			<div class='col-xs-4' id='photo'>"+ img +" </div>\
-			<div class=\'col-xs-8\'>\
-				<div class=\'row\'>\
-					<strong>Job</strong>: "+ job +"\
-				</div>\
-				<div class=\'row\'>\
-					<strong>Political party</strong>: "+ party +"\
-				</div>\
-				<div class=\'row\'>\
-					<strong>City</strong>: "+ city +"\
-				</div>\
-				<div class=\'row\'>\
-					<strong>Age</strong>: "+ bdate +"\
-				</div>\
-				<div class='row'>\
-					<a target=\'_blank\' href='"+ url +"'>Voir sur wecitizens</a>\
-				</div>\
-			</div>\
-		</div>\
-	</div>\
-</div>"
-}
-
-function initSinglePanel(img, job, party, city, bdate, url) {
-	return "<div class='panel-body'>\
-		<div class='row'>\
-			<div class='col-xs-3' id='photo'>"+ img +" </div>\
-			<div class='col-xs-9'>\
-				<div class='row'>\
-					"+ job + "\
-				</div>\
-				<div class='row'>\
-					"+ party +"\
-				</div>\
-				<div class='row'>\
-					"+ city +"\
-				</div>\
-				<div class='row'>\
-					"+ bdate +"\
-				</div>\
-				<div class='row'>\
-					<a target=\'_blank\' href='"+ url +"'>Voir sur wecitizens</a>\
-				</div>\
-			</div>\
-		</div>\
-	</div>"
 }
