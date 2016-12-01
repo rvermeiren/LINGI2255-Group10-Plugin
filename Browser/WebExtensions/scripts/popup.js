@@ -50,6 +50,7 @@ function containsObject(obj, array) {
 // Update the relevant fields with the new data
 function replaceHTML(politicianInfos) {
 
+	var count = 0;
 	for (var i in politicianInfos) {
 
 		var name			= politicianInfos[i].name;
@@ -61,15 +62,16 @@ function replaceHTML(politicianInfos) {
 		var photo			= politicianInfos[i].photo;
 		var link			= politicianInfos[i].link;
 
-		$('#content-main').append('<div class="panel-group" id="accordion'+i+'">\
+		$('#content-main').append('<div class="panel-group" id="accordion'+count+'">\
 				                <div class="panel panel-default"">\
 				                    <div class="panel-heading">\
-				                        <h4 class="panel-title">\
-				                            <a data-toggle="collapse" data-target="#collapsing'+i+'" href=\'javascript:;\' class="collapsed">' + name + " "
-				                            + surname + '</a>\
-				                        </h4>\
+										<a data-toggle="collapse" data-target="#collapsing'+count+'" href=\'javascript:;\' class="collapsed">\
+					                        <h4 class="panel-title lead">\
+					                            '+ name+' '+surname +'\
+					                        </h4>\
+										</a>\
 				                    </div>\
-				                    <div id="collapsing'+i+'" class="panel-collapse collapse">\
+				                    <div id="collapsing'+count+'" class="panel-collapse collapse">\
 				                        <div class="panel-body">\
 				                        	<div class=\'col-xs-3\' id=\'photo\'>'+ photo +' </div>\
 				                        	<div class=\'col-xs-9\'>\
@@ -83,7 +85,7 @@ function replaceHTML(politicianInfos) {
 													<strong>City</strong>: '+ city +'\
 												</div>\
 												<div class=\'row\'>\
-													<strong>Age</strong>: '+ birthDate +' years old\
+													<strong>Age</strong>: '+ birthDate +'\
 												</div>\
 												<div class=\'row\'>\
 													<a target="_blank" href=\''+ link +'\'>Voir sur wecitizens</a>\
@@ -93,5 +95,6 @@ function replaceHTML(politicianInfos) {
 				                    </div>\
 				                </div>\
 				            </div>');
+		count++;
 	}
 }

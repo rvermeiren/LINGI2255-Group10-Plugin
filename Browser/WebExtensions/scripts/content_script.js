@@ -358,16 +358,11 @@ function imgBuild(name, imgName) {
 function createSinglePopover(hashmap, name, index, counter, node) {
 	var cleanD = cleanData(hashmap[name][index]);
 
-	var bdate = cleanD[0];
-	if (bdate != "Unknown age"){
-		bdate = calculateAge(bdate);
-	}
-
 	var img = imgBuild(name, hashmap[name][index][3]);
 
 	var url = urlBuild(name, hashmap[name][index][4], hashmap[name][index][0]);
 
-	var html = initSinglePanel(img, cleanD[2], hashmap[name][index][2], cleanD[1], bdate, url);
+	var html = initSinglePanel(img, cleanD[2], hashmap[name][index][2], cleanD[1], cleanD[0], url);
 
 	var popover = String(' <span id="popoverWeCitizens"><img data-popover="true" data-placement="left" data-toggle="popover" data-trigger="hover" title="') + hashmap[name][index][4] + " " + hashmap[name][index][5] + String('" id="popover')
 	+ counter.i + String('"data-html="true" src="http://i.imgur.com/neBExfj.png" class="politicianFind pop" data-content="')
@@ -386,16 +381,11 @@ function createListPopover(hashmap, name, counter, node){
 		var person = hashmap[name][i];
 		var cleanD = cleanData(person);
 
-		var bdate = cleanD[0];
-		if (bdate != "Unknown age"){
-			bdate = calculateAge(bdate);
-		}
-
 		var img = imgBuild(name, person[3]);
 
 		var url = urlBuild(name, person[4], person[0]);
 
-		html += initMultiplePanel(counter.i, person[4], person[5], img, cleanD[2], person[2], cleanD[1], bdate, url);
+		html += initMultiplePanel(counter.i, person[4], person[5], img, cleanD[2], person[2], cleanD[1], cleanD[0], url);
 
 		counter.i++;
 	}
