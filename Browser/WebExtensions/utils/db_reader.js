@@ -1,20 +1,14 @@
-// setInterval(function() {
 chrome.storage.local.get('last_modified',
     function(date){
         //  update the db every seven days
         if (JSON.stringify(date) == '{}' || (new Date() - new Date(date.last_modified) > 7 * 24 * 60 * 60 * 1000)){
-            // chrome.storage.local.get('database_csv',
-                // function(result){
-                    getDistantCSV();
-                // }
-            // );
+            getDistantCSV();
         }
     }
 );
-// },  15000); // 60 * 1000 * 168 milsec = 1 week
 
-
-//Code found on STACKOVERFLOW
+// This code is based on this blog entry :
+// https://www.bennadel.com/blog/1504-ask-ben-parsing-csv-strings-with-javascript-exec-regular-expression-command.htm
 function CSVToHashmap(strData){
     // Check to see if the delimiter is defined. If not,
     // then default to comma.
@@ -82,11 +76,6 @@ function CSVToHashmap(strData){
 
         }
     }
-    //Return the parsed data.
-    // var test = hashmap['Michel'];
-    // for(var i = 0; i<test.length; i++){
-    //     alert(test[i]);
-    // }
     return(hashmap);
 }
 

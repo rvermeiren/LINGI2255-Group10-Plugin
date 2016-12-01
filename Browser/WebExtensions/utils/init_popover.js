@@ -2,14 +2,14 @@
  * This script handles the initialisation of the popovers that contain the info
  */
 
-function createSinglePopover(hashmap, name, index, counter, node) {
+function createSinglePopover(hashmap, name, index, counter) {
 	var cleanD = cleanData(hashmap[name][index]);
 
 	var img = imgBuild(name, hashmap[name][index][3]);
 
 	var url = urlBuild(name, hashmap[name][index][4], hashmap[name][index][0]);
 
-	var html = initSinglePanel(img, cleanD[2], hashmap[name][index][2], cleanD[1], cleanD[0], url);
+	var html = initSinglePanel(img, cleanD[8], hashmap[name][index][2], cleanD[7], cleanD[6], url);
 
 	var popover = String(' <span id="popoverWeCitizens"><img data-popover="true" data-placement="left" data-toggle="popover" data-trigger="hover" title="') + hashmap[name][index][4] + " " + hashmap[name][index][5] + String('" id="popover')
 	+ counter.i + String('"data-html="true" src="http://i.imgur.com/neBExfj.png" class="politicianFind pop" data-content="')
@@ -21,7 +21,7 @@ function createSinglePopover(hashmap, name, index, counter, node) {
 }
 
 
-function createListPopover(hashmap, name, counter, node){
+function createListPopover(hashmap, name, counter){
 	var html = "<div class='container' id='content-main'>\
 		<div class='panel-group' id='accordion'>";
 	for(i = 0; i < hashmap[name].length; i++){
@@ -32,7 +32,7 @@ function createListPopover(hashmap, name, counter, node){
 
 		var url = urlBuild(name, person[4], person[0]);
 
-		html += initMultiplePanel(counter.i, person[4], person[5], img, cleanD[2], person[2], cleanD[1], cleanD[0], url);
+		html += initMultiplePanel(counter.i, person[4], person[5], img, cleanD[8], person[2], cleanD[7], cleanD[6], url);
 
 		counter.i++;
 	}
@@ -72,7 +72,7 @@ function initMultiplePanel(i, firstName, lastName, img, job, party, city, bdate,
 					<strong>Age</strong>: "+ bdate +"\
 				</div>\
 				<div class='row'>\
-					<a target=\'_blank\' href='"+ url +"'>Voir sur wecitizens</a>\
+					<a target=\'_blank\' href='"+ url +"'>Show on WeCitizens</a>\
 				</div>\
 			</div>\
 		</div>\
@@ -86,21 +86,48 @@ function initSinglePanel(img, job, party, city, bdate, url) {
 			<div class='col-xs-3' id='photo'>"+ img +" </div>\
 			<div class='col-xs-9'>\
 				<div class='row'>\
-					"+ job + "\
+					<strong>Job</strong>: "+ job + "\
 				</div>\
 				<div class='row'>\
-					"+ party +"\
+					<strong>Party</strong>: "+ party +"\
 				</div>\
 				<div class='row'>\
-					"+ city +"\
+					<strong>City</strong>: "+ city +"\
 				</div>\
 				<div class='row'>\
-					"+ bdate +"\
+					<strong>Age</strong>: "+ bdate +"\
 				</div>\
 				<div class='row'>\
-					<a target=\'_blank\' href='"+ url +"'>Voir sur wecitizens</a>\
+					<a target=\'_blank\' href='"+ url +"'>Show on WeCitizens</a>\
 				</div>\
 			</div>\
 		</div>\
 	</div>"
 }
+
+var popoverSettings = "<script>\
+function get_popover_placement(pop, dom_el) {\
+	var width = window.innerWidth;\
+	var left_pos = $(dom_el).offset().left;\
+	if (width - left_pos > 600) return 'right';\
+	return 'left';\
+}\
+$(function(){\
+	$(\'[data-toggle=\"popover\"]\')\
+	.popover({ trigger: \"manual\", placement: get_popover_placement, html: true, animation:true})\
+	.on(\"mouseenter\", function () {\
+		var _this = this;\
+		$(this).popover(\"show\");\
+		$(\".popover\").on(\"mouseleave\", function () {\
+			$(_this).popover('hide');\
+		});\
+	}).on(\"mouseleave\", function () {\
+		var _this = this;\
+		setTimeout(function () {\
+			if (!$(\".popover:hover\").length) {\
+				$(_this).popover(\"hide\");\
+			}\
+		}, 300);\
+	});\
+});\
+</script> "

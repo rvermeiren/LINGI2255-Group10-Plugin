@@ -28,7 +28,7 @@ window.addEventListener('DOMContentLoaded', function () {
 	//Send a request for the politicians info
 		chrome.tabs.sendMessage(
 	   	 	tabs[0].id,
-	   		{from: 'popup', subject: 'politicianInfos'},
+	   		{from: 'popup', subject: 'politiciansInfo'},
 	   		//Execute ReplaceHTML with our list
 	    	replaceHTML);
 	});
@@ -40,20 +40,20 @@ function update_research(cb) {
 }
 
 // Update the HTML of the popup with the politicians list
-function replaceHTML(politicianInfos) {
+function replaceHTML(politiciansInfo) {
 
 	var count = 0;
 	// We received a hashmap with the politians - i is in format FirstnameLastname
-	for (var i in politicianInfos) {
+	for (var i in politiciansInfos) {
 
-		var name			= politicianInfos[i].name;
-		var surname			= politicianInfos[i].surname;
-		var birthDate		= politicianInfos[i].birthDate;
-		var politicalParty	= politicianInfos[i].politicalParty;
-		var city			= politicianInfos[i].city;
-		var job 			= politicianInfos[i].job;
-		var photo			= politicianInfos[i].photo;
-		var link			= politicianInfos[i].link;
+		var name			= politiciansInfos[i].name;
+		var surname			= politiciansInfos[i].surname;
+		var birthDate		= politiciansInfos[i].birthDate;
+		var politicalParty	= politiciansInfos[i].politicalParty;
+		var city			= politiciansInfos[i].city;
+		var job 			= politiciansInfos[i].job;
+		var photo			= politiciansInfos[i].photo;
+		var link			= politiciansInfos[i].link;
 
 		// Append a panel for every politician in content-main
 		$('#content-main').append('<div class="panel-group" id="accordion'+count+'">\
@@ -82,7 +82,7 @@ function replaceHTML(politicianInfos) {
 													<strong>Age</strong>: '+ birthDate +'\
 												</div>\
 												<div class=\'row\'>\
-													<a target="_blank" href=\''+ link +'\'>Voir sur wecitizens</a>\
+													<a target="_blank" href=\''+ link +'\'>Show on WeCitizens</a>\
 												</div>\
 											</div>\
 				                        </div>\

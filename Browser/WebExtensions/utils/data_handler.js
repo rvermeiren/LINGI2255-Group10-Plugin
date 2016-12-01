@@ -26,7 +26,7 @@ function cleanData(person) {
 		post = person[8];
 	}
 
-	return [bdate, city, post];
+	return [person[0], person[1], person[2], person[3], person[4], person[5], bdate, city, post];
 }
 
 //http://stackoverflow.com/questions/4060004/calculate-age-in-javascript

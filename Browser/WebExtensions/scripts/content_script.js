@@ -8,8 +8,7 @@
 // indicates if the page is a pdf or not
 var pdf = false;
 // hashmap that contains infomation about the politicians
-var politicianInfos = {};
-
+var politiciansInfo = {};
 
 /*********************************************
 ************ Start functions *****************
@@ -52,14 +51,14 @@ function start(search){
 		);
 	}
 
-	// Message passing with the popup - useful to pass the politician infos for
+	// Message passing with the popup - useful to pass the politician info for
 	// the popup, the notification and the badge.
 	chrome.runtime.onMessage.addListener(function (msg, sender, response) {
-		if ((msg.from === 'popup') && (msg.subject === 'politicianInfos')) {
-			response(politicianInfos);
+		if ((msg.from === 'popup') && (msg.subject === 'politiciansInfo')) {
+			response(politiciansInfo);
 		}
 		else if ((msg.from === 'popup') && (msg.subject === 'badge')) {
-			response({notification: pdf, count: Object.keys(politicianInfos).length});
+			response({notification: pdf, count: Object.keys(politiciansInfo).length});
 		}
 	});
 }
@@ -79,7 +78,7 @@ function launchPDFSearch(hashmap, url) {
 			var page = pdf.getPage(j).then(function(page) {
 				var textContent  = page.getTextContent().then(function(textContent){
 					for(var i = 0; i < textContent.items.length; i++) {
-						inspectTextNode(null, null, textContent.items[i].str, counter, true);
+						scanText(null, null, textContent.items[i].str, counter, true);
 					}
 				});
 			});
@@ -87,47 +86,21 @@ function launchPDFSearch(hashmap, url) {
 	});
 }
 
+// Search the HTML page for politicians
 function launchHTMLSearch(hashmap) {
 	var counter = {i: 0}; //Occurences. Singleton to be passed by reference and not by value.
 	var arr = textNodesUnder(document.body);
 	for (var i = 0; i < arr.length; i++) {
 		for (var j = 0; j < arr[i].childNodes.length; j++) {
 			if (arr[i].childNodes[j].nodeType == Node.TEXT_NODE) {
-				inspectTextNode(arr[i], j, arr[i].childNodes[j], counter, false);
+				scanText(arr[i], j, arr[i].childNodes[j], counter, false);
 				j++;
 			}
 		}
 	}
 
 	// Let the popover opened if we hover over it
-	$('head').append(
-		"<script>\
-		function get_popover_placement(pop, dom_el) {\
-			var width = window.innerWidth;\
-			var left_pos = $(dom_el).offset().left;\
-			if (width - left_pos > 600) return 'right';\
-			return 'left';\
- 		}\
-		$(function(){\
-			$(\'[data-toggle=\"popover\"]\')\
-			.popover({ trigger: \"manual\", placement: get_popover_placement, html: true, animation:true})\
-			.on(\"mouseenter\", function () {\
-				var _this = this;\
-				$(this).popover(\"show\");\
-				$(\".popover\").on(\"mouseleave\", function () {\
-					$(_this).popover('hide');\
-				});\
-			}).on(\"mouseleave\", function () {\
-				var _this = this;\
-				setTimeout(function () {\
-					if (!$(\".popover:hover\").length) {\
-						$(_this).popover(\"hide\");\
-					}\
-				}, 300);\
-			});\
-		});\
-		</script> "
-	);
+	$('head').append(popoverSettings);
 
 }
 
@@ -147,23 +120,42 @@ function textNodesUnder(el){
 **** Search through textNode and add icons ***
 **********************************************/
 
-function inspectTextNode(parent, nodeIndex, textNode, counter, pdf) {
+/* The hashmap we use in the following functions has this structure
+0 : num				5 : last name
+1 : id				6 : birth date
+2 : party			7 : city
+3 : photoID			8 : job
+4 : first name					*/
+
+// List of the prefixes :
+var prefixes = {"De":true, "Van":true, "Di":true, "Vanden":true, "Ver":true};
+
+
+// Scan textNode for politicians
+function scanText(parent, nodeIndex, textNode, counter, pdf) {
+	// Array containing the spans we will display next to the spotted names
 	var toDisplay = [];
+	// Array containing the politicians to add to the extension popup
 	var politiciansToAdd = []
+	// The raw text we will scan
 	var body;
-	var pushed = 0;
 	if (pdf)
 		body = textNode;
 	else
 		body = textNode.textContent;
-	// console.log(body);
+
+	// Prev is the previous match of the regex
+	// Pref is a prefix
+	// Word is the current match of the regex
 	var prev, pref, word;
+	// Number of politicians pushed on politiciansToAdd the last time we pushed
+	var pushed = 0;
+	// Possible lastnames' prefixes
 	var prefix = ["", "den ", "der ", "de ", "van "];
+	// Match the word beginning with an uppercase letter
 	var reg = /[A-Z]+[a-z\-]*/gm;
-	var i = 0;
-	// for(i; i<word.length; i++) {
 	while(word = reg.exec(body)){
-		if (word == "De" || word == "Van" || word == "Di" || word == "Vanden" || word == "Ver"){		//Di Rupo rpz
+		if (word in prefixes){
 			pref = word;
 			continue;
 		}
@@ -180,22 +172,23 @@ function inspectTextNode(parent, nodeIndex, textNode, counter, pdf) {
 			// Search for the name in the hashmap
 			if (name in hashmap){
 				found = true;
-				var matching = [];
-				var pol = null;
+				var mapIndex = null;
 				// If only one politician has this name
 				var twoNames = false;
 				if(hashmap[name].length == 1) {
-					pol = 0;
+					mapIndex = 0;
 				}
 				// If a politician has his first name cited just before his last name in the text
 				else for (var i in hashmap[name]) {
-					matching.push(hashmap[name][i]);
 					if (prev == hashmap[name][i][4]) { //Matching also firstname
+						// We delete the politicians we found that matched the first names
 						toDisplay.pop()
 						for(var j = 0; j < pushed; j++) {
 							politiciansToAdd.pop();
 						}
-						pol = i;
+						// Position of the politician in the hashmap
+						mapIndex = i;
+						// We spotted the two names of the politician
 						twoNames = true;
 					}
 				}
@@ -204,36 +197,8 @@ function inspectTextNode(parent, nodeIndex, textNode, counter, pdf) {
 					prev += " "
 					nameLength += prev.length;
 				}
-				else {
-					prev = ""
-				}
-
-				// Only one politician
-				if (pol != null) {
-					var lastName = hashmap[name][pol][4];
-					var firstName = hashmap[name][pol][5];
-					person = hashmap[name][pol];
-					var infos = cleanData(person);
-					pushed = 1;
-					var img = imgBuild(name, person[3]);
-					var url = urlBuild(name, person[4], person[0]);
-					politiciansToAdd.push({name: lastName, surname: firstName, birthDate: infos[0], politicalParty: hashmap[name][pol][2], city: infos[1], job: infos[2], photo: img, link: url});
-					if(!pdf)
-						toDisplay.push({"index" : reg.lastIndex, "nameLength" : nameLength ,"span" : prev + name + createSinglePopover(hashmap, name, pol, counter, parent)});
-				}
-				//Multiple policitians
-				else {
-					for(i = 0; i < hashmap[name].length; i++){
-						person = hashmap[name][i]
-						var infos = cleanData(person)
-						var img = imgBuild(name, person[3]);
-						var url = urlBuild(name, person[4], person[0]);
-						politiciansToAdd.push({name: person[4], surname: name, birthDate: infos[0], politicalParty: person[2], city: infos[1], job: infos[2], photo: img, link: url});
-					}
-					pushed = hashmap[name].length;
-					if(!pdf)
-						toDisplay.push({"index" : reg.lastIndex, "nameLength" : nameLength ,"span" : prev + name + createListPopover(hashmap, name, counter, parent)});
-				}
+				// pushed is the number of politicians we found with this name
+				pushed = pushPoliticians(mapIndex, hashmap, name, politiciansToAdd, toDisplay, counter, nameLength, reg.lastIndex);
 				pref = null;
 			}
 			prev = word;
@@ -241,33 +206,92 @@ function inspectTextNode(parent, nodeIndex, textNode, counter, pdf) {
 		}
 	}
 	for(var i = 0; i < politiciansToAdd.length; i++) {
-		politicianInfos[politiciansToAdd[i].name+politiciansToAdd[i].surname] = politiciansToAdd[i];
+		// We add the politicians we found in this part of the text in politiciansInfo, which is useful for the popup
+		politiciansInfo[politiciansToAdd[i].name+politiciansToAdd[i].surname] = politiciansToAdd[i];
 	}
+	// Display the images that toggle the popovers
 	if(toDisplay.length > 0 && !pdf) {
 		displayIcons(textNode, parent, toDisplay);
 	}
 }
 
+// Add politicians to toDisplay, to display to display it later netx to the names
+function pushPoliticians(mapIndex, hashmap, name, politiciansToAdd, toDisplay, counter, nameLength, HTMLindex) {
+	// First name of the politician was spotted
+	if (mapIndex != null) {
+		person = hashmap[name][mapIndex];
+		// Add it to politiciansToAdd
+		addPolitician(politiciansToAdd, person)
+		pushed = 1;
+		// Add it in the list that will be displayed in the text
+		if(!pdf)
+			toDisplay.push({
+				"index" : HTMLindex,
+				"nameLength" : nameLength,
+				"span" : person[4] + " " + person[5] + createSinglePopover(hashmap, person[5], mapIndex, counter)
+			});
+	}
+	//Multiple policitians
+	else {
+		for(i = 0; i < hashmap[name].length; i++){
+			person = hashmap[name][i]
+			// Add it to politiciansToAdd
+			addPolitician(politiciansToAdd, person);
+		}
+		pushed = hashmap[name].length;
+		if(!pdf)
+		// Add it in the list that will be displayed in the text
+			toDisplay.push({
+				"index" : HTMLindex,
+				"nameLength" : nameLength,
+				"span" : name + createListPopover(hashmap, person[5], counter)
+			});
+	}
+	// pushed is the number of politicians we pushed in politiciansToAdd
+	return pushed;
+}
+
+// Push person in politiciansToAdd, which will extend politiciansInfo
+function addPolitician(politiciansToAdd, person) {
+	var info = cleanData(person);
+	var img = imgBuild(info[5], info[3]);
+	var url = urlBuild(info[5], info[4], info[0]);
+	politiciansToAdd.push({
+		name: info[4],
+		surname: info[5],
+		birthDate: info[6],
+		politicalParty: info[2],
+		city: info[7],
+		job: info[8],
+		photo: img,
+		link: url}
+	);
+}
+
+// Display icons next to politicians names. These will toggle popovers with more info
 function displayIcons(textNode, parent, toDisplay) {
-	var ret = textNode.nodeValue;
+	// The text when we place the icons
+	var text = textNode.nodeValue;
 
 	var fragment = document.createDocumentFragment();
+
+	// We add icons starting from the end
 	for(var i = 0; i < toDisplay.length; i++) {
 		var icon = toDisplay.pop();
-		// console.log(icon.index);
 		// Add the end of the textNode
-		if((icon.index) < ret.length)
-			fragment.insertBefore(document.createTextNode(ret.substr(icon.index)), fragment.firstChild);
+		if((icon.index) < text.length)
+			fragment.insertBefore(document.createTextNode(text.substr(icon.index)), fragment.firstChild);
 
 		// Add the span containing the icon and the popover
 		var toAdd = document.createElement("span");
 		toAdd.innerHTML = icon.span;
 		fragment.insertBefore(toAdd, fragment.firstChild);
 
-
 		// Now we handle the rest of the names, the ones in the beginning of the text
-		ret = ret.substr(0, icon.index-icon.nameLength);
+		text = text.substr(0, icon.index-icon.nameLength);
 	}
-	fragment.insertBefore(document.createTextNode(ret), fragment.firstChild);
+	// We prepend the start of the text, where no icons have to be added
+	fragment.insertBefore(document.createTextNode(text), fragment.firstChild);
+	// Replace the original node with the modified one
 	parent.replaceChild(fragment, textNode);
 }
