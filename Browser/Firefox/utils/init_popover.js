@@ -11,7 +11,9 @@ function createSinglePopover(hashmap, name, index, counter) {
 
 	var html = initSinglePanel(img, cleanD[8], hashmap[name][index][2], cleanD[7], cleanD[6], url);
 
-	var popover = String(' <span id="popoverWeCitizens"><img data-popover="true" data-placement="left" data-toggle="popover" data-trigger="hover" title="') + hashmap[name][index][4] + " " + hashmap[name][index][5] + String('" id="popover')
+	var popover = String(' <span id="popoverWeCitizens">\
+	<style scoped><link href=\'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\' rel=\'stylesheet\' integrity=\'sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u\' crossorigin=\'anonymous\'></style>\
+	<img data-popover="true" data-placement="left" data-toggle="popover" data-trigger="hover" title="') + hashmap[name][index][4] + " " + hashmap[name][index][5] + String('" id="popover')
 	+ counter.i + String('"data-html="true" src="http://i.imgur.com/neBExfj.png" class="politicianFind pop" data-content="')
 	+ html + String('"></span>');
 
@@ -38,7 +40,9 @@ function createListPopover(hashmap, name, counter){
 	}
 	html += "</div></div>";
 
-	var popover = String(' <span id="popoverWeCitizens"><img data-popover="true" data-placement="left" data-toggle="popover" data-trigger="hover" title="Politicians found" id="popover')
+	var popover = String(' <span id="popoverWeCitizens">\
+	<style scoped><link href=\'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\' rel=\'stylesheet\' integrity=\'sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u\' crossorigin=\'anonymous\'></style>\
+	<img data-popover="true" data-placement="left" data-toggle="popover" data-trigger="hover" title="Politicians found" id="popover')
 	+ counter.i + String('"data-html="true" src="http://i.imgur.com/neBExfj.png" class="politicianFind" data-content="')
 	+ html + String('"></span>');
 

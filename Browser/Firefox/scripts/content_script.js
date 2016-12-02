@@ -18,14 +18,17 @@ var politiciansInfo = {};
 $(document).ready(function(){
 	$('head').append('<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"  integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>');
 	$('head').append('<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>');
+
+	$(window).load(function(){
 		// "Search" in local storage tell us if the search is activated or not
-	var retrievedObject = chrome.storage.local.get('search',
-		function(result){
-			// == '{}' checks if "Search" is present or not
-			if (JSON.stringify(result) == '{}') {start(true); }
-			else start(result.search);
-		}
-	);
+		var retrievedObject = chrome.storage.local.get('search',
+			function(result){
+				// == '{}' checks if "Search" is present or not
+				if (JSON.stringify(result) == '{}') {start(true); }
+				else start(result.search);
+			}
+		);
+	});
 });
 
 // Start searching for politicians
@@ -36,6 +39,8 @@ function start(search){
 		pdf=true;
 	else
 		pdf=false;
+
+	console.log(pdf);
 
 	// If the search checkbox is activated
 	if(search) {
@@ -64,7 +69,7 @@ function start(search){
 			response(politiciansInfo);
 		}
 		else if ((msg.from === 'popup') && (msg.subject === 'badge')) {
-			console.log("received");
+			console.log("received, sent: " + Object.keys(politiciansInfo).length);
 			response({notification: pdf, count: Object.keys(politiciansInfo).length});
 		}
 	});
@@ -74,11 +79,13 @@ function start(search){
 function launchPDFSearch(hashmap, url) {
 
 	// Mandatory for PDFJS
-	PDFJS.workerSrc = chrome.extension.getURL("../lib/pdf.worker.js");
+	PDFJS.workerSrc = browser.extension.getURL("../lib/pdf.worker.js");
 	var counter = {i : 0};
-
 	// Load text from PDF then launch the search on it
+	console.log(PDFJS.getDocument(url));
+	console.log(url);
 	PDFJS.getDocument(url).then(function(pdf) {
+		alert("PDF SEARCH LAUNCHED");
 		var maxPages = pdf.pdfInfo.numPages;
 		for (var j = 1; j < maxPages; j++) {
 			// Get the text from every page
