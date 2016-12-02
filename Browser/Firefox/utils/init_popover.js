@@ -106,13 +106,13 @@ function initSinglePanel(img, job, party, city, bdate, url) {
 }
 
 var popoverSettings = "<script>\
-var $ = jQuery.noConflict();\
 function get_popover_placement(pop, dom_el) {\
 	var width = window.innerWidth;\
 	var left_pos = $(dom_el).offset().left;\
 	if (width - left_pos > 600) return 'right';\
 	return 'left';\
 }\
+var $ = jQuery.noConflict();\
 	$(function(){\
 		console.log($(\'[data-toggle=\"popover\"]\')\
 		.popover);\
