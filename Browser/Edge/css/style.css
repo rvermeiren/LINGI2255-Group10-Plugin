@@ -10,6 +10,7 @@ body {
     margin:5px !important; /* bas = hauteur du pied de page */
     background-color: #AA131F;
     line-height: 1.0 !important;
+	overflow-y: scroll;
 }
 .footer {
     position: absolute;
