@@ -3,12 +3,12 @@
 html {
     position: relative;
     min-height: 100%;
-    background-color: #AA131F;
+    background-color: #b8b8b8;
 	min-width: 500px;
 }
 body {
     margin:5px !important; /* bas = hauteur du pied de page */
-    background-color: #AA131F;
+    background-color: #b8b8b8;
     line-height: 1.0 !important;
 }
 .footer {
