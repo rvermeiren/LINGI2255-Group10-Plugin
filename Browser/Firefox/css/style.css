@@ -4,20 +4,19 @@ html {
     position: relative;
     margin:5px !important; /* bas = hauteur du pied de page */
     height: 500px;
-    background-color: #b8b8b8;
+    background-color: #AA131F;
 }
 
 body {
-    margin-right: 10px;
+    margin-right: 15px !important;
     overflow-x: hidden;
     min-width: 500px;
-    margin:5px !important; /* bas = hauteur du pied de page */
-    background-color: #b8b8b8;
+    background-color: #AA131F;
     line-height: 1.0 !important;
 }
 
 .img-wecitizens {
-    max-width: 450px !important;
+    max-width: 300px !important;
 }
 
 .footer {
