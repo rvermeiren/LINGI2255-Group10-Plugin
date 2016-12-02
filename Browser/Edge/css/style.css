@@ -1,17 +1,24 @@
-﻿/* Styles propres aux pages */
+/* Styles propres aux pages */
 
 html {
     position: relative;
-    min-height: 100%;
-    background-color: #b8b8b8;
-	min-width: 500px;
-}
-body {
     margin:5px !important; /* bas = hauteur du pied de page */
-    background-color: #b8b8b8;
-    line-height: 1.0 !important;
-	overflow-y: scroll;
+    height: 500px;
+    background-color: #AA131F;
+	min-width: 450px;
 }
+
+body {
+    margin-right: 10px !important;
+    overflow-x: hidden;
+    background-color: #AA131F;
+    line-height: 1.0 !important;
+}
+
+.img-wecitizens {
+    max-width: 300px !important;
+}
+
 .footer {
     position: absolute;
     left: 0;
