@@ -1,0 +1,66 @@
+﻿/* Styles propres aux pages */
+
+html {
+    position: relative;
+    min-height: 100%;
+    background-color: #AA131F;
+	min-width: 500px;
+}
+body {
+    margin:5px !important; /* bas = hauteur du pied de page */
+    background-color: #AA131F;
+    line-height: 1.0 !important;
+}
+.footer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 40px;
+    width: 100%;
+}
+
+.padding {
+    padding: 15px;
+}
+
+#content-main {
+  margin-top: 40px;
+}
+
+.well {
+  background-color: white;
+}
+
+.panel-heading h4 {
+    cursor: pointer;
+	color: black !important;
+	text-decoration: none !important;
+}
+
+.panel-title{
+    cursor: pointer;
+	color: black !important;
+	text-decoration: none !important;
+}
+
+.panel-title:hover{
+    cursor: pointer;
+	color: black !important;
+	text-decoration: none !important;
+}
+a:visited{
+	text-decoration: none !important;
+}
+a:hover{
+	text-decoration: none !important;
+}
+a:active{
+	text-decoration: none !important;
+}
+a:link {
+	text-decoration: none !important;
+}
+
+#photo {
+  font-size: 60px !important;
+}
