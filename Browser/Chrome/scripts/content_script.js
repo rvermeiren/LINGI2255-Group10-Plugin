@@ -197,8 +197,11 @@ function scanText(parent, nodeIndex, textNode, counter, pdf) {
 					prev += " "
 					nameLength += prev.length;
 				}
+				else {
+					prev = "";
+				}
 				// pushed is the number of politicians we found with this name
-				pushed = pushPoliticians(mapIndex, hashmap, name, politiciansToAdd, toDisplay, counter, nameLength, reg.lastIndex);
+				pushed = pushPoliticians(mapIndex, hashmap, name, politiciansToAdd, toDisplay, counter, nameLength, reg.lastIndex, prev);
 				pref = null;
 			}
 			prev = word;
@@ -216,7 +219,7 @@ function scanText(parent, nodeIndex, textNode, counter, pdf) {
 }
 
 // Add politicians to toDisplay, to display to display it later netx to the names
-function pushPoliticians(mapIndex, hashmap, name, politiciansToAdd, toDisplay, counter, nameLength, HTMLindex) {
+function pushPoliticians(mapIndex, hashmap, name, politiciansToAdd, toDisplay, counter, nameLength, HTMLindex, firstName) {
 	// First name of the politician was spotted
 	if (mapIndex != null) {
 		person = hashmap[name][mapIndex];
@@ -228,7 +231,7 @@ function pushPoliticians(mapIndex, hashmap, name, politiciansToAdd, toDisplay, c
 			toDisplay.push({
 				"index" : HTMLindex,
 				"nameLength" : nameLength,
-				"span" : person[4] + " " + person[5] + createSinglePopover(hashmap, person[5], mapIndex, counter)
+				"span" : firstName + person[5] + createSinglePopover(hashmap, person[5], mapIndex, counter)
 			});
 	}
 	//Multiple policitians
