@@ -2,15 +2,23 @@
 
 html {
     position: relative;
-    min-height: 100%;
     background-color: #AA131F;
-	min-width: 500px;
-}
-body {
     margin:5px !important; /* bas = hauteur du pied de page */
+    height: 500px;
+}
+
+body {
+    margin-right: 10px;
+    overflow-x: hidden;
+    min-width: 500px;
     background-color: #AA131F;
     line-height: 1.0 !important;
 }
+
+.img-wecitizens {
+    max-width: 450px !important;
+}
+
 .footer {
     position: absolute;
     left: 0;

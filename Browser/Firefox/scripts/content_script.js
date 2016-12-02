@@ -9,15 +9,15 @@
 var pdf = false;
 // hashmap that contains infomation about the politicians
 var politiciansInfo = {};
-var $ = jQuery.noConflict();
+
 /*********************************************
 ************ Start functions *****************
 **********************************************/
 
 // When the page is loaded
 $(document).ready(function(){
-	$('head').append('<script  src="https://code.jquery.com/jquery-1.12.4.min.js"  integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>');
-	$('head').append('<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>');
+	$('head').append('<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"  integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>');
+	$('head').append('<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>');
 		// "Search" in local storage tell us if the search is activated or not
 	var retrievedObject = chrome.storage.local.get('search',
 		function(result){

@@ -56,8 +56,7 @@ function replaceHTML(politiciansInfo) {
 		var link			= politiciansInfo[i].link;
 
 		// Append a panel for every politician in content-main
-		$('#content-main').append('<div class="panel-group" id="accordion'+count+'">\
-				                <div class="panel panel-default"">\
+		$('#content-main').append('<div class="panel">\
 				                    <div class="panel-heading">\
 										<a data-toggle="collapse" data-target="#collapsing'+count+'" href=\'javascript:;\' class="collapsed">\
 					                        <h4 class="panel-title lead">\
@@ -87,8 +86,7 @@ function replaceHTML(politiciansInfo) {
 											</div>\
 				                        </div>\
 				                    </div>\
-				                </div>\
-				            </div>');
+				                </div>');
 		count++;
 	}
 }
