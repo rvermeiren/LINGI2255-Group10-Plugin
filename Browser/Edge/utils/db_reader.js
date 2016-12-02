@@ -1,6 +1,6 @@
 chrome.storage.local.get('last_modified',
     function(date){
-        //  update the db every seven days
+		// alert(date.last_modified);
         if (JSON.stringify(date) == '{}' || (new Date() - new Date(date.last_modified) > 7 * 24 * 60 * 60 * 1000)){
             getDistantCSV();
         }
@@ -97,7 +97,8 @@ function addToHashMap(hashmap, line){
 function getDistantCSV(){
     var client = new XMLHttpRequest();
     var filename = 'http://34bw.be/wp-content/uploads/2016/11/temp_database.csv';
-    client.open('GET', filename, false);
+    client.open('GET', filename, true);
+	client.setRequestHeader('Content-Type','text/javascript');
     client.onreadystatechange = function() {
         var d = new Date();
         chrome.storage.local.set({'database_csv': client.responseText}, function(){

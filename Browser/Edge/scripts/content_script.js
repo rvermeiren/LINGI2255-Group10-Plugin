@@ -16,12 +16,13 @@ var politiciansInfo = {};
 
 // When the page is loaded
 $(document).ready(function(){
+	console.log("Starting the extension and trying to retrieve the search");
 	// "Search" in local storage tell us if the search is activated or not
 	var retrievedObject = chrome.storage.local.get('search',
 		function(result){
 			// == '{}' checks if "Search" is present or not
-			if (JSON.stringify(result) == '{}') {start(true); }
-			else start(result.search);
+			if (JSON.stringify(result) == '{}') {start(true); console.log("Search was not present");}
+			else { start(result.search); console.log("Search was present");}
 		}
 	);
 });
@@ -38,15 +39,17 @@ function start(search){
 	// If the search checkbox is activated
 	if(search) {
 		// Retrieve the database
+		console.log("Trying to retrieve the csv");
 		chrome.storage.local.get('database_csv',
 			function(result){
-					hashmap = CSVToHashmap(result.database_csv);
-					if (pdf){
-						launchPDFSearch(hashmap, url);
-					}
-					else {
-						launchHTMLSearch(hashmap);
-					}
+				console.log("Retrieved the csv");
+				hashmap = CSVToHashmap(result.database_csv);
+				if (pdf){
+					launchPDFSearch(hashmap, url);
+				}
+				else {
+					launchHTMLSearch(hashmap);
+				}
 			});
 	}
 
