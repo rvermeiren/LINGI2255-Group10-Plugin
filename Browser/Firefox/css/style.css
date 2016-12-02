@@ -2,16 +2,17 @@
 
 html {
     position: relative;
-    background-color: #AA131F;
     margin:5px !important; /* bas = hauteur du pied de page */
     height: 500px;
+    background-color: #b8b8b8;
 }
 
 body {
     margin-right: 10px;
     overflow-x: hidden;
     min-width: 500px;
-    background-color: #AA131F;
+    margin:5px !important; /* bas = hauteur du pied de page */
+    background-color: #b8b8b8;
     line-height: 1.0 !important;
 }
 

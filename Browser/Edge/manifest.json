@@ -1,0 +1,62 @@
+{
+    "author": "WeCitizens",
+    "background": {
+        "page": "background.html",
+        "persistent": true
+    },
+    "browser_action": {
+        "default_title": "WeCitizens",
+        "default_popup": "views/popup.html",
+        "default_icon": {
+            "16": "icons/icon16.png",
+            "48": "icons/icon48.png",
+            "128": "icons/icon128.png"
+        }
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>",
+                "file:///*"
+            ],
+            "css": [
+                "css/bootstrap_popover.css"
+            ],
+            "run_at": "document_start",
+            "js": [
+                "lib/jquery-1.9.1.min.js",
+                "lib/bootstrap.min.js",
+                "utils/db_reader.js",
+                "lib/compatibility.js",
+                "lib/pdf.js",
+                "utils/data_handler.js",
+                "utils/init_popover.js",
+                "scripts/content_script.js"
+            ]
+        }
+    ],
+    "description": "WeCitizens",
+    "homepage_url": "http://WeCitizens.be/",
+    "icons": {
+        "16": "icons/icon16.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+    },
+    "manifest_version": 2,
+    "name": "WeCitizens",
+    "permissions": [
+        "storage",
+        "tabs",
+        "notifications",
+        "webRequest",
+        "*://34bw.be/*"
+    ],
+    "version": "0.1",
+    "web_accessible_resources": [
+        "lib/pdf.worker.js"
+    ],
+    "-ms-preload": {
+        "backgroundScript": "backgroundScriptsAPIBridge.js",
+        "contentScript": "contentScriptsAPIBridge.js"
+    }
+}
