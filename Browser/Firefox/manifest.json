@@ -8,6 +8,7 @@
         {
             "matches": ["<all_urls>", "file:///*"],
             "css": ["css/bootstrap_popover.css"],
+            "run_at": "document_start",
             "js":
 				["lib/jquery-1.9.1.min.js",
 				"lib/bootstrap.min.js",
@@ -36,7 +37,9 @@
     "permissions": [
         "storage",
         "tabs",
-        "notifications"
+        "notifications",
+        "webRequest",
+        "*://34bw.be/*"
     ],
     "applications": {
         "gecko": {

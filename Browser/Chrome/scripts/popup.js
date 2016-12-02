@@ -44,16 +44,16 @@ function replaceHTML(politiciansInfo) {
 
 	var count = 0;
 	// We received a hashmap with the politians - i is in format FirstnameLastname
-	for (var i in politiciansInfos) {
+	for (var i in politiciansInfo) {
 
-		var name			= politiciansInfos[i].name;
-		var surname			= politiciansInfos[i].surname;
-		var birthDate		= politiciansInfos[i].birthDate;
-		var politicalParty	= politiciansInfos[i].politicalParty;
-		var city			= politiciansInfos[i].city;
-		var job 			= politiciansInfos[i].job;
-		var photo			= politiciansInfos[i].photo;
-		var link			= politiciansInfos[i].link;
+		var name			= politiciansInfo[i].name;
+		var surname			= politiciansInfo[i].surname;
+		var birthDate		= politiciansInfo[i].birthDate;
+		var politicalParty	= politiciansInfo[i].politicalParty;
+		var city			= politiciansInfo[i].city;
+		var job 			= politiciansInfo[i].job;
+		var photo			= politiciansInfo[i].photo;
+		var link			= politiciansInfo[i].link;
 
 		// Append a panel for every politician in content-main
 		$('#content-main').append('<div class="panel-group" id="accordion'+count+'">\

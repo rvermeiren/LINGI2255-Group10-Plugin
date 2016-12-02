@@ -100,9 +100,13 @@ function getDistantCSV(){
     client.open('GET', filename, false);
     client.onreadystatechange = function() {
         var d = new Date();
-        chrome.storage.local.set({'database_csv': client.responseText, 'last_modified': d.toString()},
-            function(){
-                console.log("File saved, last modified : " + d);
+        browser.storage.local.set({'database_csv': client.responseText}).then(function(){
+                console.log("File saved" + client.responseText);
+                browser.storage.local.set({'last_modified': d.toString()}).then(function(){
+                    console.log("File saved, last modified : " + d);
+                }, null);
+            }, function(){
+                console.log("ERROR");
             });
     }
     client.send();

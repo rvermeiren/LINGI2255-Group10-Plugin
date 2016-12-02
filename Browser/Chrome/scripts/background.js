@@ -26,7 +26,7 @@ chrome.notifications.onClicked.addListener(function(Id) {
 /* This updates the badge every seconds*/
 window.setInterval(function(){
 	badgeMessage();
-}, 1000);
+}, 100000);
 
 /* Sends a message to the tab to know how many politicians were found*/
 function badgeMessage() {

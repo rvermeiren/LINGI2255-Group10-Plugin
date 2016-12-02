@@ -38,18 +38,18 @@ function start(search){
 	// If the search checkbox is activated
 	if(search) {
 		// Retrieve the database
-		var retrievedObject = chrome.storage.local.get('database_csv',
+		chrome.storage.local.get('database_csv',
 			function(result){
-				hashmap = CSVToHashmap(result.database_csv);
-				if (pdf){
-					launchPDFSearch(hashmap, url);
-				}
-				else {
-					launchHTMLSearch(hashmap);
-				}
-			}
-		);
+					hashmap = CSVToHashmap(result.database_csv);
+					if (pdf){
+						launchPDFSearch(hashmap, url);
+					}
+					else {
+						launchHTMLSearch(hashmap);
+					}
+			});
 	}
+
 
 	// Message passing with the popup - useful to pass the politician info for
 	// the popup, the notification and the badge.
