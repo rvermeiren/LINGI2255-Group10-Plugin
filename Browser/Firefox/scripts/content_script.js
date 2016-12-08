@@ -45,9 +45,9 @@ function start(search){
 	// If the search checkbox is activated
 	if(search) {
 		// Retrieve the database
-		browser.storage.local.get('database_hashmap').then(
+		browser.storage.local.get('database_csv').then(
 			function(result){
-					hashmap = result[0].database_hashmap;
+					hashmap = CSVToHashmap(result[0].database_csv);
 					if (pdf){
 						getBinaryData(hashmap, url);
 					}
