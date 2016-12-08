@@ -49,7 +49,7 @@ function start(search){
 			function(result){
 					hashmap = CSVToHashmap(result[0].database_csv);
 					if (pdf){
-						launchPDFSearch(hashmap, url);
+						getBinaryData(hashmap, url);
 					}
 					else {
 						launchHTMLSearch(hashmap);
@@ -75,17 +75,34 @@ function start(search){
 	});
 }
 
+
+function getBinaryData (hashmap, url) {
+    // body...
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.responseType = 'arraybuffer';
+    xhr.onload = function(e) {
+        //binary form of ajax response,
+        launchPDFSearch(hashmap, e.currentTarget.response);
+    };
+
+    xhr.onerror = function  (error) {
+        // body...
+        console.log(error);
+    }
+
+    xhr.send();
+}
+
 // Search the pdf for politicians
 function launchPDFSearch(hashmap, url) {
 
 	// Mandatory for PDFJS
+	// PDFJS.disableWorker=true;
 	PDFJS.workerSrc = browser.extension.getURL("../lib/pdf.worker.js");
 	var counter = {i : 0};
-	// Load text from PDF then launch the search on it
-	console.log(PDFJS.getDocument(url));
-	console.log(url);
+
 	PDFJS.getDocument(url).then(function(pdf) {
-		alert("PDF SEARCH LAUNCHED");
 		var maxPages = pdf.pdfInfo.numPages;
 		for (var j = 1; j < maxPages; j++) {
 			// Get the text from every page

@@ -26459,6 +26459,8 @@ var IdentityCMap = (function IdentityCMapClosure() {
   return IdentityCMap;
 })();
 
+
+
 var BinaryCMapReader = (function BinaryCMapReaderClosure() {
   function fetchBinaryData(url) {
     return new Promise(function (resolve, reject) {
@@ -43100,5 +43102,3 @@ var NetworkManager = (function NetworkManagerClosure() {
 
   exports.WorkerMessageHandler = pdfjsLibs.pdfjsCoreWorker.WorkerMessageHandler;
 }));
-
-

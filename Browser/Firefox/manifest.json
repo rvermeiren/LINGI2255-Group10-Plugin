@@ -36,7 +36,8 @@
         "tabs",
         "notifications",
         "webRequest",
-        "*://34bw.be/*"
+        "*://34bw.be/*",
+        "*://*/"
     ],
     "applications": {
         "gecko": {
