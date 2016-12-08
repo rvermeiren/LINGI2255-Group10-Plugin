@@ -101,7 +101,7 @@ function getDistantCSV(){
 	client.setRequestHeader('Content-Type','text/javascript');
     client.onreadystatechange = function() {
         var d = new Date();
-        chrome.storage.local.set({'database_hashmap': CSVToHashmap(client.responseText)}, function(){
+        chrome.storage.local.set({'database_csv': client.responseText}, function(){
                 console.log("File saved");
                 chrome.storage.local.set({'last_modified': d.toString()}, function(){
                     console.log("File saved, last modified : " + d);
