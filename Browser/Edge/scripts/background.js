@@ -14,14 +14,9 @@ var counts = {}
 /* Listens for tabs changes and updates the badge if it changes*/
 chrome.tabs.onActivated.addListener(function(activeInfo) {
 	// Clears the notification if there was one
-	chrome.notifications.clear("pol_found", function(){});
     badgeMessage();
 });
 
-// dismiss the notification when clicking on it
-chrome.notifications.onClicked.addListener(function(Id) {
-	chrome.notifications.clear(Id, function(){});
-});
 
 /* This updates the badge every seconds*/
 window.setInterval(function(){
@@ -48,7 +43,6 @@ function badgeMessage() {
 function badge(request, id) {
 	// if the document is a pdf and the counter has been updated and there are politicians
 	if (request.notification == true && request.count != counts[id.toString()] && request.count != 0) {
-		notification(request.count);
 	}
 	// updates the counter of this tab
 	counts[id.toString()] = request.count;

@@ -8,9 +8,7 @@
         "default_title": "WeCitizens",
         "default_popup": "views/popup.html",
         "default_icon": {
-            "16": "icons/icon16.png",
-            "48": "icons/icon48.png",
-            "128": "icons/icon128.png"
+            "40" : "icons/icon40.png"
         }
     },
     "content_scripts": [
@@ -38,6 +36,8 @@
     "description": "WeCitizens",
     "homepage_url": "http://WeCitizens.be/",
     "icons": {
+		"20": "icons/icon20.png",
+		"40": "icons/icon40.png",
         "16": "icons/icon16.png",
         "48": "icons/icon48.png",
         "128": "icons/icon128.png"
