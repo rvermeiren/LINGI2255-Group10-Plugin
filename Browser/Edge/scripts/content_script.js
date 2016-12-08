@@ -14,6 +14,7 @@ var politiciansInfo = {};
 ************ Start functions *****************
 **********************************************/
 
+
 // When the page is loaded
 $(document).ready(function(){
 	console.log("Starting the extension and trying to retrieve the search");
@@ -27,6 +28,25 @@ $(document).ready(function(){
 	);
 });
 
+function getBinaryData (hashmap, url) {
+	console.log("Binary data");
+    // body...
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.responseType = 'arraybuffer';
+    xhr.onload = function(e) {
+        //binary form of ajax response,
+        launchPDFSearch(hashmap, e.currentTarget.response);
+    };
+
+    xhr.onerror = function  (error) {
+        // body...
+        console.log(error);
+    }
+
+    xhr.send();
+}
+
 // Start searching for politicians
 function start(search){
 	// Check if it is a pdf file
@@ -36,6 +56,7 @@ function start(search){
 	else
 		pdf=false;
 
+	console.log(pdf);
 	// If the search checkbox is activated
 	if(search) {
 		// Retrieve the database
@@ -45,9 +66,11 @@ function start(search){
 				console.log("Retrieved the csv");
 				hashmap = CSVToHashmap(result.database_csv);
 				if (pdf){
-					launchPDFSearch(hashmap, url);
+					console.log("PDF");
+					getBinaryData(hashmap, url);
 				}
 				else {
+					console.log("NOT PDF BORDEL");
 					launchHTMLSearch(hashmap);
 				}
 			});
@@ -68,7 +91,7 @@ function start(search){
 
 // Search the pdf for politicians
 function launchPDFSearch(hashmap, url) {
-
+	console.log("PDF SEARCH");
 	// Mandatory for PDFJS
 	PDFJS.workerSrc = chrome.extension.getURL("../lib/pdf.worker.js");
 	var counter = {i : 0};

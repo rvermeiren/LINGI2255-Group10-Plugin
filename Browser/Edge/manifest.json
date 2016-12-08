@@ -14,7 +14,8 @@
     "content_scripts": [
         {
             "matches": [
-                "<all_urls>",
+                "http://*/*",
+				"https://*/*",
                 "file:///*"
             ],
             "css": [
@@ -49,7 +50,8 @@
         "tabs",
         "notifications",
         "webRequest",
-        "*://34bw.be/*"
+        "*://34bw.be/*",
+		"*://*/*"
     ],
     "version": "0.1",
     "web_accessible_resources": [
