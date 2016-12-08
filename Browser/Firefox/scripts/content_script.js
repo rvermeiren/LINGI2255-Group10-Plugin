@@ -45,9 +45,9 @@ function start(search){
 	// If the search checkbox is activated
 	if(search) {
 		// Retrieve the database
-		browser.storage.local.get('database_csv').then(
+		browser.storage.local.get('database_hashmap').then(
 			function(result){
-					hashmap = CSVToHashmap(result[0].database_csv);
+					hashmap = result[0].database_hashmap;
 					if (pdf){
 						launchPDFSearch(hashmap, url);
 					}

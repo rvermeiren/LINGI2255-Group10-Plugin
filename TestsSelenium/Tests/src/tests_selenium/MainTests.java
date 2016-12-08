@@ -28,7 +28,7 @@ public class MainTests {
 	private static boolean checkFields(String[] infos, String html){
 		for (int i=0; i<infos.length; i++){
 			if (!html.contains(infos[i])){
-				System.out.println(i);
+				System.out.println("Popover number " + i + " does not contain information " + infos[i] + ".");
 				return false;
 			}
 		}
@@ -71,14 +71,14 @@ public class MainTests {
 	 * 
 	 * @return true if no problem encountered while reading the CSV DB, false otherwise.
 	 */
-	private static boolean readCSVDB(String csvFile){
+	/*private static boolean readCSVDB(String csvFile){
         BufferedReader br = null;
         String line = "";
         String cvsSplitBy = "\",\"";
 
         try {
 
-            br = new BufferedReader(new FileReader("src/tests_selenium/" + csvFile));
+            br = new BufferedReader(new FileReader(csvFile));
             while ((line = br.readLine()) != null) {
             	String modifiedLine = addQuotes(line);
                 // use comma as separator
@@ -119,7 +119,7 @@ public class MainTests {
         
         return true;
 	}
-	
+	*/
 	
 	/***************
 	 **MAIN METHOD**
@@ -129,9 +129,9 @@ public class MainTests {
         // Create a new instance of the Firefox driver
         // Notice that the remainder of the code relies on the interface, 
         // not the implementation.
-    	System.setProperty("webdriver.chrome.driver", "tests_selenium/chromedriver");
+    	System.setProperty("webdriver.chrome.driver", args[0]);
     	
-    	String[] rudy = new String[]{"Rudy", "Government of the Federation Wallonia-Brussels", "PS", "Tournai", "53 years old", "http://directory.wecitizens.be/fr/politician/RudyDemotte-234", "http://directory.wecitizens.be/images/generic/politician-thumb/173.jpg"};
+    	String[] rudy = {"Rudy", "Government of the Federation Wallonia-Brussels", "PS", "Tournai", "53 years old", "http://directory.wecitizens.be/fr/politician/RudyDemotte-234", "http://directory.wecitizens.be/images/generic/politician-thumb/173.jpg"};
     	String[] marie = {"Marie", "Unknown post", "PS", "Bruxelles", "49 years old", "http://directory.wecitizens.be/fr/politician/MarieArena-455", "http://directory.wecitizens.be/images/generic/politician-thumb/385.jpg"};
     	String[] elio = {"Elio", "Chair of a party", "PS", "Mons", "65 years old", "http://directory.wecitizens.be/fr/politician/ElioDi-Rupo-217", "http://directory.wecitizens.be/images/generic/politician-thumb/156.jpg"};
     	String[] paul = {"Paul", "Walloon Government","PS", "Charleroi", "45 years old", "http://directory.wecitizens.be/fr/politician/PaulMagnette-465", "http://directory.wecitizens.be/images/generic/politician-thumb/395.jpg"}; 
@@ -143,18 +143,19 @@ public class MainTests {
      	names.put("Paul Magnette", paul);
      	names.put("Politicians found", pol);
         
-        File file = new File(args[0]);
+        File file = new File(args[1]);
         ChromeOptions options = new ChromeOptions();
         options.addExtensions(file);
         //options.addArguments("--allow-file-access-from-files"); 
         
         WebDriver driver = new ChromeDriver(options);
         
-        driver.get("http://wecitizens.be");
+        // Get first on WeCitizens.be to download the database
+        driver.get("http://www.wecitizens.be/");
         // Opens the Wikipedia page of Rudy Demotte, in english, stored on 01/12/16.
-        //driver.get("file:///home/nicolas/eclipse/workspace/Tests/src/tests_selenium/rudy_demotte_wiki.html");
-        //getCurrentUrl()
-        driver.get("https://en.wikipedia.org/wiki/Rudy_Demotte");
+        String dir = args[2];
+        driver.get("file:///" + dir + "/rudy_demotte_wiki.html");
+        //driver.get("https://en.wikipedia.org/wiki/Rudy_Demotte");
         
         try {
         	driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
@@ -165,82 +166,158 @@ public class MainTests {
         	System.exit(-1);
         }
         
+        try{
+        	Thread.sleep(3000);
+        } catch(InterruptedException e){
+        	Thread.currentThread().interrupt();
+        }
+        
+        System.out.println("-----------------------------------");
+        System.out.println();
+        System.out.println("Lauching tests...");
+        System.out.println();
+        
         List<WebElement> list = driver.findElements(By.xpath("//*[contains(@id, 'popoverWeCitizens')]"));
         
-        // First Test: test size of this list, to check if the number of icons is the expected one
-        if(list.size()!=17){
-        	System.out.println(list.size());
-        	System.out.println("Wrong number of different names of politicians found");
-        	driver.quit();
-        	System.exit(-1);
+        
+        // First Test: test if the correct number of each
+        // politician are found (3 times Rudy Demotte,
+        // 2 times Paul Magnette etc..)
+        
+        int demotte = 0;
+        int ronse = 0;
+        int magnette = 0;
+        int arena = 0;
+        int dirupo = 0;
+        
+        Iterator<WebElement> iter1 = list.iterator();
+        while(iter1.hasNext()){
+        	WebElement elem = iter1.next();
+        	String html = elem.getAttribute("innerHTML");
+        	if(html.contains("Demotte")){ demotte++; }
+        	else if(html.contains("Ronse")){ ronse++; }
+        	else if(html.contains("Magnette")){ magnette ++; }
+        	else if(html.contains("Arena")){ arena++; }
+        	else if(html.contains("Di Rupo")){ dirupo++; }
         }
         
+        if(list.size()!=17){
+        	System.out.println("Wrong number of different names of politicians found. (" + list.size() + "/17)");
+        }
+        else{
+        	System.out.println("First test passed! (politicians found : 17/17)");
+        }
+        System.out.println("Rudy Demotte : " + demotte + "/7");
+    	System.out.println("Ronse : " + ronse + "/3");
+    	System.out.println("Elio Di Rupo : " + dirupo + "/3");
+    	System.out.println("Marie Arena : " + arena + "/2");
+    	System.out.println("Paul Magnette : " + magnette + "/2");
+    	System.out.println();
+    	System.out.println("-----------------------------------");
+    	System.out.println();
+        
+    	
         // Second Test : test if, after having clicked on an icon, the infos in each popover are correct
         // (correct function, name, link to PolDir etc.)
-        Iterator<WebElement> iter = list.iterator();
-        while(iter.hasNext()){
-        	WebElement elem = iter.next();
-        	String html = elem.getAttribute("innerHTML");
-        	String current = extractName(html);
-        	if (!checkFields(names.get(current), html)){
-        		System.out.println("Wrong infos displayed in the popover");
-            	driver.quit();
-            	System.exit(-1);
-        	}
-        }
-        
-        // Third Test : test the politicians below are spotted in the correct order
-        // (tests manually their expected position)
-        int count = 0;
+    	
+    	ArrayList<String> wrongResults = new ArrayList();
+    	
         Iterator<WebElement> iter2 = list.iterator();
         while(iter2.hasNext()){
         	WebElement elem = iter2.next();
         	String html = elem.getAttribute("innerHTML");
+        	String current = extractName(html);
+        	if (!checkFields(names.get(current), html)){
+        		wrongResults.add(current);
+        	}
+        }
+        if(wrongResults.isEmpty()){
+        	System.out.println("Second test passed! Information displayed in each popover are correct.");
+        } else{
+        	System.out.println("Wrong infos displayed in the popover for :");
+        	for(String res : wrongResults){
+        		if(res.equals("Politicians found")){
+        			System.out.println("Ronse");
+        		}
+        		System.out.println(res);
+        	}
+        }
+        System.out.println();
+    	System.out.println("-----------------------------------");
+    	System.out.println();
+        
+        // Third Test : test the politicians below are spotted in the correct order
+        // (tests manually their expected position)
+    	boolean passed3 = true;
+        int count = 0;
+        Iterator<WebElement> iter3 = list.iterator();
+        while(iter3.hasNext()){
+        	WebElement elem = iter3.next();
+        	String html = elem.getAttribute("innerHTML");
         	if(count == 0){	// Rudy Demotte supposed to be the first one spotted
         		if(!html.contains("Demotte")){
-        			System.out.println("Rudy Demotte not spotted in the right place");
-                	driver.quit();
-                	System.exit(-1);
+        			passed3 = false;
+        			System.out.println("The first politician found is supposed to be Rudy Demotte.");
+        		} else {
+        			System.out.println("The first politician found is Rudy Demotte.");
+        		}
+        	}
+        	if(count==2){ // Marie Arena supposed to be the sixth one spotted
+        		if(!html.contains("Arena")){
+        			passed3 = false;
+        			System.out.println("The third politician found is supposed to be Marie Arena.");
+        		} else {
+        			System.out.println("The third politician found is Marie Arena.");
         		}
         	}
         	if(count==5){ // Ronse supposed to be the sixth one spotted
         		if(!html.contains("Ronse")){
-        			System.out.println("Axel and Pol Ronse not spotted in the right place");
-                	driver.quit();
-                	System.exit(-1);
+        			passed3 = false;
+        			System.out.println("The sixth politician found is supposed to be Ronse.");
+        		} else {
+        			System.out.println("The sixth politician found is Ronse.");
         		}
         	}
         	if(count==8){ // Elio Di Rupo supposed to be the ninth one spotted
         		if(!html.contains("Di Rupo")){
-        			System.out.println("Elio Di Rupo not spotted in the right place");
-                	driver.quit();
-                	System.exit(-1);
+        			passed3 = false;
+        			System.out.println("The ninth politician found is supposed to be Elio Di Rupo.");
+        		} else {
+        			System.out.println("The ninth politician found is Elio Di Rupo.");
         		}
         	}
         	if(count==13){ // Paul Magnette supposed to be the fourteenth one spotted
         		if(!html.contains("Magnette")){
-        			System.out.println("Paul Magnette not spotted in the right place");
-                	driver.quit();
-                	System.exit(-1);
+        			passed3 = false;
+        			System.out.println("The fourteenth politician found is supposed to be Paul Magnette.");
+        		} else {
+        			System.out.println("The fourteenth politician found is Paul Magnette.");
         		}
         	}
         	count++;
         }
-        
+        if(passed3){
+        	System.out.println("Third test passed!");
+        } else{
+        	System.out.println("Third test failed...");
+        }
+        System.out.println();
+    	System.out.println("-----------------------------------");
+    	System.out.println();
         
        /* Fourth test : tests if the database in CSV format has the correct
         * fields (if they are at the right place, if the data types are the
         * ones we expected and if there are the correct number of fields).
         */
-        String fileName = "temp_database.csv";
+        /*String fileName = "temp_database.csv";
         
-        if(!readCSVDB(fileName)){
+        if(!readCSVDB("src/tests_selenium/temp_database.csv")){
         	System.out.println("Something is wrong in the CSV file corresponding to politicians' database");
-        	driver.quit();
-        	System.exit(-1);
-        }
+        }*/
         
-        //Close the browser
-        //driver.quit();
+        System.out.println("Finished to run the tests, closing the browser...");
+        //Close the browser when tests are finished
+        driver.quit();
+        System.out.println("Browser closed!");
     }
 }
