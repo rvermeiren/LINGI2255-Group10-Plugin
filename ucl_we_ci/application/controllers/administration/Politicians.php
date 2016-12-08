@@ -98,6 +98,7 @@ class Politicians extends CI_Controller {
 	    $this->load->view("template/footer");
 	}
 
+	//Export the database of Code Igniter to a CSV file into /code_igniter_folder/assets/db
 	public function ExportCSV()
 	{
 		$this->load->dbutil();
