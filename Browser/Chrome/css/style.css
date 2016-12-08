@@ -1,4 +1,4 @@
-﻿/* Styles propres aux pages */
+﻿/* Style of the popup */
 
 html {
     position: relative;
@@ -7,7 +7,7 @@ html {
 	min-width: 500px;
 }
 body {
-    margin:5px !important; /* bas = hauteur du pied de page */
+    margin:5px !important;
     background-color: #AA131F;
     line-height: 1.0 !important;
 }

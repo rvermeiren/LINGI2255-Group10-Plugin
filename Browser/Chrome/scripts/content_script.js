@@ -104,7 +104,7 @@ function launchHTMLSearch(hashmap) {
 
 }
 
-//
+// Returns all of the DOM nodes that contains text nodes
 function textNodesUnder(el){
 	var pred;
 	var n, a=[], walk=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,null,false);
