@@ -40,8 +40,6 @@ function start(search){
 	else
 		pdf=false;
 
-	console.log(pdf);
-
 	// If the search checkbox is activated
 	if(search) {
 		// Retrieve the database
@@ -69,7 +67,6 @@ function start(search){
 			response(politiciansInfo);
 		}
 		else if ((msg.from === 'popup') && (msg.subject === 'badge')) {
-			console.log("received, sent: " + Object.keys(politiciansInfo).length);
 			response({notification: pdf, count: Object.keys(politiciansInfo).length});
 		}
 	});
