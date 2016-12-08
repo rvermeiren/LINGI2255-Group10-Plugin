@@ -45,9 +45,9 @@ function start(search){
 	// If the search checkbox is activated
 	if(search) {
 		// Retrieve the database
-		browser.storage.local.get('database_csv').then(
+		browser.storage.local.get('database_hashmap').then(
 			function(result){
-					hashmap = CSVToHashmap(result[0].database_csv);
+					hashmap = result[0].database_hashmap;
 					if (pdf){
 						getBinaryData(hashmap, url);
 					}
@@ -98,7 +98,6 @@ function getBinaryData (hashmap, url) {
 function launchPDFSearch(hashmap, url) {
 
 	// Mandatory for PDFJS
-	// PDFJS.disableWorker=true;
 	PDFJS.workerSrc = browser.extension.getURL("../lib/pdf.worker.js");
 	var counter = {i : 0};
 
