@@ -3,6 +3,7 @@
  * Formatting, building urls, and so on.
  */
 
+//Checks if the database entries are not \N or undefined
 function cleanData(person) {
 	var bdate;
 	if (person[6] == "\\N" || typeof person[6] == 'undefined') {
