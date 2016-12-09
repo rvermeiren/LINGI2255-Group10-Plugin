@@ -20,7 +20,7 @@ matches.
 * It is also possible to click on the extension icon (in the top-right corner).
 Every politician that is mentionned in the page and their information are
 available there as well. A little badge directly tells you how many were spotted
-on the page.
+on the page. It is also possible to disable the research from there, the plugin will keep track of the user preferences.
 * When reading an online *PDF*, it only displays information in the top-right
 corner list. A notification will tell you how many were spotted in the document.
 
