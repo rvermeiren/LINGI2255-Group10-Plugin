@@ -36,3 +36,4 @@ This folder contains these elements :
 * **Edge/**: source code for the Microsoft Edge extension
 * **Firefox**: source code for the Mozilla Firefox extension
 * **Chrome.pem**: key to generate the Chrome extension
+* **We_Citizens_Browsers_Plugin.zip**: archive containing all the source code
