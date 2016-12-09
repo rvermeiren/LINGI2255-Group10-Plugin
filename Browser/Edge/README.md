@@ -16,7 +16,7 @@ To install and test it, follow these steps:
 2. Once there, check the box next to **Enable extension developer features**
 3. Close and reopen Edge
 4. Click on the three dots in the top-right corner, then on *Extensions*.
-5. Click on *Load an extension* and seletc this folder.
+5. Click on *Load an extension* and select this folder.
 6. Then you have access to a toggle in order to display the extension icon.
 
 ## Use
