@@ -13,7 +13,7 @@ The tests are written in Java, run on Google Chrome or Chromium and use librarie
 
 ## Tests installation
 
-* Download the .zip file at this link: 
+* Download the .zip file at this link: https://goo.gl/dAAUst
 * Extract the files in the directory of your choice.
 
 ## Running the tests
