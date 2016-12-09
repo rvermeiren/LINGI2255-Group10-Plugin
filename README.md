@@ -5,6 +5,6 @@ The plugin works on Chrome, Opera, Firefox, Edge. There is also a plugin for Mic
 
 ## Content
 * **Browser/**:  The source code for the extension on the browsers.
-* **TestsSelenium/**:
+* **TestsSelenium/**: The source code of the tests and the files needed to run them.
 * **ucl_we_ci/**:
-* **Word add in/**:
+* **Word add in/**: The source code for the extension on Microsoft Word.
