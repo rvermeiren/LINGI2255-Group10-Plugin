@@ -6,7 +6,7 @@
 //Checks if the database entries are not \N or undefined
 function cleanData(person) {
 	var bdate;
-	if (person[6] == "\\N" || typeof person[6] == 'undefined') {
+	if (person[6] == "\\N" || person[6] == null || typeof person[6] == 'undefined') {
 		bdate = "Unknown age";
 	} else {
 		bdate = new Date(person[6]+'T10:20:30Z');
@@ -14,14 +14,14 @@ function cleanData(person) {
 	}
 
 	var city;
-	if (person[7] == "\\N" || typeof person[7] == 'undefined'){
+	if (person[7] == "\\N" || person[7] == null || typeof person[7] == 'undefined'){
 		city = "Unknown city";
 	}else{
 		city= person[7];
 	}
 
 	var post;
-	if (person[8] == "\\N" || typeof person[8] == 'undefined'){
+	if (person[8] == "\\N" || person[8] == null || typeof person[8] == 'undefined'){
 		post = "Unknown post";
 	}else{
 		post = person[8];
