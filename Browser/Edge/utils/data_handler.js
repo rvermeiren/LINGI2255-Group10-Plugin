@@ -3,31 +3,32 @@
  * Formatting, building urls, and so on.
  */
 
-function cleanData(person) {
-	var bdate;
-	if (person[6] == "\\N" || typeof person[6] == 'undefined') {
-		bdate = "Unknown age";
-	} else {
-		bdate = new Date(person[6]+'T10:20:30Z');
-		bdate = calculateAge(bdate);
-	}
+ //checks if the database entries are not \N or undefined and gives a cleaner output
+ function cleanData(person) {
+ 	var bdate;
+ 	if (person[6] == "\\N" || typeof person[6] == 'undefined' || person[6] == null) {
+ 		bdate = "Unknown age";
+ 	} else {
+ 		bdate = new Date(person[6]+'T10:20:30Z');
+ 		bdate = calculateAge(bdate);
+ 	}
 
-	var city;
-	if (person[7] == "\\N" || typeof person[7] == 'undefined'){
-		city = "Unknown city";
-	}else{
-		city= person[7];
-	}
+ 	var city;
+ 	if (person[7] == "\\N" || typeof person[7] == 'undefined' || person[7] == null){
+ 		city = "Unknown city";
+ 	}else{
+ 		city= person[7];
+ 	}
 
-	var post;
-	if (person[8] == "\\N" || typeof person[8] == 'undefined'){
-		post = "Unknown post";
-	}else{
-		post = person[8];
-	}
+ 	var post;
+ 	if (person[8] == "\\N" || typeof person[8] == 'undefined' || person[8] == null){
+ 		post = "Unknown post";
+ 	}else{
+ 		post = person[8];
+ 	}
 
-	return [person[0], person[1], person[2], person[3], person[4], person[5], bdate, city, post];
-}
+ 	return [person[0], person[1], person[2], person[3], person[4], person[5], bdate, city, post];
+ }
 
 //http://stackoverflow.com/questions/4060004/calculate-age-in-javascript
 function calculateAge(birthday) { // birthday is a date
