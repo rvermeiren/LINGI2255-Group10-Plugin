@@ -12,6 +12,8 @@
 
     var hashmap = [];
 
+	var counter = {i: 0};
+
     // La fonction d'initialisation doit être exécutée chaque fois qu'une nouvelle page est chargée.
     Office.initialize = function (reason) {
         $(document).ready(function () {
@@ -47,7 +49,7 @@
 
                    // Give entire file to the function CSVToHashmap
                    hashmap = CSVToHashmap(this.result);
-                   
+
                };
                reader.readAsText(file);
            };
@@ -65,7 +67,7 @@
 
 
 /*****************************************************************************************************************/
-    
+
 
     /*********************************************/
     /***** SEARCH RELATED AUXILIARY FUNCTIONS*****/
@@ -77,7 +79,7 @@
      *
      * @index allows to retrieve the first name
      * of the policitian.
-     */ 
+     */
     function display(hashmap, name, index, context) {
 
         Word.run(function (context) {
@@ -93,13 +95,13 @@
             bdate = calculateAge(bdate);
 
             $('#politicians').append(
-                    '<div class="panel panel-default" id="panel' + index + '">\
+                    '<div class="panel panel-default" id="panel' + counter.i + '">\
                         <div class="panel-heading">\
-                            <a data-toggle="collapse" data-target="#collapse'+ index + '">\
+                            <a data-toggle="collapse" data-target="#collapse'+ counter.i + '">\
                             <h4 class="panel-title">' + hashmap[name][index][4] + " " + hashmap[name][index][5] + '</h4>\
                             </a>\
                         </div>\
-                        <div id="collapse'+ index + '" class="panel-collapse collapse ">\
+                        <div id="collapse'+ counter.i + '" class="panel-collapse collapse ">\
                             <div class="panel-body">\
                                 <div class="row">\
                                     <div class="col-xs-2" id="photo"> <i class="material-icons md-60">face</i> </div>\
@@ -115,12 +117,13 @@
                     </div>\
                 </div>\ '
                 );
+				counter.i++;
         })
     }
 
     /**
      * Given the name of a politician, displays
-     * the infos of all the policitians in the DB matching 
+     * the infos of all the policitians in the DB matching
      * this name.
      */
     function display_multiple(hashmap, name, context) {
@@ -138,13 +141,13 @@
                 bdate = calculateAge(bdate);
 
                 $('#politicians').append(
-                    '<div class="panel panel-default" id="panel' + i + '">\
+                    '<div class="panel panel-default" id="panel' + counter.i + '">\
                         <div class="panel-heading">\
-                            <a data-toggle="collapse" data-target="#collapse'+ i + '">\
+                            <a data-toggle="collapse" data-target="#collapse'+ counter.i + '">\
                             <h4 class="panel-title">' + person[4] + " " + person[5] + '</h4>\
                             </a>\
                         </div>\
-                        <div id="collapse'+ i + '" class="panel-collapse collapse ">\
+                        <div id="collapse'+ counter.i + '" class="panel-collapse collapse ">\
                             <div class="panel-body">\
                                 <div class="row">\
                                     <div class="col-xs-2" id="photo"> <i class="material-icons md-60">face</i> </div>\
@@ -159,7 +162,8 @@
                         </div>\
                     </div>\
                 </div>\ '
-                    );
+                );
+				counter.i++;
             }
         })
     }
@@ -180,11 +184,11 @@
 
             // Empties the politicians already found since we "relaunch" the search.
             alreadyFoundPoliticians = {};
-            
+
             $('#politicians').empty();  // Empties all the content of the panel.
 
             return context.sync().then(function () {
-                
+
                 var wholeText = body.text;  // Get the whole text of the body as a String
 
                 // Launch the search
@@ -197,7 +201,7 @@
     }
 
     /**
-     * Given a text as a String object (body), 
+     * Given a text as a String object (body),
      * the function searches for any politicians' names in the text of the document.
      * It uses a regular expression.
      */
@@ -225,7 +229,8 @@
                     name = prefix[iter] + word;
                 }
                 // Search for the name in the hashmap
-                if (name in hashmap) {
+                if (name in hashmap && !(name in alreadyFoundPoliticians)) {
+					alreadyFoundPoliticians[name] = true;
                     found = true;
                     var matching = [];
                     var pol = null;
@@ -267,7 +272,7 @@
             }
         }
     }
-    
+
     //http://stackoverflow.com/questions/4060004/calculate-age-in-javascript
     function calculateAge(birthday) { // birthday is a date
         var ageDifMs = Date.now() - birthday.getTime();
